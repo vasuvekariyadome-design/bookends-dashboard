@@ -59,9 +59,13 @@ Target row shape (this is what `index.html` expects):
 - `type`  → map `VIDEO`/`REELS` → `"Reel"`, `CAROUSEL_ALBUM` → `"Carousel"`, `IMAGE` → `"Image"`
 - numbers → integers (`0` if blank)
 - `url`   → `media_permalink`
-- `caption` → real caption, trimmed to ~40 chars, with `"` and newlines stripped (keep it
-  safe to embed in a JS string). If empty, use `""`.
-Sort rows newest-first (matches the existing file).
+- `caption` → **preserve curation:** if this post's `url` already exists in index.html, KEEP
+  its current caption (these are hand-written editorial summaries — do not overwrite them).
+  Only for a genuinely NEW url, generate one from the real caption: take the first line,
+  trim to ~40 chars at a word boundary, strip `"` and newlines so it is safe inside a JS
+  string. If empty, use `""`.
+Keep the existing row order (the file is sorted by interactions/likes descending); just
+update the numbers in place and insert any new posts. The UI re-sorts anyway.
 
 ## Step 3 — rewrite `index.html`
 
