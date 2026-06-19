@@ -757,7 +757,7 @@ async function refreshAll(){
 document.getElementById("refreshBtn").onclick=refreshAll;
 render();
 document.getElementById("freshPill").className="pill snap";
-document.getElementById("freshPill").textContent="Snapshot · "+SNAPSHOT_DATE;
+document.getElementById("freshPill").textContent="Updated · "+SNAPSHOT_DATE;
 if(window.cowork&&window.cowork.callMcpTool){refreshAll().catch(()=>{});}
 </script>
 </body>
