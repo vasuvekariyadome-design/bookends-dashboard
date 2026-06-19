@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Bookends Brand Auditor — Live Engagement Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
+<style>
+:root{color-scheme:light;
+ --bg:#FCF6EC;--card:#FFFCF5;--ink:#14110D;--muted:#7A7064;--line:#E7D9C2;
+ --navy:#00259A;--navy2:#001A6E;
+ --capiche:#F50C0C;--aiko:#EDB32B;--bookends:#00259A;--ghaslet:#E8431C;
+ --hit:#2E7D4E;--dud:#C2080B;--ok:#8a8a8a;--hitbg:#e7f5ec;--dudbg:#fbe9e8;--okbg:#f0efec;--blue:#7A7064;
+ --serif:Georgia,'Iowan Old Style','Times New Roman',serif;
+ --shadow:0 1px 2px rgba(31,41,51,.04),0 4px 16px rgba(31,41,51,.05);}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+/* hero */
+.hero{background:radial-gradient(120% 140% at 0% 0%,#1A3FB0 0%,var(--navy) 45%,var(--navy2) 100%);color:#fff;padding:30px 0 26px}
+.hero-in{max-width:1040px;margin:0 auto;padding:0 20px;display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px}
+.eyebrow{font-size:10px;letter-spacing:3.5px;text-transform:uppercase;color:#9db4cf;font-weight:700}
+.wordmark{font-family:"Anton","Oswald","Arial Narrow Bold","Arial Narrow",Impact,sans-serif;font-size:40px;letter-spacing:3px;font-weight:700;margin:4px 0 5px;color:#fff;line-height:1}
+.tagline{font-size:12.5px;color:#bccee2;font-style:italic}
+.hero-right{display:flex;align-items:center;gap:9px;padding-bottom:3px}
+.hero .btn{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.28);color:#fff}
+.hero .btn:hover{background:rgba(255,255,255,.22)}
+.brandstripe{display:flex;height:5px}
+.brandstripe i{flex:1}
+.wrap{max-width:1040px;margin:0 auto;padding:22px 20px 64px}
+h1{font-size:20px;margin:0 0 2px;letter-spacing:-.2px}
+.sub{color:var(--muted);font-size:12.5px;margin-bottom:14px}
+.status{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.pill{font-size:11.5px;padding:4px 11px;border-radius:999px;background:rgba(255,255,255,.14);color:#dfeaf6;font-weight:600;letter-spacing:.2px}
+.pill.live{background:#d8f0e1;color:#0f6b38}
+.pill.snap{background:#fbeccb;color:#8a5e00}
+.btn{font-size:12.5px;padding:6px 13px;border:1px solid var(--line);background:#fff;border-radius:9px;cursor:pointer;color:var(--ink);font-weight:600;transition:all .15s}
+.btn:hover{background:#faf9f6}
+.tabs{display:flex;gap:7px;margin-bottom:18px;flex-wrap:wrap}
+.tab{padding:8px 15px;border-radius:10px;border:1px solid var(--line);background:#FFFCF5;cursor:pointer;font-weight:600;font-size:13px;color:var(--muted);display:flex;align-items:center;gap:7px;transition:all .15s}
+.tab:hover{border-color:#d3cbbb;transform:translateY(-1px)}
+.tab .dot{width:9px;height:9px;border-radius:50%}
+.tab.active{color:var(--ink);border-color:#cdd6e0;box-shadow:var(--shadow);border-bottom:3px solid var(--navy)}
+.tab.active.capiche{border-bottom-color:var(--capiche)}
+.tab.active.aiko{border-bottom-color:var(--aiko)}
+.tab.active.bookends{border-bottom-color:var(--bookends)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:12px;margin-bottom:8px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;box-shadow:var(--shadow);transition:transform .15s}
+.kpi:hover{transform:translateY(-2px)}
+.kpi .lab{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+.kpi .val{font-size:26px;font-weight:700;margin:4px 0 2px;letter-spacing:-.5px;font-variant-numeric:tabular-nums;color:var(--navy)}
+.kpi .note{font-size:11.5px;color:var(--muted)}
+.kpi .note.good{color:var(--hit)}
+.kpi .note.warn{color:#C2080B}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-top:14px;box-shadow:var(--shadow)}
+.panel h2{font-size:12px;margin:0 0 12px;text-transform:uppercase;letter-spacing:.6px;color:var(--ink);font-weight:700;display:flex;align-items:center;gap:9px}
+.panel h2::before{content:"";width:3px;height:13px;background:var(--navy);border-radius:2px;display:inline-block;flex:none}
+.panel h2 .tagm{font-size:9.5px;background:#fbeccb;color:#8a5e00;padding:2px 8px;border-radius:999px;text-transform:none;letter-spacing:0;font-weight:600}
+.chartbox{position:relative;height:240px}
+.chartbox.sm{height:200px}
+.fmt{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fmtcard{border:1px solid var(--line);border-radius:11px;padding:12px 14px;background:#FFFCF5}
+.fmtcard .t{font-weight:700;font-size:13px;margin-bottom:4px}
+.fmtcard .s{font-size:12px;color:var(--muted)}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th,td{text-align:right;padding:8px 9px;border-bottom:1px solid var(--line)}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--muted);font-weight:700;font-size:10.5px;text-transform:uppercase;letter-spacing:.4px;cursor:pointer;user-select:none}
+tbody tr{transition:background .12s}
+tbody tr:hover{background:#faf7f0}
+td a{color:var(--navy);text-decoration:none;font-weight:600}
+td a:hover{text-decoration:underline}
+.tag{font-size:11px;font-weight:700;padding:2px 9px;border-radius:999px}
+.tag.Hit{background:var(--hitbg);color:var(--hit)}
+.tag.Dud{background:var(--dudbg);color:var(--dud)}
+.tag.OK{background:var(--okbg);color:var(--ok)}
+.ttype{font-size:11px;color:var(--muted)}
+.flags{margin-top:2px}
+.flag{display:flex;gap:10px;padding:10px 13px;border-radius:11px;background:#faf7f0;border:1px solid var(--line);margin-bottom:8px;font-size:13px;line-height:1.45}
+.flag .ic{font-weight:700;flex:none}
+.flag.red{background:var(--dudbg);border-color:#f3cfcb}
+.flag.amber{background:#fbeccb;border-color:#f0dcae}
+.flag.green{background:var(--hitbg);border-color:#cce8d6}
+.foot{margin-top:22px;font-size:11px;color:var(--muted);line-height:1.6;border-top:1px solid var(--line);padding-top:14px}
+.dormant{padding:22px;text-align:center;color:var(--muted)}
+.dormant b{color:var(--ink)}
+.delta{font-weight:700}
+.delta.up{color:var(--hit)}.delta.down{color:var(--dud)}
+.bar{display:flex;align-items:center;gap:9px;margin:5px 0;font-size:12px}
+.bar .lb{width:54px;color:var(--muted)}
+.bar .track{flex:1;background:#efe9dd;border-radius:6px;height:15px;overflow:hidden}
+.bar .fill{display:block;height:100%;border-radius:6px;transition:width .4s;min-width:2px}
+.bar .vv{width:70px;text-align:right;color:var(--muted);font-size:11px;font-variant-numeric:tabular-nums}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.citylist{font-size:12.5px}
+.citylist .row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--line)}
+.cmt{padding:9px 12px;border:1px solid var(--line);border-radius:11px;margin-bottom:7px;font-size:13px;background:#faf7f0}
+.cmt .meta{font-size:11px;color:var(--muted);margin-top:3px}
+.cmt a{color:var(--blue);text-decoration:none}
+@media(max-width:620px){.split{grid-template-columns:1fr}.fmt{grid-template-columns:1fr}.wordmark{font-size:28px;letter-spacing:5px}}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow">Brand Auditor · Live Instagram Intelligence</div>
+      <div class="wordmark">BOOKENDS</div>
+      <div class="tagline">unreasonable hospitality — Capiche · Aiko · Ghaslet</div>
+    </div>
+    <div class="hero-right">
+      <span id="freshPill" class="pill snap">Loading…</span>
+      <button id="refreshBtn" class="btn">↻ Refresh</button>
+    </div>
+  </div>
+</header>
+<div class="brandstripe"><i style="background:var(--bookends)"></i><i style="background:var(--capiche)"></i><i style="background:var(--aiko)"></i><i style="background:var(--ghaslet)"></i></div>
+<div class="wrap">
+  <div class="tabs" id="tabs"></div>
+  <div id="view"></div>
+  <div class="foot">
+    Core post metrics refresh live from Supermetrics. Deep-dive panels (audience, trends, reels, stories, comments) are a 19 Jun 2026 snapshot — say the word to wire any of them live. Comment counts from the API are unreliable; treated as directional. Ghaslet not yet connected.
+  </div>
+</div>
+
+<script>
+const SERVER="mcp__8fc949c9-81dd-4966-a30a-5e7223ce57c8";
+const SNAPSHOT_DATE="2026-06-19";
+let charts=[];
+
+// row: [date, type, likes, comments, saves, shares, reach, interactions, url, caption]
+const DATA={
+ capiche:{name:"Capiche",handle:"@pizza.capiche",acct:"17841418368091658",color:"#F50C0C",followers:22096,media:1063,
+  thr:{dudInt:250,hitInt:800,dudER:0.04,hitER:0.09},
+  posts:[
+   ["2026-05-19","Reel",806,67,28,183,13886,1115,"https://www.instagram.com/reel/DYhMU2-s2IS/","frisbees before flipping pizzas"],
+   ["2026-05-01","Carousel",696,0,89,1015,16612,1801,"https://www.instagram.com/p/DXy8O6ZDM0z/","new dishes for the season"],
+   ["2026-05-09","Carousel",587,6,31,154,10084,784,"https://www.instagram.com/p/DYHdCtFjJKx/","new menu>>"],
+   ["2026-05-05","Carousel",519,0,85,273,15490,878,"https://www.instagram.com/p/DX9N3-TDN0m/","too many pizzas?"],
+   ["2026-05-28","Reel",464,18,4,37,6545,536,"https://www.instagram.com/reel/DY4fmgBtjPF/","pizza boys on the field"],
+   ["2026-04-30","Reel",432,2,13,85,9418,544,"https://www.instagram.com/reel/DXwbFzzteTT/","all this over new dishes"],
+   ["2026-03-26","Reel",392,23,63,109,8858,597,"https://www.instagram.com/reel/DWWOA9ajLP-/","we would've done the same"],
+   ["2026-06-05","Carousel",370,3,7,28,3989,416,"https://www.instagram.com/p/DZNDRC7jGQf/","the ny pies brought us here"],
+   ["2026-05-21","Carousel",335,0,10,9,4032,354,"https://www.instagram.com/p/DYmVqmpjLb6/","we love the creativity"],
+   ["2026-05-12","Reel",321,1,10,21,4560,358,"https://www.instagram.com/reel/DYPUZ-lsvas/","new menu szn"],
+   ["2026-05-30","Carousel",306,2,14,16,4869,341,"https://www.instagram.com/p/DY9aM6-DBSf/","houseparty in Delhi"],
+   ["2026-04-22","Reel",270,6,14,49,9395,340,"https://www.instagram.com/reel/DXa7DSfDMv0/","not just dinner anymore"],
+   ["2026-05-26","Carousel",265,2,12,60,3589,341,"https://www.instagram.com/p/DYze7lNjFtm/","reserve your table"],
+   ["2026-06-12","Carousel",255,1,8,81,13953,345,"https://www.instagram.com/p/DZfFecJjMQf/","capiche x jaywalking merch"],
+   ["2026-04-03","Carousel",243,1,14,16,3867,276,"https://www.instagram.com/p/DWlfNtqjOtY/","made himself at home"],
+   ["2026-06-01","Carousel",199,1,15,19,2563,235,"https://www.instagram.com/p/DZC0agnjKpD/","meet the summer regulars"],
+   ["2026-03-23","Reel",183,0,59,49,4764,292,"https://www.instagram.com/reel/DWOnr3fDA7T/","exactly how we like it"],
+   ["2026-04-13","Reel",149,0,7,10,4105,167,"https://www.instagram.com/reel/DXEp7PNMYgk/","april fool's, 13 days late"],
+   ["2026-04-18","Image",126,0,17,10,3996,153,"https://www.instagram.com/p/DXRfQZ0jJye/","meet hulk (pesto pizza)"]
+  ],
+  deep:{
+   mom:{newFoll:388,perDay:15.5,reachL:78660,reachP:92583,reachD:-15.0,pvL:387496,pvP:441837,pvD:-12.3},
+   daily:[["04-20",1229,8979],["04-21",2745,12203],["04-22",5418,16515],["04-23",1974,10575],["04-24",1418,9720],["04-25",872,8519],["04-26",1056,15928],["04-27",1402,10505],["04-28",1122,7649],["04-29",1412,13165],["04-30",4588,16603],["05-01",7783,35117],["05-02",4704,19890],["05-03",2741,14799],["05-04",2518,12837],["05-05",4551,18311],["05-06",3355,19433],["05-07",2942,15095],["05-08",2921,14275],["05-09",5668,21688],["05-10",2749,12002],["05-11",2884,13262],["05-12",3948,15206],["05-13",2382,11816],["05-14",2057,10127],["05-15",2552,11968],["05-16",1865,13683],["05-17",1531,9976],["05-18",2344,14098],["05-19",9852,27893],["05-20",4275,14203],["05-21",3745,15131],["05-22",2667,14775],["05-23",2199,11377],["05-24",1634,11016],["05-25",2082,10658],["05-26",2749,12884],["05-27",2044,11792],["05-28",5347,18033],["05-29",2077,10599],["05-30",3455,16606],["05-31",4816,15835],["06-01",2328,10675],["06-02",1456,8452],["06-03",1351,7769],["06-04",1386,7919],["06-05",2792,12887],["06-06",1552,9318],["06-07",1360,8366],["06-08",2210,16159],["06-09",1290,7923],["06-10",1693,10916],["06-11",1601,21656],["06-12",9937,30724],["06-13",6037,18822],["06-14",1316,10299],["06-15",1709,11124],["06-16",1335,8309],["06-17",1164,15215],["06-18",1053,8054]],
+   age:[["13-17",106],["18-24",2678],["25-34",11601],["35-44",5662],["45-54",1492],["55-64",354],["65+",87]],
+   gender:{male:10244,female:8964,undef:2772},
+   cities:[["Surat",10589],["Ahmedabad",3089],["Mumbai",1061],["Vadodara",230],["Bangalore",222],["Pune",181],["Delhi",165],["Rajkot",163]],
+   reels:[["05-19","00:13",60.0,1115],["05-28","00:10",62.3,536],["03-26","00:11",53.7,597],["04-22","00:08",58.5,340],["04-30","00:06",63.6,544],["05-12","00:05",68.0,358],["04-13","00:04",69.1,167],["03-23","00:03",76.3,292]],
+   stories:[["Jun18 10:45",695,883,11],["Jun18 13:21",639,766,7],["Jun18 13:29",623,774,17],["Jun19 06:55",280,385,13],["Jun19 08:45",213,287,10],["Jun19 08:53",179,248,13]],
+   comments:[
+    {t:"awesome food, cool chefs doing cool stuff!! Insane aura farming #capiche 💪",d:"May 28",u:"https://www.instagram.com/reel/DY4fmgBtjPF/"},
+    {t:"when did this happen wtf how did i miss this",d:"May 30",u:"https://www.instagram.com/p/DY9aM6-DBSf/"},
+    {t:"That's #GangstaSmooth 🔥",d:"May 26",u:"https://www.instagram.com/p/DYze7lNjFtm/"},
+    {t:"Crazy idea!",d:"Jun 5",u:"https://www.instagram.com/p/DZNDRC7jGQf/"},
+    {t:"Manish bhai on top 🔥",d:"Jun 12",u:"https://www.instagram.com/p/DZfFecJjMQf/"}
+   ]
+  }},
+ aiko:{name:"Aiko",handle:"@aikomfort",acct:"17841449386057518",color:"#EDB32B",followers:11407,media:553,
+  thr:{dudInt:120,hitInt:350,dudER:0.04,hitER:0.09},
+  posts:[
+   ["2026-05-04","Carousel",327,3,57,389,6049,776,"https://www.instagram.com/p/DX66jsmjOoT/","this season feels different"],
+   ["2026-05-07","Reel",325,7,20,56,4505,413,"https://www.instagram.com/reel/DYCV2GNPTka/","behind the pass"],
+   ["2026-05-01","Reel",324,14,5,25,6284,380,"https://www.instagram.com/reel/DXzCSQDMtaY/","5 khoka. no negotiations"],
+   ["2026-06-09","Reel",254,8,5,23,5785,295,"https://www.instagram.com/reel/DZXXEeVMLSR/","food jutsu"],
+   ["2026-04-06","Reel",208,0,24,38,6339,273,"https://www.instagram.com/reel/DWyivJ3DKz_/","sounds of aiko"],
+   ["2026-03-23","Reel",193,1,40,66,4626,301,"https://www.instagram.com/reel/DWOhDMvjHWO/","ahmedabad in motion"],
+   ["2026-04-25","Carousel",182,1,29,61,4017,274,"https://www.instagram.com/p/DXjlMhIjCJ2/","chef's on katsu duty"],
+   ["2026-05-26","Carousel",167,0,15,101,3245,284,"https://www.instagram.com/p/DYzVP0hjChv/","a sushi roll for the table"],
+   ["2026-04-16","Reel",166,0,13,23,3407,206,"https://www.instagram.com/reel/DXMT18vERDT/","aiko in motion"],
+   ["2026-06-01","Carousel",160,1,11,32,2132,204,"https://www.instagram.com/p/DZCsZGiD7OD/","the noodle section"],
+   ["2026-05-23","Reel",159,1,1,3,2800,164,"https://www.instagram.com/reel/DYrg3H6sf8K/","chef's off duty"],
+   ["2026-05-20","Reel",154,2,13,51,3642,221,"https://www.instagram.com/reel/DYjy0-QsyTK/","tofu bao"],
+   ["2026-03-28","Reel",146,4,5,7,3299,164,"https://www.instagram.com/reel/DWbUrEUDFQr/","not on the menu"],
+   ["2026-05-16","Reel",141,1,6,8,2580,159,"https://www.instagram.com/reel/DYZgAANMMtK/","still time for lunch"],
+   ["2026-06-12","Carousel",138,0,16,42,2659,196,"https://www.instagram.com/p/DZfC1epj6us/","sweet tooth o'clock"],
+   ["2026-04-12","Carousel",137,0,5,26,2414,168,"https://www.instagram.com/p/DXCCKIyjPVT/","you'll find your way back"],
+   ["2026-05-28","Carousel",135,0,16,62,2997,214,"https://www.instagram.com/p/DY4h6Ilj5SV/","reserve your table"],
+   ["2026-05-12","Reel",130,0,7,17,2447,156,"https://www.instagram.com/reel/DYPOdPBsFYa/","what makes aiko, aiko"],
+   ["2026-03-26","Reel",128,2,13,13,4299,157,"https://www.instagram.com/reel/DWWMys1DK-C/","good food should be heard"],
+   ["2026-06-17","Carousel",119,0,1,3,1303,125,"https://www.instagram.com/p/DZr5bIyDFci/","cooked up back here"],
+   ["2026-05-09","Carousel",115,0,3,2,1749,120,"https://www.instagram.com/p/DYHkOyFjBNy/","straight outta the kitchen"],
+   ["2026-04-18","Carousel",104,0,14,41,2155,159,"https://www.instagram.com/p/DXRgEbhjAGr/","pours for the heat"],
+   ["2026-06-04","Reel",92,5,3,9,2652,109,"https://www.instagram.com/reel/DZKa8wWv_J-/","a komfort order"],
+   ["2026-06-15","Reel",92,0,8,16,1791,116,"https://www.instagram.com/reel/DZmuMO6sFkA/","this season brought along"],
+   ["2026-04-09","Reel",88,0,16,24,2549,130,"https://www.instagram.com/reel/DW6TVxUDDEq/","never not ordering this"],
+   ["2026-04-03","Carousel",68,0,10,4,1928,82,"https://www.instagram.com/p/DWq0NtTDK8S/","one spoon is never enough"]
+  ],
+  deep:{
+   mom:{newFoll:254,perDay:10.2,reachL:42830,reachP:44657,reachD:-4.1,pvL:239647,pvP:226491,pvD:5.8},
+   daily:[["04-20",819,5085],["04-21",1294,6954],["04-22",917,5567],["04-23",1328,7855],["04-24",1054,6190],["04-25",1114,6589],["04-26",1115,7672],["04-27",1880,8871],["04-28",990,5656],["04-29",1424,5625],["04-30",926,5907],["05-01",4025,14746],["05-02",1995,7754],["05-03",860,5596],["05-04",2307,10895],["05-05",1446,7289],["05-06",1597,6992],["05-07",2470,10525],["05-08",2085,9968],["05-09",1862,9021],["05-10",879,6807],["05-11",1370,6421],["05-12",1892,6508],["05-13",1039,7078],["05-14",1362,7526],["05-15",990,5715],["05-16",1974,9494],["05-17",1312,8519],["05-18",1131,7167],["05-19",1200,6499],["05-20",2243,10157],["05-21",1478,7329],["05-22",977,7114],["05-23",1815,9180],["05-24",1303,7446],["05-25",1008,6131],["05-26",2066,11869],["05-27",1093,6419],["05-28",1760,10303],["05-29",1311,7459],["05-30",971,13002],["05-31",763,6503],["06-01",1414,11036],["06-02",993,6449],["06-03",896,6843],["06-04",1837,7728],["06-05",1242,7043],["06-06",921,6709],["06-07",876,7495],["06-08",958,5787],["06-09",4744,13570],["06-10",1565,7603],["06-11",1081,7388],["06-12",2270,10263],["06-13",1178,5948],["06-14",863,7462],["06-15",1560,7573],["06-16",1066,4475],["06-17",1440,7517],["06-18",1138,5846]],
+   age:[["13-17",62],["18-24",1518],["25-34",5703],["35-44",3105],["45-54",780],["55-64",192],["65+",44]],
+   gender:{male:4761,female:5225,undef:1418},
+   cities:[["Surat",6067],["Ahmedabad",1565],["Mumbai",490],["Bangalore",124],["Pune",111],["Vadodara",100],["Sanand",87],["Navsari",79]],
+   reels:[["06-09","00:06",53.3,295],["04-06","00:06",53.5,273],["03-26","00:07",59.5,157],["05-20","00:06",60.5,222],["05-07","00:08",61.0,413],["06-04","00:07",61.3,109],["03-23","00:04",63.3,301],["04-09","00:05",63.9,130],["05-01","00:08",64.9,380],["05-12","00:04",65.4,156],["05-23","00:05",66.0,164],["05-16","00:05",67.3,159],["04-16","00:05",68.1,206],["06-15","00:05",68.1,116],["03-28","00:04",71.1,164]],
+   stories:[["Jun18 11:51",695,970,67],["Jun18 12:41",611,809,115],["Jun19 09:27",366,484,57],["Jun19 07:52",344,434,41],["Jun19 07:56",277,382,46]],
+   comments:[
+    {t:"They are goddamn kwispyyy !!!",d:"Jun 4",u:"https://www.instagram.com/reel/DZKa8wWv_J-/"},
+    {t:"my favv",d:"Jun 2",u:"https://www.instagram.com/p/DZCsZGiD7OD/"},
+    {t:"Sensei @vekariya_vasu @ghodke_yash 🥷🍣",d:"Jun 9",u:"https://www.instagram.com/reel/DZXXEeVMLSR/"},
+    {t:"Uff 🔥",d:"May 20",u:"https://www.instagram.com/reel/DYjy0-QsyTK/"}
+   ]
+  }},
+ bookends:{name:"Bookends",handle:"@bookendshospitality",acct:"17841463855235063",color:"#00259A",followers:691,media:36,histStart:"2024-06-20",
+  thr:{dudInt:200,hitInt:500,dudER:0.03,hitER:0.06},
+  posts:[
+   ["2026-01-27","Carousel",464,2,27,59,9845,557,"https://www.instagram.com/p/DUA4odCktJ8/","1,000+ guests, 200+ team"],
+   ["2026-02-19","Reel",416,13,9,50,8747,495,"https://www.instagram.com/reel/DU8KZNxDa41/","wedding after-movie 3/3"],
+   ["2026-01-30","Reel",355,13,16,29,8307,421,"https://www.instagram.com/reel/DUI3dNCDYcn/","wedding after-movie 1/3"],
+   ["2026-02-01","Reel",354,5,14,42,8379,424,"https://www.instagram.com/reel/DUNX4LjDd2n/","wedding after-movie 2/3"],
+   ["2026-03-05","Reel",339,8,6,16,7018,375,"https://www.instagram.com/reel/DVgBbfcDUpg/","Mayra celebration catering"],
+   ["2026-03-31","Reel",320,14,8,43,8690,393,"https://www.instagram.com/reel/DWjDHA8je4L/","Bookends Retreat 2026"],
+   ["2026-02-02","Carousel",131,0,17,31,5868,180,"https://www.instagram.com/p/DUP_P4eEi1j/","hiring — team over title"]
+  ],
+  deep:{
+   mom:{newFoll:31,perDay:1.2,reachL:1385,reachP:2626,reachD:-47.3,pvL:7334,pvP:12013,pvD:-38.9},
+   daily:[["04-20",72,345],["04-21",77,353],["04-22",115,488],["04-23",69,538],["04-24",66,255],["04-25",73,387],["04-26",95,302],["04-27",109,720],["04-28",67,377],["04-29",72,407],["04-30",95,509],["05-01",190,608],["05-02",179,465],["05-03",62,227],["05-04",64,453],["05-05",77,403],["05-06",108,484],["05-07",144,592],["05-08",113,424],["05-09",78,248],["05-10",72,381],["05-11",65,316],["05-12",65,378],["05-13",60,335],["05-14",66,305],["05-15",43,263],["05-16",68,327],["05-17",65,275],["05-18",83,344],["05-19",114,504],["05-20",73,457],["05-21",58,313],["05-22",57,276],["05-23",60,215],["05-24",59,426],["05-25",31,180],["05-26",42,230],["05-27",45,235],["05-28",75,274],["05-29",58,464],["05-30",48,283],["05-31",30,134],["06-01",41,248],["06-02",28,125],["06-03",43,228],["06-04",44,264],["06-05",45,239],["06-06",62,270],["06-07",30,143],["06-08",38,195],["06-09",46,252],["06-10",42,216],["06-11",47,218],["06-12",58,235],["06-13",36,156],["06-14",53,241],["06-15",38,209],["06-16",25,132],["06-17",44,328],["06-18",29,148]],
+   age:[["13-17",5],["18-24",165],["25-34",324],["35-44",149],["45-54",37],["55-64",9],["65+",2]],
+   gender:{male:384,female:201,undef:106},
+   cities:[["Surat",389],["Ahmedabad",114],["Mumbai",46],["Bangalore",6],["Dubai",6],["Delhi",5],["Navsari",5]],
+   reels:[],stories:[],comments:[]
+  }}
+};
+
+// July 2026 content calendar [date, day, brand, format, pillar, concept, hook, goal]
+const CAL=[
+["Jul 1","Wed","Capiche","Reel","Seasonal craving","July opener — \"rainy season, hot pies\" mood reel","Cheese pull + rain/steam in frame 1","Reach"],
+["Jul 2","Thu","Aiko","Carousel","Menu education","\"Monsoon = ramen weather\" — broth & steam close-ups","Steaming bowl, glossy broth pour","Engagement"],
+["Jul 3","Fri","Capiche","Carousel","Menu drop","Monsoon specials drop — item names + descriptions","Hero slice front of frame","Engagement"],
+["Jul 4","Sat","Aiko","Reel","Food in motion","Sounds of Aiko — slurp / wok ASMR, sound on","Slurp in first second, no intro","Reach"],
+["Jul 5","Sun","Capiche","Reel","Team / community","Characters of Capiche — team member POV, quick + funny","Face-to-camera hook line","Engagement"],
+["Jul 7","Tue","Capiche","Carousel","Craving + reservation","\"Rainy night, table for two ;)\" reservation guide","Cozy table + slice, CTA slide 1","CTA"],
+["Jul 8","Wed","Aiko","Carousel","Menu education","Dimsum / dumpling close-up + thoughtful description","Glistening dumpling macro","Engagement"],
+["Jul 10","Fri","Capiche","Reel","BTS / craving","Kitchen BTS — dough toss → oven, sharp cuts","Dough stretch in frame 1","Reach"],
+["Jul 10","Fri","Aiko","Carousel","Comfort sets","Rainy-day comfort set — ramen + side + drink","Full warm table flat-lay","Engagement"],
+["Jul 12","Sun","Capiche","Carousel","Review reactions","React to a customer review with a cheeky one-liner","Bold review quote slide 1","Engagement"],
+["Jul 14","Tue","Capiche","Reel","Trend","Trend-jack current audio with a pizza payoff","Trend hook → slice reveal by 2s","Reach"],
+["Jul 14","Tue","Aiko","Reel","Behind the pass","Chef plating ramen — craft & care, warm light","Hands + steam, immediate","Engagement"],
+["Jul 17","Fri","Capiche","Carousel","Menu education","Signature pie deep-dive — appetite-first shots","Cheese pull macro slide 1","Engagement"],
+["Jul 18","Sat","Aiko","Carousel","Drinks / dessert","Tail-end mango + matcha coolers / dessert","Condensation on a cold glass","Engagement"],
+["Jul 19","Sun","Capiche","Reel","Team / community","Team/community moment (frisbee / staff hangout)","Energy + motion in frame 1","Engagement"],
+["Jul 21","Tue","Capiche","Carousel","Cross-brand","Capiche x Ghaslet — hot sauce on a slice (+ where to buy)","Sauce drizzle on hot slice","Engagement"],
+["Jul 22","Wed","Aiko","Carousel","Reservation","\"Still time for lunch 👀\" warm reservation invite","Inviting table + link sticker","CTA"],
+["Jul 24","Fri","Capiche","Reel","Craving","\"Most-ordered in July\" craving montage + payoff","Best slice up top, fast cuts","Reach"],
+["Jul 24","Fri","Aiko","Reel","Food in motion","Wok / noodle action — texture & toss, hook fast","Wok flame + toss frame 1","Reach"],
+["Jul 25","Sat","Aiko","Carousel","Ambience","\"A rainy night at Aiko\" — warm interior + comfort","Warm window + rain + bowl","Engagement"],
+["Jul 26","Sun","Capiche","Carousel","Cross-brand","Weekend houseparty fuel — Bookends catering tie-in","Big spread / slices at a party","Engagement"],
+["Jul 28","Tue","Capiche","Reel","Seasonal craving","\"Rainy day = pizza day\" craving reel","Rain on window → hot pie","Reach"],
+["Jul 28","Tue","Aiko","Carousel","Menu education","Signature dish education — katsu / bao, warm copy","Crispy katsu cross-section","Engagement"],
+["Jul 31","Fri","Capiche","Carousel","Menu drop + CTA","July best-of + \"see you in August\" reservation nudge","Top pie of the month slide 1","CTA"]
+];
+const STORYP=[["Wk1","Capiche","Poll","\"pineapple on pizza? — yes / never ;)\""],["Wk1","Aiko","Poll","\"ramen or noodles tonight?\""],["Wk2","Capiche","Quiz","\"guess this pie\" — slice close-up"],["Wk2","Aiko","Question","\"what's your komfort order?\""],["Wk3","Capiche","Question","\"your go-to Capiche order?\""],["Wk3","Aiko","Quiz","\"spot the dumpling\""],["Wk4","Capiche","Slider+Link","\"rate this cheese pull 🔥\" + reserve link"],["Wk4","Aiko","Poll+Link","\"rainy day = ramen or bao?\" + reserve link"]];
+
+// Per-brand extras: reach drivers, content pillars, best day, follower projection
+const EXTRA={
+ capiche:{
+  drivers:{saveRate:0.29,shareRate:0.70,top:[["May 1","6.1%","summer menu drop",1015,1801],["May 5","1.8%","too many pizzas",273,878],["May 26","1.7%","reserve your table",60,341]]},
+  pillars:[["Menu / Food",6,732],["Team / BTS",4,606],["Trend / Reaction",3,373],["Cross-brand",2,343],["Reservation",1,341],["Other",3,303]],
+  bestDay:[["Mon",231],["Tue",673],["Wed",340],["Thu",508],["Fri",710],["Sat",426],["Sun",0]],
+  proj:{from:22096,to:25000,days:187,when:"Dec 2026",rate:15.5}
+ },
+ aiko:{
+  drivers:{saveRate:0.38,shareRate:0.79,top:[["May 4","6.4%","this season feels different",389,776],["May 26","3.1%","sushi roll for the table",101,284],["May 28","2.1%","reserve table",62,214]]},
+  pillars:[["Reservation",2,249],["Menu / Food",10,234],["Team / BTS",11,231],["Other",2,158],["Trend / Reaction",1,157]],
+  bestDay:[["Mon",334],["Tue",245],["Wed",173],["Thu",205],["Fri",219],["Sat",173],["Sun",168]],
+  proj:{from:11407,to:12000,days:58,when:"Aug 2026",rate:10.2}
+ },
+ bookends:{proj:{from:691,to:1000,days:257,when:"Mar 2027",rate:1.2}}
+};
+
+// TickTick "Bookends Marketing" backlog (live projectId + snapshot)
+const BACKLOG={projectId:"6a2cfbb9ebcdba000000029f",total:41,groups:[
+ ["🎬 Reels",["Pasta Steam Video","Ghaslet Jacket","Aiko Ahmedabad Thirst Trap","Ghaslet Horror","Yash × Thirst-Trap Comments","Central Kitchen Tour with Husen","Doughj0e-Style Pizza Rolling","Jaywalking Merch Drop — with Jay","Pranjal × Anirudh Branding Recap","Denis Prokopyev reference","Pizza & Coke with Dipak Patel"]],
+ ["📺 Series",["Bookends R&D Trials Reel","Foodaholics Dish-Led Marketing"]],
+ ["🎯 Campaigns & Brand",["Capiche Privé Launch — Pranjal","Beshak + South Indian Full Identity","Brand Thesis: Human Connection & Courtship","Capiche NY-Style Positioning","Growth: Ahmedabad IG Share 6% → 30% (due Dec 10)"]],
+ ["🎨 Assets",["Annual Cultural Event Roster + Live Coverage","Bookends Fleet Livery Design","Jaywalking Jacket Patches — Team Badges","Cathay Pacific-Style Kids' Kit","Artwork Taglines — Foodaholics","Customized pens"]],
+ ["🎞️ Films",["Don't Work At Bookends — Recruitment","Gujarat Does Pizza Right — Cultural Piece"]],
+ ["🤝 Events / Collabs / Ops",["First-Ever 1000 Pizza Day — Capiche","Suggahunny DJ Set","All Team Members Follow Brand Instagrams"]],
+ ["💡 Concepts & Ideas",["The Hotline","Smells Like Capiche","The Disloyalty Card","The Capiche Entrance Exam","Menu Graveyard","Slice Insurance","Transfer Window","MSCHF-Style Marketing Pipeline","Bumper Sticker idea","Celebrity Logo Equivalents","Libertario Coffee reference"]]
+]};
+
+// Group overview data
+const OVERVIEW=[
+ ["capiche","Capiche",22096,19,7.0,-15,"red","Posting too little; reach sliding. Get back to launch tempo (3-4×/wk)."],
+ ["aiko","Aiko",11407,26,6.4,-4,"green","Healthiest brand. Keep cadence; lean carousels."],
+ ["bookends","Bookends",691,7,5.1,-47,"amber","Posts in bursts around events; travels ~12× its base. Fix the gaps between events."]
+];
+
+const med=a=>{if(!a.length)return 0;const s=[...a].sort((x,y)=>x-y);const m=Math.floor(s.length/2);return s.length%2?s[m]:(s[m-1]+s[m])/2;};
+const mean=a=>a.length?a.reduce((x,y)=>x+y,0)/a.length:0;
+const fmtN=n=>n>=1000?(n/1000).toFixed(n>=10000?0:1)+"k":(""+Math.round(n));
+function flagOf(b,p){const er=p[7]/p[6];const t=b.thr;
+  if(b.dormant)return"OK";
+  if(p[7]>=t.hitInt||er>=t.hitER)return"Hit";
+  if(p[7]<t.dudInt||er<t.dudER)return"Dud";return"OK";}
+let current="overview";let sortKey="date";let sortDir=-1;
+
+function buildTabs(){
+  const t=document.getElementById("tabs");t.innerHTML="";
+  const ov=document.createElement("div");ov.className="tab"+(current==="overview"?" active":"");
+  ov.style.fontWeight="700";ov.innerHTML="◆ Overview";ov.onclick=()=>{current="overview";render();};t.appendChild(ov);
+  Object.keys(DATA).forEach(k=>{const b=DATA[k];
+    const el=document.createElement("div");el.className="tab "+k+(k===current?" active":"");
+    el.innerHTML=`<span class="dot" style="background:${b.color}"></span>${b.name}`;
+    el.onclick=()=>{current=k;render();};t.appendChild(el);});
+  const cal=document.createElement("div");cal.className="tab"+(current==="calendar"?" active":"");
+  cal.style.fontWeight="700";cal.innerHTML="📅 July Plan";
+  cal.onclick=()=>{current="calendar";render();};t.appendChild(cal);
+  const bk=document.createElement("div");bk.className="tab"+(current==="backlog"?" active":"");
+  bk.style.fontWeight="700";bk.innerHTML="✅ Backlog";
+  bk.onclick=()=>{current="backlog";render();};t.appendChild(bk);
+}
+
+function render(){
+  charts.forEach(c=>{try{c.destroy();}catch(e){}});charts=[];
+  buildTabs();
+  if(current==="overview"){renderOverview();return;}
+  if(current==="calendar"){renderCalendar();return;}
+  if(current==="backlog"){renderBacklog();return;}
+  const b=DATA[current];const v=document.getElementById("view");
+  const inter=b.posts.map(p=>p[7]);const reach=b.posts.map(p=>p[6]);const ers=b.posts.map(p=>p[7]/p[6]);
+  const cad=(b.posts.length/90*7);const erMed=med(ers)*100;const reachPct=mean(reach)/b.followers*100;
+  const reels=b.posts.filter(p=>p[1]==="Reel");const car=b.posts.filter(p=>p[1]==="Carousel");
+  const erOf=arr=>arr.length?mean(arr.map(p=>p[7]/p[6]))*100:0;
+
+  let cards=`<div class="cards">
+     <div class="kpi"><div class="lab">Followers</div><div class="val">${fmtN(b.followers)}</div><div class="note">${b.media} posts all-time</div></div>
+     <div class="kpi"><div class="lab">${b.histStart?'Posts (history)':'Posts / 90d'}</div><div class="val">${b.posts.length}</div><div class="note ${cad<1.5&&!b.histStart?'warn':''}">${b.histStart?'all accessible':cad.toFixed(1)+'/week'}</div></div>
+     <div class="kpi"><div class="lab">Median interactions</div><div class="val">${Math.round(med(inter))}</div><div class="note">per permanent post</div></div>
+     <div class="kpi"><div class="lab">Engagement / reach</div><div class="val">${erMed.toFixed(1)+'%'}</div><div class="note ${erMed>=6?'good':''}">${erMed>=6?'healthy':'below par'}</div></div>
+     <div class="kpi"><div class="lab">Reach vs followers</div><div class="val">${reachPct>140?(reachPct/100).toFixed(1)+'×':Math.round(reachPct)+'%'}</div><div class="note ${reachPct>=100?'good':'warn'}">${reachPct>=100?'travels past its base':Math.round(100-reachPct)+'% never saw it'}</div></div>
+   </div>`;
+
+  if(b.dormant){
+    v.innerHTML=cards+`<div class="panel"><div class="dormant"><b>${b.name} is dormant.</b><br>Only ${b.posts.length} permanent post in 90 days — nothing to optimize yet. The one post reached ${fmtN(b.posts[0][6])} (${(b.posts[0][6]/b.followers).toFixed(0)}× its followers), so the content travels. The only move is to post consistently.</div></div>`+(b.deep?renderDeep(b):"")+renderExtra(current)+postsTable(b);
+    if(b.deep)drawDeepCharts(b);
+    return;
+  }
+
+  const flags=computeFlags(b,cad,reachPct,reels,car);
+  let flagHtml=`<div class="panel"><h2>What needs attention</h2><div class="flags">`+flags.map(f=>`<div class="flag ${f.c}"><span class="ic">${f.i}</span><span>${f.t}</span></div>`).join("")+`</div></div>`;
+
+  let deepHtml = b.deep ? renderDeep(b) : "";
+
+  let fmt=`<div class="panel"><h2>Format breakdown</h2><div class="fmt">
+     <div class="fmtcard"><div class="t">Reels <span class="ttype">· ${reels.length}</span></div><div class="s">ER ${erOf(reels).toFixed(1)}% · avg ${Math.round(mean(reels.map(p=>p[7])))} interactions · avg reach ${fmtN(mean(reels.map(p=>p[6])))}</div></div>
+     <div class="fmtcard"><div class="t">Carousels <span class="ttype">· ${car.length}</span></div><div class="s">ER ${erOf(car).toFixed(1)}% · avg ${Math.round(mean(car.map(p=>p[7])))} interactions · avg reach ${fmtN(mean(car.map(p=>p[6])))}</div></div>
+   </div></div>`;
+  let chartPanel=`<div class="panel"><h2>Interactions over time (90 days)</h2><div class="chartbox"><canvas id="trend"></canvas></div></div>`;
+
+  v.innerHTML=cards+flagHtml+deepHtml+renderExtra(current)+renderBenchmark(current)+fmt+chartPanel+postsTable(b);
+  drawInterChart(b);
+  if(b.deep)drawDeepCharts(b);
+  if(window.cowork&&window.cowork.callMcpTool&&b.deep&&!b._deepLive&&!b._deepLoading)refreshDeep(current);
+  wireSort(b);
+}
+
+function computeFlags(b,cad,reachPct,reels,car){
+  const f=[];
+  if(b.deep&&b.deep.mom.reachD<=-10)f.push({c:"red",i:"▼",t:`Reach down ${Math.abs(b.deep.mom.reachD).toFixed(0)}% vs last month, profile views down ${Math.abs(b.deep.mom.pvD).toFixed(0)}%. This is the #1 issue — fewer people are seeing you, even though engagement quality holds.`});
+  const sorted=[...b.posts].sort((x,y)=>x[0]<y[0]?1:-1);
+  const lastDate=new Date(sorted[0][0]);const days=Math.round((new Date(SNAPSHOT_DATE)-lastDate)/864e5);
+  if(days>=7)f.push({c:"red",i:"!",t:`Last permanent post was ${days} days ago — past the 7-day cadence line.`});
+  if(cad<1.5)f.push({c:"amber",i:"▲",t:`Posting ~${cad.toFixed(1)}×/week. More good posts is your cheapest engagement lever.`});
+  if(reachPct<40)f.push({c:"amber",i:"◐",t:`Posts reach only ${Math.round(reachPct)}% of followers. Reach is the ceiling, not engagement quality.`});
+  const erReels=mean(reels.map(p=>p[7]/p[6]))*100,erCar=mean(car.map(p=>p[7]/p[6]))*100;
+  if(car.length&&reels.length&&Math.abs(erCar-erReels)>1.5){
+    const w=erCar>erReels?"Carousels":"Reels";const l=Math.min(erCar,erReels);const h=Math.max(erCar,erReels);
+    f.push({c:"green",i:"✓",t:`${w} are winning (${h.toFixed(1)}% vs ${l.toFixed(1)}% ER). Lean into them.`});
+  }
+  const hits=b.posts.filter(p=>flagOf(b,p)==="Hit");
+  if(hits.length)f.push({c:"green",i:"★",t:`Top performer: "${hits[0][9]}" — ${hits[0][7]} interactions. Make more like it.`});
+  if(!f.length)f.push({c:"green",i:"✓",t:"Nothing urgent — keep the cadence."});
+  return f;
+}
+
+function renderDeep(b){
+  const d=b.deep;const m=d.mom;
+  const dcls=x=>x>=0?"up":"down";const ds=x=>(x>=0?"+":"")+x.toFixed(0)+"%";
+  // age bars
+  const ageMax=Math.max(...d.age.map(a=>a[1]));
+  const ageBars=d.age.map(a=>`<div class="bar"><span class="lb">${a[0]}</span><span class="track"><span class="fill" style="width:${a[1]/ageMax*100}%;background:${b.color}"></span></span><span class="vv">${fmtN(a[1])}</span></div>`).join("");
+  const gtot=d.gender.male+d.gender.female+d.gender.undef;
+  const gpct=x=>Math.round(x/gtot*100);
+  const cities=d.cities.map(c=>`<div class="row"><span>${c[0]}</span><span>${fmtN(c[1])} · ${Math.round(c[1]/b.followers*100)}%</span></div>`).join("");
+  const reels=d.reels||[],stories=d.stories||[],comments=d.comments||[];
+  let reelPanel="";
+  if(reels.length){
+    const reelRows=reels.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2].toFixed(0)}%</td><td><b>${r[3]}</b></td></tr>`).join("");
+    reelPanel=`<div class="panel"><h2>Reel retention <span class="tagm">snapshot · 19 Jun</span></h2>
+     <table><thead><tr><th>Reel</th><th>Avg watch</th><th>Skip rate</th><th>Interactions</th></tr></thead><tbody>${reelRows}</tbody></table>
+     <div style="font-size:12px;color:var(--muted);margin-top:8px">Lower skip = more interactions. Hook in the first 2 seconds — skip rate predicts the post.</div></div>`;
+  }
+  let storyPanel="";
+  if(stories.length){
+    const stRows=stories.map(s=>`<tr><td>${s[0]}</td><td>${s[1]}</td><td>${s[2]}</td><td>${Math.round(s[3]/s[2]*100)}%</td></tr>`).join("");
+    const avgStReach=mean(stories.map(s=>s[1]));
+    storyPanel=`<div class="panel"><h2>Stories <span class="tagm">snapshot · recent</span></h2>
+     <table><thead><tr><th>Story</th><th>Reach</th><th>Views</th><th>Exit rate</th></tr></thead><tbody>${stRows}</tbody></table>
+     <div class="flag amber" style="margin-top:10px"><span class="ic">◐</span><span>Stories reach only ~${Math.round(avgStReach)} people (${(avgStReach/b.followers*100).toFixed(1)}% of followers) with 0 replies. Add polls/questions/stickers to lift reach + replies.</span></div></div>`;
+  }
+  let cmtPanel="";
+  if(comments.length){
+    const cmts=comments.map(c=>`<div class="cmt">${c.t}<div class="meta">${c.d} · <a href="${c.u}" target="_blank">open post →</a></div></div>`).join("");
+    cmtPanel=`<div class="panel"><h2>Comments worth replying to <span class="tagm">snapshot · 19 Jun</span></h2>${cmts}
+     <div style="font-size:12px;color:var(--muted);margin-top:4px">Replying compounds engagement. Recent text comments (emoji-only filtered out).</div></div>`;
+  }
+
+  return `
+  <div class="panel"><h2>Month-over-month <span class="tagm">${b._deepLive?'● live':'snapshot · 19 Jun'}</span></h2>
+   <div class="cards">
+     <div class="kpi"><div class="lab">New followers (30d)</div><div class="val">+${m.newFoll}</div><div class="note good">~${m.perDay}/day · growing</div></div>
+     <div class="kpi"><div class="lab">Reach 30d vs prior</div><div class="val">${fmtN(m.reachL)}</div><div class="note warn"><span class="delta ${dcls(m.reachD)}">${ds(m.reachD)}</span> vs ${fmtN(m.reachP)}</div></div>
+     <div class="kpi"><div class="lab">Profile views 30d</div><div class="val">${fmtN(m.pvL)}</div><div class="note warn"><span class="delta ${dcls(m.pvD)}">${ds(m.pvD)}</span> vs ${fmtN(m.pvP)}</div></div>
+   </div>
+   <div class="chartbox sm" style="margin-top:10px"><canvas id="reachTrend"></canvas></div>
+  </div>
+
+  <div class="panel"><h2>Who follows ${b.name} <span class="tagm">snapshot · 19 Jun</span></h2>
+   <div class="split">
+    <div><div style="font-size:11px;color:var(--muted);margin-bottom:6px">AGE · ${gpct(d.gender.male)}% male / ${gpct(d.gender.female)}% female</div>${ageBars}</div>
+    <div><div style="font-size:11px;color:var(--muted);margin-bottom:6px">TOP CITIES</div><div class="citylist">${cities}</div></div>
+   </div>
+   <div style="font-size:12px;color:var(--muted);margin-top:8px">${Math.round((d.cities[0][1]+(d.cities[1]?d.cities[1][1]:0))/b.followers*100)}% of followers are in ${d.cities[0][0]}${d.cities[1]?" + "+d.cities[1][0]:""} — squarely local.</div>
+  </div>
+  ${reelPanel}
+  ${storyPanel}
+  ${cmtPanel}`;
+}
+
+function renderExtra(k){
+  const e=EXTRA[k]; if(!e) return "";
+  const col=DATA[k].color; let html="";
+  if(e.drivers){
+    const d=e.drivers;
+    const rows=d.top.map(t=>`<tr><td>${t[0]}</td><td style="white-space:normal">${t[2]}</td><td>${t[3]}</td><td><b>${t[1]}</b></td><td>${t[4]}</td></tr>`).join("");
+    html+=`<div class="panel"><h2>Reach drivers · saves &amp; shares <span class="tagm">snapshot · 19 Jun</span></h2>
+      <div class="cards">
+        <div class="kpi"><div class="lab">Median save-rate</div><div class="val">${d.saveRate}%</div><div class="note">saves ÷ reach</div></div>
+        <div class="kpi"><div class="lab">Median share-rate</div><div class="val">${d.shareRate}%</div><div class="note">shares ÷ reach — the reach engine</div></div>
+      </div>
+      <div style="font-size:12px;color:var(--muted);margin:10px 0 4px">Top posts that TRAVELED (highest share-rate):</div>
+      <table><thead><tr><th>Date</th><th>Post</th><th>Shares</th><th>Share-rate</th><th>Interactions</th></tr></thead><tbody>${rows}</tbody></table>
+      <div style="font-size:12px;color:var(--muted);margin-top:8px">Shares drive reach far more than likes. Your biggest hits won on shares — make more of what people send to a friend.</div></div>`;
+  }
+  if(e.pillars){
+    const mx=Math.max(...e.pillars.map(p=>p[2]));
+    const bars=e.pillars.map(p=>`<div class="bar"><span class="lb" style="width:128px">${p[0]} <span style="color:#bbb">·${p[1]}</span></span><span class="track"><span class="fill" style="width:${p[2]/mx*100}%;background:${col}"></span></span><span class="vv">${p[2]}</span></div>`).join("");
+    html+=`<div class="panel"><h2>What content earns engagement · pillars <span class="tagm">snapshot · 19 Jun</span></h2>${bars}
+      <div style="font-size:12px;color:var(--muted);margin-top:8px">Avg interactions per post by pillar. Make more of the top bars.</div></div>`;
+  }
+  if(e.bestDay){
+    const mx=Math.max(...e.bestDay.map(d=>d[1]));
+    const bars=e.bestDay.map(d=>{const best=d[1]===mx&&mx>0;return `<div class="bar"><span class="lb" style="width:42px">${d[0]}</span><span class="track"><span class="fill" style="width:${mx?d[1]/mx*100:0}%;background:${best?'#2E7D4E':col}"></span></span><span class="vv">${d[1]||'—'}</span></div>`;}).join("");
+    html+=`<div class="panel"><h2>Best day to post <span class="tagm">snapshot · 19 Jun</span></h2>${bars}
+      <div style="font-size:12px;color:var(--muted);margin-top:8px">Avg interactions by weekday. Put hero posts on the green bar.</div></div>`;
+  }
+  if(e.proj){const p=e.proj;
+    html+=`<div class="panel"><h2>Follower projection</h2>
+      <div class="flag green"><span class="ic">↗</span><span>At the current +${p.rate}/day, ${DATA[k].name} reaches <b>${p.to.toLocaleString()}</b> followers around <b>${p.when}</b> (~${p.days} days). Posting more accelerates this.</span></div></div>`;
+  }
+  return html;
+}
+
+function renderOverview(){
+  const v=document.getElementById("view");
+  const totF=OVERVIEW.reduce((s,b)=>s+b[2],0),totP=OVERVIEW.reduce((s,b)=>s+b[3],0),need=OVERVIEW.filter(b=>b[6]==="red").length;
+  let cards=`<div class="cards">
+    <div class="kpi"><div class="lab">Total followers</div><div class="val">${(totF/1000).toFixed(1)}k</div><div class="note">3 brands</div></div>
+    <div class="kpi"><div class="lab">Posts / 90d</div><div class="val">${totP}</div><div class="note">across brands</div></div>
+    <div class="kpi"><div class="lab">Need attention</div><div class="val" style="color:var(--dud)">${need}</div><div class="note warn">red status</div></div>
+    <div class="kpi"><div class="lab">Backlog ideas</div><div class="val">${BACKLOG.total}</div><div class="note">in TickTick</div></div>
+  </div>`;
+  const dotS=`display:inline-block;width:9px;height:9px;border-radius:50%`;
+  let rows=OVERVIEW.map(b=>{
+    const col=b[0]==="capiche"?"var(--capiche)":b[0]==="aiko"?"var(--aiko)":"var(--bookends)";
+    const dot=b[6]==="green"?"#2E7D4E":b[6]==="amber"?"#D09A12":"#C2080B";
+    const arrow=b[5]<=-10?"▼":b[5]<0?"▾":"▲";const acol=b[5]<=-10?"var(--dud)":b[5]<0?"#D09A12":"var(--hit)";
+    return `<tr style="cursor:pointer" onclick="current='${b[0]}';render()">
+      <td><span style="${dotS};background:${col}"></span> <b>${b[1]}</b></td>
+      <td>${b[2].toLocaleString()}</td><td>${b[3]}</td><td>${b[4]?b[4]+'%':'—'}</td>
+      <td style="color:${acol}"><b>${arrow} ${Math.abs(b[5])}%</b></td>
+      <td><span style="${dotS};background:${dot}"></span></td>
+      <td style="white-space:normal;text-align:left">${b[7]}</td></tr>`;}).join("");
+  let table=`<div class="panel"><h2>All brands at a glance</h2>
+    <table><thead><tr><th>Brand</th><th>Followers</th><th>90d</th><th>ER</th><th>Reach MoM</th><th>Status</th><th style="text-align:left">Do today</th></tr></thead><tbody>${rows}</tbody></table>
+    <div style="font-size:12px;color:var(--muted);margin-top:8px">Click a brand to open its full page.</div></div>`;
+  v.innerHTML=cards+table+renderPlanActual();
+}
+function renderPlanActual(){
+  const planned={Capiche:CAL.filter(r=>r[2]==="Capiche").length,Aiko:CAL.filter(r=>r[2]==="Aiko").length};
+  const postedJuly=k=>(DATA[k].posts||[]).filter(p=>p[0]>="2026-07-01"&&p[0]<="2026-07-31").length;
+  const rows=[["Capiche","capiche"],["Aiko","aiko"]].map(([n,k])=>{
+    const pl=planned[n],po=postedJuly(k),pct=pl?Math.round(po/pl*100):0;
+    return `<div class="bar"><span class="lb" style="width:70px">${n}</span><span class="track"><span class="fill" style="width:${pct}%;background:${po>=pl&&pl>0?'#2E7D4E':DATA[k].color}"></span></span><span class="vv">${po}/${pl}</span></div>`;}).join("");
+  const julyStarted=new Date()>=new Date("2026-07-01");
+  return `<div class="panel"><h2>Plan vs. actual &middot; July <span class="tagm">live</span></h2>${rows}
+    <div style="font-size:12px;color:var(--muted);margin-top:8px">${julyStarted?"Posts shipped vs planned this month. Red = behind schedule.":"July hasn't started — this fills in live as you post against the calendar. The point: it holds you to the cadence that fixes reach."}</div></div>`;
+}
+function groupsHtml(groups){return groups.map(g=>`<div class="panel"><h2>${g[0]} <span class="tagm">${g[1].length}</span></h2>${g[1].map(t=>`<div class="cmt" style="background:#faf9f6">${t}</div>`).join("")}</div>`).join("");}
+function renderBacklog(){
+  const v=document.getElementById("view");
+  v.innerHTML=`<div class="cards"><div class="kpi"><div class="lab">Marketing backlog</div><div class="val" id="bkTotal">${BACKLOG.total}</div><div class="note">open ideas &middot; TickTick "Bookends Marketing"</div></div></div>
+   <div class="panel"><div style="font-size:12px;color:var(--muted)">From your TickTick project, grouped by type. <span id="bkStatus" class="pill snap">snapshot</span> &mdash; turn any idea into a caption or design anytime.</div></div>
+   <div id="bkGroups">${groupsHtml(BACKLOG.groups)}</div>`;
+  if(window.cowork&&window.cowork.callMcpTool)pullBacklog();
+}
+async function pullBacklog(){
+  try{
+    const r=await window.cowork.callMcpTool("mcp__3ce71bde-54a2-4a99-9f45-0920f3ea931a__get_project_with_undone_tasks",{project_id:BACKLOG.projectId});
+    let o=r.structuredContent;if(!o&&r.content&&r.content[0])o=JSON.parse(r.content[0].text);
+    const tasks=((o&&o.tasks)||(o&&o.result&&o.result.tasks)||[]).filter(t=>t.title&&t.title.trim());
+    if(!tasks.length)return;
+    const order=["🎬 Reels","📺 Series","🎯 Campaigns & Brand","🎨 Assets","🎞️ Films","🤝 Events / Collabs / Ops","💡 Concepts & Ideas"];
+    const grp=t=>{const s=t.toLowerCase();
+      if(s.startsWith("reel"))return order[0];if(s.startsWith("series"))return order[1];
+      if(s.startsWith("campaign")||s.startsWith("brand")||s.startsWith("growth"))return order[2];
+      if(s.startsWith("asset"))return order[3];if(s.startsWith("film"))return order[4];
+      if(s.startsWith("event")||s.startsWith("collab")||s.startsWith("ops"))return order[5];
+      return order[6];};
+    const G={};tasks.forEach(t=>{const g=grp(t.title);(G[g]=G[g]||[]).push(t.title.replace(/\[Instagram\][^\n]*/gi,"").replace(/https?:\/\/\S+/g,"").trim());});
+    const groups=order.filter(k=>G[k]).map(k=>[k,G[k]]);
+    document.getElementById("bkGroups").innerHTML=groupsHtml(groups);
+    document.getElementById("bkTotal").textContent=tasks.length;
+    const st=document.getElementById("bkStatus");st.className="pill live";st.textContent="● live";
+  }catch(e){}
+}
+const BENCH={
+ capiche:{cohort:"micro · 10–100K",rows:[
+   ["Posting cadence","1.5 / wk","4–5 / wk","under"],
+   ["Content mix","R42 / C53 / I5","~60 / 30 / 10","under"],
+   ["Engagement / followers","1.6%","3–6%","below"],
+   ["Engagement / reach","7.0%","1–5% healthy","pass"]],
+  auth:"Looks organic — smooth ~+15/day growth, no bot-spike pattern, ER consistent.",authOk:true,
+  hash:"Barely uses hashtags (relies on bracketed keywords) — a missed discovery-reach lever.",
+  sent:"Overwhelmingly positive & emoji-heavy; insider-community tone, ~0 negative."},
+ aiko:{cohort:"micro · 10–100K",rows:[
+   ["Posting cadence","2.0 / wk","4–5 / wk","under"],
+   ["Content mix","R58 / C42","~60 / 30 / 10","pass"],
+   ["Engagement / followers","1.6%","3–6%","below"],
+   ["Engagement / reach","6.4%","1–5% healthy","pass"]],
+  auth:"Looks organic — steady ~+10/day, no spikes; female-leaning, on-profile audience.",authOk:true,
+  hash:"Minimal hashtags (parenthetical keywords) — add a tight branded + discovery set.",
+  sent:"Warm and positive ('my favv', 'kwispyyy!!!'); zero negativity sampled."},
+ bookends:{cohort:"nano · 1–10K",rows:[
+   ["Posting cadence","0.5 / wk","4–5 / wk","under"],
+   ["Content mix","R71 / C29","~60 / 30 / 10","pass"],
+   ["Engagement / reach","5.1%","1–5% healthy","pass"],
+   ["Reach vs followers","~12×","—","pass"]],
+  auth:"Organic but slow (~+1/day) — grows on the group halo, not its own engine.",authOk:false,
+  hash:"Uses #bookends #capiche #aiko consistently; could add catering/wedding discovery tags.",
+  sent:"Positive, supplier/peer-driven; the community knows the team."}
+};
+function renderBenchmark(k){
+  const x=BENCH[k]; if(!x) return "";
+  const chip=s=>{const cl=s==="pass"?"Hit":(s==="under"||s==="below")?"Dud":"OK";const t=s==="pass"?"✓ on target":s==="under"?"▲ under":s==="below"?"▼ below":"watch";return `<span class="tag ${cl}">${t}</span>`;};
+  const rows=x.rows.map(r=>`<tr><td style="text-align:left">${r[0]}</td><td>${r[1]}</td><td class="ttype">${r[2]}</td><td>${chip(r[3])}</td></tr>`).join("");
+  return `<div class="panel"><h2>Auditor benchmarks · vs the world <span class="tagm">${x.cohort}</span></h2>
+   <table><thead><tr><th style="text-align:left">Metric</th><th>You</th><th>Best-practice</th><th>Verdict</th></tr></thead><tbody>${rows}</tbody></table>
+   <div class="flags" style="margin-top:10px">
+    <div class="flag ${x.authOk?'green':'amber'}"><span class="ic">●</span><span><b>Follower authenticity:</b> ${x.auth}</span></div>
+    <div class="flag amber"><span class="ic">#</span><span><b>Hashtags:</b> ${x.hash}</span></div>
+    <div class="flag green"><span class="ic">♥</span><span><b>Comment sentiment:</b> ${x.sent}</span></div>
+   </div>
+   <div style="font-size:12px;color:var(--muted);margin-top:6px">Benchmarks (2026 best practice): micro-account engagement 3–6% of followers, 4–5 posts/week, ~60% Reels / 30% carousel / 10% other. Fake-follower read is a proxy from growth-smoothness + ER — definitive checks need a dedicated tool (e.g. HypeAuditor).</div></div>`;
+}
+async function refreshDeep(k){
+  const b=DATA[k]; if(!b.deep||b._deepLoading) return; b._deepLoading=true;
+  try{
+    const sub=await call("data_query",{ds_id:"IGI",ds_accounts:b.acct,fields:"date,reach,profile_views",date_range_type:"custom",start_date:isoDaysAgo(61),end_date:isoDaysAgo(1),max_rows:100,compress:false});
+    const sid=(sub.data&&sub.data.schedule_id)||sub.schedule_id; let rows=null;
+    for(let i=0;i<12;i++){await new Promise(r=>setTimeout(r,2200));const res=await call("get_async_query_results",{schedule_id:sid,compress:false});const dd=res.data||res;if(dd.status==="completed"){rows=dd.data;break;}if(dd.status==="failed")break;}
+    if(rows&&rows.length>4){
+      const d=[];for(let i=1;i<rows.length;i++){const r=rows[i];d.push([String(r[0]).slice(5),+r[1]||0,+r[2]||0]);}
+      d.sort((x,y)=>x[0]<y[0]?-1:1);
+      const n=d.length,last=d.slice(Math.max(0,n-30)),prior=d.slice(Math.max(0,n-60),Math.max(0,n-30));
+      const sum=(a,i)=>a.reduce((s,r)=>s+r[i],0);
+      const rl=sum(last,1),rp=sum(prior,1)||1,pl=sum(last,2),pp=sum(prior,2)||1;
+      b.deep.daily=d;
+      b.deep.mom={newFoll:b.deep.mom.newFoll,perDay:b.deep.mom.perDay,reachL:rl,reachP:rp,reachD:(rl-rp)/rp*100,pvL:pl,pvP:pp,pvD:(pl-pp)/pp*100};
+      b._deepLive=true; if(current===k) render();
+    }
+  }catch(e){}
+  b._deepLoading=false;
+}
+function renderCalendar(){
+  const v=document.getElementById("view");
+  const capN=CAL.filter(r=>r[2]==="Capiche").length, aikN=CAL.filter(r=>r[2]==="Aiko").length;
+  const weeks=[["Jul 1","Jul 5","Week 1"],["Jul 7","Jul 12","Week 2"],["Jul 14","Jul 19","Week 3"],["Jul 21","Jul 26","Week 4"],["Jul 28","Jul 31","Week 5"]];
+  const dnum=d=>parseInt(d.split(" ")[1]);
+  let cards=`<div class="cards">
+    <div class="kpi"><div class="lab">Total posts</div><div class="val">${CAL.length}</div><div class="note">planned for July</div></div>
+    <div class="kpi"><div class="lab">Capiche</div><div class="val" style="color:var(--capiche)">${capN}</div><div class="note good">~3-4/week</div></div>
+    <div class="kpi"><div class="lab">Aiko</div><div class="val" style="color:var(--aiko)">${aikN}</div><div class="note">carousel-led</div></div>
+    <div class="kpi"><div class="lab">Story prompts</div><div class="val">${STORYP.length}</div><div class="note">weekly</div></div>
+  </div>`;
+  let weekHtml="";
+  weeks.forEach(w=>{const lo=dnum(w[0]),hi=dnum(w[1]);
+    const rows=CAL.filter(r=>{const n=dnum(r[0]);return n>=lo&&n<=hi;});
+    if(!rows.length)return;
+    weekHtml+=`<div class="panel"><h2>${w[2]}</h2><table><thead><tr><th>Date</th><th>Brand</th><th>Format</th><th>Pillar</th><th>Concept</th><th>Goal</th></tr></thead><tbody>`;
+    rows.forEach(r=>{const col=r[2]==="Capiche"?"var(--capiche)":"var(--aiko)";const bg=r[2]==="Capiche"?"#fce3e2":"#fbf0d5";
+      weekHtml+=`<tr><td><b>${r[0]}</b> <span class="ttype">${r[1]}</span></td>
+        <td><span class="tag" style="background:${bg};color:${col}">${r[2]}</span></td>
+        <td class="ttype">${r[3]}</td><td class="ttype">${r[4]}</td>
+        <td style="white-space:normal">${r[5]}<div class="meta" style="font-size:11px;color:var(--muted)">hook: ${r[6]}</div></td>
+        <td class="ttype">${r[7]}</td></tr>`;});
+    weekHtml+=`</tbody></table></div>`;});
+  let stHtml=`<div class="panel"><h2>Weekly story prompts <span class="tagm">fix the 2% reach problem</span></h2><table><thead><tr><th>Week</th><th>Brand</th><th>Sticker</th><th>Prompt</th></tr></thead><tbody>`;
+  STORYP.forEach(s=>{const col=s[1]==="Capiche"?"var(--capiche)":"var(--aiko)";const bg=s[1]==="Capiche"?"#fce3e2":"#fbf0d5";
+    stHtml+=`<tr><td>${s[0]}</td><td><span class="tag" style="background:${bg};color:${col}">${s[1]}</span></td><td class="ttype">${s[2]}</td><td style="white-space:normal">${s[3]}</td></tr>`;});
+  stHtml+=`</tbody></table></div>`;
+  let playbook=`<div class="panel"><h2>Why this plan</h2><div class="flags">
+    <div class="flag red"><span class="ic">▼</span><span>Capiche reach down 15% MoM — cadence jumps to 3-4&times;/week, reels weighted for reach.</span></div>
+    <div class="flag green"><span class="ic">✓</span><span>Aiko leans carousels (8.5% ER vs 5.7% reels).</span></div>
+    <div class="flag amber"><span class="ic">★</span><span>Hero posts Fri &amp; Tue, never Monday. Reels hook in 2s. Monsoon = the thread.</span></div>
+  </div></div>`;
+  v.innerHTML=cards+playbook+weekHtml+stHtml;
+}
+function postsTable(b){
+  return `<div class="panel"><h2>Every post &middot; flagged vs baseline</h2>
+   <table id="ptab"><thead><tr>
+     <th data-k="date">Date</th><th data-k="type">Type</th><th data-k="likes">Likes</th>
+     <th data-k="saves">Saves</th><th data-k="shares">Shares</th><th data-k="reach">Reach</th>
+     <th data-k="inter">Interactions</th><th data-k="er">ER</th><th data-k="flag">Flag</th>
+   </tr></thead><tbody id="ptbody"></tbody></table></div>`;
+}
+function fillTable(b){
+  const idx={date:0,type:1,likes:2,saves:4,shares:5,reach:6,inter:7};
+  let rows=[...b.posts];
+  rows.sort((x,y)=>{let a,c;
+    if(sortKey==="er"){a=x[7]/x[6];c=y[7]/y[6];}
+    else if(sortKey==="flag"){const o={Hit:2,OK:1,Dud:0};a=o[flagOf(b,x)];c=o[flagOf(b,y)];}
+    else{a=x[idx[sortKey]];c=y[idx[sortKey]];}
+    if(a<c)return -sortDir;if(a>c)return sortDir;return 0;});
+  const tb=document.getElementById("ptbody");tb.innerHTML="";
+  rows.forEach(p=>{const er=(p[7]/p[6]*100).toFixed(1);const fl=flagOf(b,p);
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td><a href="${p[8]}" target="_blank" title="${p[9]}">${p[0].slice(5)}</a></td>
+     <td class="ttype">${p[1]}</td><td>${p[2]}</td><td>${p[4]}</td><td>${p[5]}</td>
+     <td>${fmtN(p[6])}</td><td><b>${p[7]}</b></td><td>${er}%</td>
+     <td><span class="tag ${fl}">${fl}</span></td>`;
+    tb.appendChild(tr);});
+}
+function wireSort(b){
+  document.querySelectorAll("#ptab th").forEach(th=>{th.onclick=()=>{
+    const k=th.dataset.k;if(sortKey===k)sortDir*=-1;else{sortKey=k;sortDir=-1;}fillTable(b);};});
+  fillTable(b);
+}
+function drawInterChart(b){
+  const sorted=[...b.posts].sort((x,y)=>x[0]<y[0]?-1:1);
+  const labels=sorted.map(p=>p[0].slice(5));const data=sorted.map(p=>p[7]);
+  const colors=sorted.map(p=>{const f=flagOf(b,p);return f==="Hit"?"#2E7D4E":f==="Dud"?"#C2080B":b.color;});
+  const ctx=document.getElementById("trend");
+  charts.push(new Chart(ctx,{type:"bar",data:{labels,datasets:[{data,backgroundColor:colors,borderRadius:4}]},
+   options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},
+    tooltip:{callbacks:{title:(i)=>sorted[i[0].dataIndex][9],label:(i)=>`${i.raw} interactions &middot; ${sorted[i.dataIndex][1]}`}}},
+    scales:{y:{beginAtZero:true,grid:{color:"#eee"}},x:{grid:{display:false}}}}}));
+}
+function drawDeepCharts(b){
+  const d=b.deep;const ctx=document.getElementById("reachTrend");if(!ctx)return;
+  charts.push(new Chart(ctx,{type:"line",data:{labels:d.daily.map(r=>r[0]),
+    datasets:[
+     {label:"Reach",data:d.daily.map(r=>r[1]),borderColor:b.color,backgroundColor:"transparent",tension:.3,pointRadius:0,borderWidth:2,yAxisID:"y"},
+     {label:"Profile views",data:d.daily.map(r=>r[2]),borderColor:"#7A7064",backgroundColor:"transparent",tension:.3,pointRadius:0,borderWidth:1.5,borderDash:[4,3],yAxisID:"y"}
+    ]},
+   options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},
+    plugins:{legend:{display:true,labels:{boxWidth:12,font:{size:11}}}},
+    scales:{y:{beginAtZero:true,grid:{color:"#eee"}},x:{grid:{display:false},ticks:{maxTicksLimit:10,font:{size:10}}}}}}));
+}
+async function call(tool,args){
+  const r=await window.cowork.callMcpTool(SERVER+"__"+tool,args);
+  let o=r.structuredContent;if(!o&&r.content&&r.content[0])o=JSON.parse(r.content[0].text);return o;}
+function isoDaysAgo(n){const d=new Date();d.setUTCDate(d.getUTCDate()-n);return d.toISOString().slice(0,10);}
+async function pullBrand(k){
+  const b=DATA[k];
+  const sub=await call("data_query",{ds_id:"IGI",ds_accounts:b.acct,
+    fields:"timestamp,media_type,media_like_count,media_comments_count,media_saved,media_shares,media_reach,interactions,media_permalink",
+    date_range_type:"custom",start_date:b.histStart||isoDaysAgo(90),end_date:isoDaysAgo(0),max_rows:300,compress:false});
+  const sid=(sub.data&&sub.data.schedule_id)||sub.schedule_id;if(!sid)throw new Error("no sid");
+  let rows=null;
+  for(let i=0;i<15;i++){await new Promise(r=>setTimeout(r,2200));
+    const res=await call("get_async_query_results",{schedule_id:sid,compress:false});const dd=res.data||res;
+    if(dd.status==="completed"){rows=dd.data;break;}if(dd.status==="failed")throw new Error("failed");}
+  if(!rows)throw new Error("timeout");
+  const out=[];
+  for(let i=1;i<rows.length;i++){const r=rows[i];
+    const type=r[1]==="VIDEO"||r[1]==="REELS"?"Reel":r[1]==="CAROUSEL_ALBUM"?"Carousel":r[1]==="IMAGE"?"Image":r[1];
+    out.push([String(r[0]).slice(0,10),type,+r[2]||0,+r[3]||0,+r[4]||0,+r[5]||0,+r[6]||0,+r[7]||0,r[8]||"#",""]);}
+  if(out.length){b.posts=out;}
+  return out.length;
+}
+async function refreshAll(){
+  const pill=document.getElementById("freshPill");pill.className="pill";pill.textContent="Pulling fresh data…";
+  let ok=0,fail=0;
+  for(const k of Object.keys(DATA)){try{await pullBrand(k);ok++;}catch(e){fail++;}}
+  render();
+  const now=new Date().toLocaleString("en-IN",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});
+  if(ok>0&&fail===0){pill.className="pill live";pill.textContent="● Live · "+now;}
+  else if(ok>0){pill.className="pill live";pill.textContent="● Live ("+ok+"/"+(ok+fail)+") · "+now;}
+  else{pill.className="pill snap";pill.textContent="Snapshot · "+SNAPSHOT_DATE;}
+}
+document.getElementById("refreshBtn").onclick=refreshAll;
+render();
+document.getElementById("freshPill").className="pill snap";
+document.getElementById("freshPill").textContent="Snapshot · "+SNAPSHOT_DATE;
+if(window.cowork&&window.cowork.callMcpTool){refreshAll().catch(()=>{});}
+</script>
+</body>
+</html>
