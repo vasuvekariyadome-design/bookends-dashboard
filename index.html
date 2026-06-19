@@ -518,7 +518,16 @@ function renderExtra(k){
 
 function renderOverview(){
   const v=document.getElementById("view");
-  const totF=OVERVIEW.reduce((s,b)=>s+b[2],0),totP=OVERVIEW.reduce((s,b)=>s+b[3],0),need=OVERVIEW.filter(b=>b[6]==="red").length;
+  // Numbers are computed live from DATA so this tab stays consistent with the brand tabs
+  // after the daily refresh. Only status colour (b[6]) and the "do today" note (b[7]) are editorial.
+  const ov=OVERVIEW.map(o=>{const B=DATA[o[0]];
+    return {k:o[0],name:o[1],
+      foll:B.followers,
+      n:B.posts.length,
+      er:B.posts.length?med(B.posts.map(p=>p[7]/p[6]))*100:0,
+      mom:B.deep?Math.round(B.deep.mom.reachD):0,
+      status:o[6],text:o[7]};});
+  const totF=ov.reduce((s,b)=>s+b.foll,0),totP=ov.reduce((s,b)=>s+b.n,0),need=ov.filter(b=>b.status==="red").length;
   let cards=`<div class="cards">
     <div class="kpi"><div class="lab">Total followers</div><div class="val">${(totF/1000).toFixed(1)}k</div><div class="note">3 brands</div></div>
     <div class="kpi"><div class="lab">Posts / 90d</div><div class="val">${totP}</div><div class="note">across brands</div></div>
@@ -526,16 +535,16 @@ function renderOverview(){
     <div class="kpi"><div class="lab">Backlog ideas</div><div class="val">${BACKLOG.total}</div><div class="note">in TickTick</div></div>
   </div>`;
   const dotS=`display:inline-block;width:9px;height:9px;border-radius:50%`;
-  let rows=OVERVIEW.map(b=>{
-    const col=b[0]==="capiche"?"var(--capiche)":b[0]==="aiko"?"var(--aiko)":"var(--bookends)";
-    const dot=b[6]==="green"?"#2E7D4E":b[6]==="amber"?"#D09A12":"#C2080B";
-    const arrow=b[5]<=-10?"▼":b[5]<0?"▾":"▲";const acol=b[5]<=-10?"var(--dud)":b[5]<0?"#D09A12":"var(--hit)";
-    return `<tr style="cursor:pointer" onclick="current='${b[0]}';render()">
-      <td><span style="${dotS};background:${col}"></span> <b>${b[1]}</b></td>
-      <td>${b[2].toLocaleString()}</td><td>${b[3]}</td><td>${b[4]?b[4]+'%':'—'}</td>
-      <td style="color:${acol}"><b>${arrow} ${Math.abs(b[5])}%</b></td>
+  let rows=ov.map(b=>{
+    const col=b.k==="capiche"?"var(--capiche)":b.k==="aiko"?"var(--aiko)":"var(--bookends)";
+    const dot=b.status==="green"?"#2E7D4E":b.status==="amber"?"#D09A12":"#C2080B";
+    const arrow=b.mom<=-10?"▼":b.mom<0?"▾":"▲";const acol=b.mom<=-10?"var(--dud)":b.mom<0?"#D09A12":"var(--hit)";
+    return `<tr style="cursor:pointer" onclick="current='${b.k}';render()">
+      <td><span style="${dotS};background:${col}"></span> <b>${b.name}</b></td>
+      <td>${b.foll.toLocaleString()}</td><td>${b.n}</td><td>${b.er?b.er.toFixed(1)+'%':'—'}</td>
+      <td style="color:${acol}"><b>${arrow} ${Math.abs(b.mom)}%</b></td>
       <td><span style="${dotS};background:${dot}"></span></td>
-      <td style="white-space:normal;text-align:left">${b[7]}</td></tr>`;}).join("");
+      <td style="white-space:normal;text-align:left">${b.text}</td></tr>`;}).join("");
   let table=`<div class="panel"><h2>All brands at a glance</h2>
     <table><thead><tr><th>Brand</th><th>Followers</th><th>90d</th><th>ER</th><th>Reach MoM</th><th>Status</th><th style="text-align:left">Do today</th></tr></thead><tbody>${rows}</tbody></table>
     <div style="font-size:12px;color:var(--muted);margin-top:8px">Click a brand to open its full page.</div></div>`;
@@ -738,9 +747,11 @@ async function pullBrand(k){
     if(dd.status==="completed"){rows=dd.data;break;}if(dd.status==="failed")throw new Error("failed");}
   if(!rows)throw new Error("timeout");
   const out=[];
+  // Supermetrics returns DIMENSIONS before METRICS, so the actual column order is:
+  // [0]timestamp [1]media_type [2]media_permalink [3]likes [4]comments [5]saves [6]shares [7]reach [8]interactions
   for(let i=1;i<rows.length;i++){const r=rows[i];
     const type=r[1]==="VIDEO"||r[1]==="REELS"?"Reel":r[1]==="CAROUSEL_ALBUM"?"Carousel":r[1]==="IMAGE"?"Image":r[1];
-    out.push([String(r[0]).slice(0,10),type,+r[2]||0,+r[3]||0,+r[4]||0,+r[5]||0,+r[6]||0,+r[7]||0,r[8]||"#",""]);}
+    out.push([String(r[0]).slice(0,10),type,+r[3]||0,+r[4]||0,+r[5]||0,+r[6]||0,+r[7]||0,+r[8]||0,r[2]||"#",""]);}
   if(out.length){b.posts=out;}
   return out.length;
 }
@@ -754,11 +765,17 @@ async function refreshAll(){
   else if(ok>0){pill.className="pill live";pill.textContent="● Live ("+ok+"/"+(ok+fail)+") · "+now;}
   else{pill.className="pill snap";pill.textContent="Snapshot · "+SNAPSHOT_DATE;}
 }
-document.getElementById("refreshBtn").onclick=refreshAll;
 render();
 document.getElementById("freshPill").className="pill snap";
 document.getElementById("freshPill").textContent="Updated · "+SNAPSHOT_DATE;
-if(window.cowork&&window.cowork.callMcpTool){refreshAll().catch(()=>{});}
+if(window.cowork&&window.cowork.callMcpTool){
+  // inside Claude: the live in-browser refresh works
+  document.getElementById("refreshBtn").onclick=refreshAll;
+  refreshAll().catch(()=>{});
+}else{
+  // hosted (no Claude bridge): the button can't pull data, so hide it — data is baked in daily
+  document.getElementById("refreshBtn").style.display="none";
+}
 </script>
 </body>
 </html>

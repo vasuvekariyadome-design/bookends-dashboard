@@ -34,8 +34,20 @@ data_query(
 ```
 Then poll `get_async_query_results(schedule_id=...)` until `status=="completed"`.
 The data_query call sometimes times out before returning the schedule_id — just retry it.
-Map columns by `requested_field_ids` (the API returns dimensions before metrics, so the
-column order differs from the request).
+
+⚠️ **CRITICAL — column order is NOT the order you requested.** Supermetrics returns **all
+dimensions first, then all metrics**. Do NOT assume `r[2]` is likes. Map columns by the
+**row-0 header names** (or `requested_field_ids`). For the field list above, the verified
+returned order is:
+
+```
+index: 0          1           2               3        4      5        6      7       8      9
+field: timestamp  media_type  media_permalink caption  likes  comments saves  shares  reach  interactions
+```
+
+(Dimensions = timestamp, media_type, media_permalink, caption — returned first in that
+order; then the metrics in requested order.) Always re-check the header row in case the set
+changes; never hard-trust these indices blindly.
 
 ## Step 2 — build each post row
 
