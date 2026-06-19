@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta name="robots" content="noindex,nofollow"/>
 <title>Bookends Brand Auditor — Live Engagement Dashboard</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
 <style>
@@ -97,9 +98,50 @@ td a:hover{text-decoration:underline}
 .cmt .meta{font-size:11px;color:var(--muted);margin-top:3px}
 .cmt a{color:var(--blue);text-decoration:none}
 @media(max-width:620px){.split{grid-template-columns:1fr}.fmt{grid-template-columns:1fr}.wordmark{font-size:28px;letter-spacing:5px}}
+/* password gate */
+.gate{position:fixed;inset:0;z-index:9999;background:radial-gradient(120% 140% at 0% 0%,#1A3FB0 0%,#00259A 45%,#001A6E 100%);display:flex;align-items:center;justify-content:center;padding:20px}
+.gatecard{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:32px 30px;width:100%;max-width:340px;box-shadow:0 10px 40px rgba(0,0,0,.25);text-align:center}
+.gateword{font-family:"Anton","Oswald","Arial Narrow Bold","Arial Narrow",Impact,sans-serif;font-size:34px;letter-spacing:3px;font-weight:700;color:var(--navy);line-height:1}
+.gatesub{font-size:12.5px;color:var(--muted);font-style:italic;margin:6px 0 22px}
+.gatecard input{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:10px;font-size:15px;text-align:center;letter-spacing:1px;outline:none}
+.gatecard input:focus{border-color:var(--navy)}
+.gatecard button{width:100%;margin-top:12px;padding:11px;border:none;border-radius:10px;background:var(--navy);color:#fff;font-size:14px;font-weight:700;cursor:pointer;transition:background .15s}
+.gatecard button:hover{background:var(--navy2)}
+.gateerr{font-size:12px;color:var(--dud);margin-top:12px;min-height:16px}
 </style>
 </head>
 <body>
+<div id="gate" class="gate">
+  <div class="gatecard">
+    <div class="gateword">BOOKENDS</div>
+    <div class="gatesub">brand dashboard — team access</div>
+    <input id="gatepass" type="password" placeholder="Enter passcode" autocomplete="off" autocapitalize="off"/>
+    <button id="gatebtn">Unlock</button>
+    <div id="gateerr" class="gateerr"></div>
+  </div>
+</div>
+<script>
+(function(){
+  var HASH="11bac86c2fb51522904f8f367e7a9433d82ee951a7ffb899e05a74f4ad3907c9";
+  var KEY="bookends_dash_unlock_v1";
+  var gate=document.getElementById("gate");
+  function unlock(){if(gate&&gate.parentNode)gate.parentNode.removeChild(gate);document.body.style.overflow="";}
+  if(localStorage.getItem(KEY)===HASH){unlock();return;}
+  document.body.style.overflow="hidden";
+  async function sha(s){var b=new TextEncoder().encode(s);var h=await crypto.subtle.digest("SHA-256",b);return Array.from(new Uint8Array(h)).map(function(x){return x.toString(16).padStart(2,"0");}).join("");}
+  async function tryit(){
+    var err=document.getElementById("gateerr");
+    try{
+      var h=await sha(document.getElementById("gatepass").value);
+      if(h===HASH){localStorage.setItem(KEY,HASH);unlock();}
+      else{err.textContent="Wrong passcode — try again.";}
+    }catch(e){err.textContent="Open this via the live https link to unlock.";}
+  }
+  document.getElementById("gatebtn").onclick=tryit;
+  document.getElementById("gatepass").addEventListener("keydown",function(e){if(e.key==="Enter")tryit();});
+  document.getElementById("gatepass").focus();
+})();
+</script>
 <header class="hero">
   <div class="hero-in">
     <div>
