@@ -1,0 +1,206 @@
+{
+  "meta": {
+    "title": "Bookends Strategic Cockpit",
+    "fy": "FY27",
+    "latestMonth": "FY27-05",
+    "anchorEbitdaCr": 13.17,
+    "band": "11.2–13.17",
+    "snapshotLabel": "Actuals · Apr–May FY27",
+    "updatedAt": "2026-06-20",
+    "updatedBy": "Seed (Apr–May FY27)"
+  },
+  "lines": [
+    {"key": "net_rev", "label": "Net Revenue (ex-GST)", "higherGood": true, "head": false, "computed": false, "note": "May beat budget by ₹43.5L"},
+    {"key": "cogs", "label": "Less: COGS (consumption)", "higherGood": false, "head": true, "computed": false, "note": "23.5% Apr / 21.4% May vs 19% budget — the single biggest variance driver"},
+    {"key": "gross_profit", "label": "Gross Profit", "higherGood": true, "head": true, "computed": true, "note": ""},
+    {"key": "sal_resto", "label": "Salary — Restaurant", "higherGood": false, "head": false, "computed": false, "note": "~₹53L resto staff + ~₹1L Facets"},
+    {"key": "sal_corp", "label": "Salary — Corporate", "higherGood": false, "head": false, "computed": false, "note": "Termination not as planned"},
+    {"key": "rent", "label": "Rent", "higherGood": false, "head": false, "computed": false, "note": "Revised to actual FY27 schedule; FY total ₹2.62 Cr"},
+    {"key": "electricity", "label": "Electricity", "higherGood": false, "head": false, "computed": false, "note": ""},
+    {"key": "staff_welfare", "label": "Staff Welfare", "higherGood": false, "head": false, "computed": false, "note": "One-off items (PG dinners, frisbee event, penthouse) removed forward"},
+    {"key": "staff_welfare_facets", "label": "Staff Welfare (Facets)", "higherGood": false, "head": false, "computed": false, "note": "incl Ranchi girls lunch"},
+    {"key": "housekeeping", "label": "Housekeeping", "higherGood": false, "head": false, "computed": false, "note": "Tightened with process review"},
+    {"key": "travelling", "label": "Travelling", "higherGood": false, "head": false, "computed": false, "note": "Facets + offside + marketing travel"},
+    {"key": "kitchen_equip", "label": "Kitchen Equipment & Utensil", "higherGood": false, "head": false, "computed": false, "note": ""},
+    {"key": "courier", "label": "Courier & Transport", "higherGood": false, "head": false, "computed": false, "note": ""},
+    {"key": "rent_maint", "label": "Rent Maintenance", "higherGood": false, "head": false, "computed": false, "note": "Outlet-wise revised"},
+    {"key": "repairs", "label": "Repairing & Maintenance", "higherGood": false, "head": false, "computed": false, "note": "Offside ₹80k + other ₹2L"},
+    {"key": "property_tax", "label": "Property Tax", "higherGood": false, "head": false, "computed": false, "note": ""},
+    {"key": "rnd", "label": "Research & Development", "higherGood": false, "head": false, "computed": false, "note": ""},
+    {"key": "vehicle_fuel", "label": "Vehicle Fuel & Service", "higherGood": false, "head": false, "computed": false, "note": "Fuel price increase"},
+    {"key": "online_platform", "label": "Online Platform", "higherGood": false, "head": false, "computed": false, "note": "Capiche Uni Zomato onboarding"},
+    {"key": "biz_promo", "label": "Business Promotion", "higherGood": false, "head": false, "computed": false, "note": "Ahm valet cost"},
+    {"key": "stationery", "label": "Stationery & Printing", "higherGood": false, "head": false, "computed": false, "note": "Switching to washable menus"},
+    {"key": "uniform", "label": "Uniform", "higherGood": false, "head": false, "computed": false, "note": ""},
+    {"key": "water", "label": "Water", "higherGood": false, "head": false, "computed": false, "note": ""},
+    {"key": "electric_exp", "label": "Electric Expense", "higherGood": false, "head": false, "computed": false, "note": "Merge with R&M"},
+    {"key": "software", "label": "Software", "higherGood": false, "head": false, "computed": false, "note": ""},
+    {"key": "internet", "label": "Internet", "higherGood": false, "head": false, "computed": false, "note": ""},
+    {"key": "legal", "label": "Legal", "higherGood": false, "head": false, "computed": false, "note": ""},
+    {"key": "office", "label": "Office", "higherGood": false, "head": false, "computed": false, "note": ""},
+    {"key": "prof_fee", "label": "Professional Fee", "higherGood": false, "head": false, "computed": false, "note": ""},
+    {"key": "marketing", "label": "Marketing", "higherGood": false, "head": false, "computed": false, "note": "Apr–Aug ₹11.2L/mo (in-house + agency); post-Aug ~₹5L — planned transition"},
+    {"key": "event_expense", "label": "Event Expense", "higherGood": false, "head": false, "computed": false, "note": ""},
+    {"key": "total_opex", "label": "Total Operating Expenses", "higherGood": false, "head": true, "computed": true, "note": ""},
+    {"key": "ebitda", "label": "EBITDA", "higherGood": true, "head": true, "computed": true, "note": "Apr −11% margin (loss) → May +15%"}
+  ],
+  "opexKeys": ["sal_resto","sal_corp","rent","electricity","staff_welfare","staff_welfare_facets","housekeeping","travelling","kitchen_equip","courier","rent_maint","repairs","property_tax","rnd","vehicle_fuel","online_platform","biz_promo","stationery","uniform","water","electric_exp","software","internet","legal","office","prof_fee","marketing","event_expense"],
+  "budgetNew": {
+    "sal_resto": 54.0, "sal_corp": 22.0, "rent": 22.0, "electricity": 6.0, "staff_welfare": 7.6,
+    "staff_welfare_facets": 1.69, "housekeeping": 3.0, "travelling": 2.0, "kitchen_equip": 2.14,
+    "courier": 3.0, "rent_maint": 1.15, "repairs": 2.8, "property_tax": 0.52, "rnd": 1.0,
+    "vehicle_fuel": 1.5, "online_platform": 4.5, "biz_promo": 1.0, "stationery": 1.5, "uniform": 0.54,
+    "water": 0.23, "electric_exp": 0.55, "software": 2.0, "internet": 0.5, "legal": 0.44,
+    "office": 0.25, "prof_fee": 0.9, "marketing": 8.0
+  },
+  "monthOrder": ["FY27-04", "FY27-05"],
+  "months": {
+    "FY27-04": {
+      "label": "Apr FY27",
+      "budget": {"net_rev":203.4,"cogs":38.65,"gross_profit":164.79,"sal_resto":53.0,"sal_corp":20.0,"rent":28.0,"electricity":6.0,"staff_welfare":7.6,"staff_welfare_facets":1.69,"housekeeping":4.0,"travelling":1.0,"kitchen_equip":2.14,"courier":5.8,"rent_maint":0.71,"repairs":2.0,"property_tax":0.52,"rnd":0.08,"vehicle_fuel":1.29,"online_platform":4.39,"biz_promo":0.22,"stationery":1.5,"uniform":0.54,"water":0.23,"electric_exp":0.55,"software":2.0,"internet":0.5,"legal":0.44,"office":0.25,"prof_fee":0.9,"marketing":5.83,"event_expense":null,"total_opex":151.18,"ebitda":13.6},
+      "actual": {"net_rev":201.8,"cogs":47.46,"gross_profit":154.34,"sal_resto":59.6,"sal_corp":17.59,"rent":25.17,"electricity":6.11,"staff_welfare":11.85,"staff_welfare_facets":2.89,"housekeeping":5.49,"travelling":9.70,"kitchen_equip":4.66,"courier":1.95,"rent_maint":0.87,"repairs":2.77,"property_tax":0,"rnd":0,"vehicle_fuel":1.49,"online_platform":4.64,"biz_promo":0.27,"stationery":2.09,"uniform":4.03,"water":0.15,"electric_exp":0.91,"software":0.82,"internet":0.10,"legal":0.01,"office":0.43,"prof_fee":1.32,"marketing":11.39,"event_expense":null,"total_opex":176.30,"ebitda":-21.97}
+    },
+    "FY27-05": {
+      "label": "May FY27",
+      "budget": {"net_rev":222.8,"cogs":43.55,"gross_profit":179.28,"sal_resto":53.0,"sal_corp":20.0,"rent":28.0,"electricity":6.0,"staff_welfare":7.6,"staff_welfare_facets":1.69,"housekeeping":4.0,"travelling":1.0,"kitchen_equip":2.14,"courier":5.8,"rent_maint":0.71,"repairs":2.0,"property_tax":0.52,"rnd":0.08,"vehicle_fuel":1.29,"online_platform":4.39,"biz_promo":0.22,"stationery":1.5,"uniform":0.54,"water":0.23,"electric_exp":0.55,"software":2.0,"internet":0.5,"legal":0.44,"office":0.25,"prof_fee":0.9,"marketing":5.83,"event_expense":null,"total_opex":151.18,"ebitda":28.1},
+      "actual": {"net_rev":266.3,"cogs":57.11,"gross_profit":209.2,"sal_resto":53.95,"sal_corp":24.37,"rent":25.65,"electricity":8.07,"staff_welfare":10.86,"staff_welfare_facets":2.41,"housekeeping":5.51,"travelling":2.10,"kitchen_equip":1.90,"courier":2.14,"rent_maint":0.87,"repairs":4.30,"property_tax":0,"rnd":0,"vehicle_fuel":2.04,"online_platform":4.06,"biz_promo":0.93,"stationery":2.85,"uniform":0.17,"water":0.02,"electric_exp":1.24,"software":0.48,"internet":0.19,"legal":0.25,"office":0.47,"prof_fee":1.78,"marketing":9.52,"event_expense":2.68,"total_opex":168.80,"ebitda":40.40}
+    }
+  },
+  "config": {
+    "bannerHtml": "<b>One genuine RED: COGS.</b> 23.5% April, 21.4% May vs a 19% budget (consumption variance −₹8.8L in April alone) — War Room active. April closed at an EBITDA <b>loss of −₹22L</b> on year-opening one-offs; May recovered to <b>+₹40L (+15%)</b> and beat budget. Everything else on the scoreboard is Green or Amber; the marketing Amber is by design through August.",
+    "honestRead": "Three things are simultaneously true going into FY27, and the plan honours all three: (1) the business has scale (₹23.1 Cr FY26 revenue) but not yet sustained profitability (₹0.53 Cr cleaned EBITDA, and April FY27 was an outright loss); (2) FY27 demands a step-change to ₹13.17 Cr — explicitly the optimistic case, conditional on COGS returning to 19% and ODC doubling to ₹10 Cr; (3) four new outlets land on top of all of that, funded by a family-office bridge that peaks dangerously in September and only clears if Q4 delivers.",
+    "kpis": [
+      {"lab": "EBITDA · Apr→May actual", "val": "−₹22L → +₹40L", "cls": "amber", "note": "April was a loss (year-opening one-offs); May +15% margin, beat budget by ₹12.3L"},
+      {"lab": "COGS actual", "val": "23.5% → 21.4%", "cls": "red", "note": "Apr 23.5% · May 21.4% vs 19% budget · every 1pt = ₹40L · ACTIVE CRISIS"},
+      {"lab": "Net revenue · May", "val": "₹2.66 Cr", "cls": "green", "note": "beat budget by ₹43.5L · Apr ₹2.02 Cr (on budget)"},
+      {"lab": "FY27 EBITDA anchor", "val": "₹13.17 Cr", "cls": "amber", "note": "34% existing · band ₹11.2–13.17 Cr · COGS-conditional"},
+      {"lab": "Parent loans · BS 15 Jun", "val": "₹25.4 Cr", "cls": "", "note": "unsecured family funding already on the books — the bridge is deep in"},
+      {"lab": "Sept bridge peak", "val": "₹7.24 Cr+", "cls": "amber", "note": "re-model required · weakest season"}
+    ],
+    "riskFlags": [
+      {"c": "red", "i": "●", "t": "<b>COGS is the one genuine RED.</b> 23.5% April, 21.4% May against a 19% target. Every 1pt = ₹40L of EBITDA. The ₹13.17 Cr anchor is conditional on closing this. COGS War Room (Rock 8) is active — weekly meeting, per-outlet yield audits, supplier renegotiation calendar live."},
+      {"c": "amber", "i": "◆", "t": "<b>Marketing spend above 3% through August — by design.</b> Agency + in-house run in parallel during the handover (HoM hired). A planned transition cost, not an overrun. Normalises to ~2.7% from September."},
+      {"c": "amber", "i": "◆", "t": "<b>September is the peak-crunch month.</b> Gandhinagar opening + Mumbai pre-opening/opening + Beshak signing now all cluster here, in the weakest season. Peak likely exceeds ₹7.24 Cr — re-model required."},
+      {"c": "amber", "i": "◆", "t": "<b>Key-person concentration.</b> SS and AJ each own 4–5 critical functions plus most rocks, and the exec team is green by our own admission. Tech lead now named; SS still to deputise one of {bridge, new-outlet dev}."},
+      {"c": "green", "i": "✓", "t": "<b>May recovery is real.</b> April's −₹22L EBITDA loss became +₹40.4L (+15% margin) in May, beating budget. ODC Sales Head hired; 50% advance now mandatory on bookings > ₹50,000."}
+    ],
+    "score": [
+      ["Monthly Revenue", "≥95% of plan", "85–95%", "<85%", "CFO / SS", "GREEN"],
+      ["EBITDA % (consolidated)", "On/above plan", "Within 2pts", "<2pts below", "CFO", "AMBER"],
+      ["COGS %", "<19%", "19–21%", ">21%", "AS / PP / YG", "RED"],
+      ["Inventory Days", "<15", "15–20", ">20", "Stock Tally Head", "RED"],
+      ["Bridge vs plan", "On plan", "+10%", "+25%", "CFO", "AMBER"],
+      ["ODC monthly revenue", "≥95%", "80–95%", "<80%", "VV", "GREEN"],
+      ["Rock progress", "On plan", "1-wk slip", ">1-wk slip", "SS", "AMBER"],
+      ["New outlet ramp", "≥90%", "75–90%", "<75%", "HK", "AMBER"],
+      ["Role overlap conflicts", "0", "1–2", "3+", "AJ", "AMBER"],
+      ["Marketing Spend %", "<3%", "3–4%", ">4%", "AJ / HoM", "AMBER"],
+      ["Staff Attrition (annualised)", "<35%", "35–50%", ">50%", "AJ", "NA"]
+    ],
+    "scoreNote": {
+      "9": "Above 3% through August by design (agency + in-house parallel). Annotated as a planned transition cost; normalises from September.",
+      "10": "New metric — live from Q2. Staff retention is now a scoreboard metric, not a Q1 to-do."
+    },
+    "rocks": [
+      [1, "Org structure audit", "Org mapped. Zero unresolved role overlaps. Q1-critical hires made. Staff retention metric live.", "AJ", false],
+      [2, "Ghaslet — brand year begins", "Brand identity, marketing plan, content cadence locked. Revenue is not the target.", "RB", false],
+      [3, "Catering full rebuild", "SOP rulebook, T&C, vendor policy, billing, season/offseason pricing, brochure, client database.", "VV", false],
+      [4, "AI for systems & efficiency", "Inventory control + KPI dashboard scoped. Dashboard live Q2.", "DK", false],
+      [5, "P&L habit — read, segregate, own", "Every leadership owner reads their P&L lines by the 10th of each month and explains variances. No exception.", "AJ", false],
+      [6, "Marketing in-house build", "HoM hired. In-house team build underway; agency off-boarded by September.", "AJ", false],
+      [7, "Accounts hardening (3 sub-projects)", "(a) 100% PO compliance via Petpooja. (b) Structured petty cash. (c) Zoho maker/checker. Tracked separately.", "AS", false],
+      [8, "COGS War Room — NEW", "Weekly COGS meeting running. Per-outlet yield audits done. Supplier renegotiation calendar with named dates live. Weekly COGS dashboard active.", "PP + YG", true]
+    ],
+    "bridge": {
+      "steps": [
+        ["Apr 2026", "₹2.88 Cr draw", "Largest single-month draw — pre-FY27 pending capex + Mumbai signing. (Gandhinagar build now shifts later with its September opening.)", "normal"],
+        ["Sep 2026 — PEAK", "₹7.24 Cr+ (re-model)", "Gandhinagar opening + Mumbai pre-opening &amp; opening + Beshak signing now all cluster here. Highest bridge-risk month, in the weakest season — peak likely exceeds ₹7.24 Cr.", "peak"],
+        ["Feb 2027", "Bridge cleared", "Q4 portfolio strength (₹250L+ EBITDA/month Jan–Mar) repays the bridge.", "clear"],
+        ["Mar 2027", "+₹2.90 Cr", "FY27 closes net cash-positive — in the 19% COGS case.", "clear"]
+      ],
+      "capexLoc": [
+        ["Capiche Jaipur (kitchen partner)", "Aug-26", "₹0.40 Cr"],
+        ["Capiche Gandhinagar", "Sep-26", "₹1.84 Cr"],
+        ["Capiche Mumbai", "Sep-26", "₹2.81 Cr"],
+        ["Beshak Ahmedabad (ground-up)", "Dec-26", "₹5.09 Cr"],
+        ["Pre-FY27 pending capex", "Apr-26", "₹1.00 Cr"]
+      ],
+      "funding": [
+        ["Operating cash (existing + new)", "+₹12.98 Cr", "green"],
+        ["Family-office bridge (peak need)", "₹7.24 Cr", "amber"],
+        ["Recommended standby (peak + 30%)", "₹10.0 Cr", "navy"],
+        ["Net FY27 surplus", "+₹2.90 Cr", "green"],
+        ["Bridge outstanding (Mar-27)", "₹0.00", "green"]
+      ],
+      "cogsScen": [
+        ["Returns to 19% (plan)", "₹13.17 Cr", "+₹2.90 Cr", "plan"],
+        ["Holds at 21% (current)", "₹12.4 Cr", "+₹2.1 Cr", "cur"],
+        ["Holds at 23% (worst case)", "₹11.2 Cr", "+₹0.9 Cr", "worst"]
+      ],
+      "tripwires": [
+        ["Bridge > ₹8.5 Cr at any point", "Emergency cash review within 48 hours. Defer non-critical capex. SS + CFO + family-office contact.", "red"],
+        ["Mumbai Month 3 < 60% of plan", "Full-day leadership reset. Bridge timeline revision. Beshak Dec capex decision reviewed.", "amber"],
+        ["ODC invoices > 45 days outstanding", "Collections escalation. New bookings require full prepay until AR < 30 days.", "amber"],
+        ["COGS > 22% at Q2 end", "Escalate the War Room. Pricing + sourcing levers pulled harder; review against the 23% scenario.", "amber"],
+        ["COMBINED: COGS ~22% AND Mumbai < 60% at M3 — NEW", "Treat as one trigger — plausibly pushes the bridge past ₹8.5 Cr. SS + CFO + family office, freeze Beshak capex, model the combined peak.", "red"]
+      ],
+      "cashNote": "Two cash fragilities to name: (1) Repayment is a single-quarter bullet — the whole bridge clears on Jan–Mar throwing off ₹250L+/month, with no buffer if Q4 disappoints by even 10%. (2) The ₹10 Cr facility is a single-provider family-office line — confirm it is documented &amp; committed, not a handshake, before the September peak, and pre-arrange a fallback working-capital line. <b>Reality from the books (BS 15 Jun):</b> ₹25.4 Cr of unsecured parent loans already sit on the balance sheet (Siddhant ₹22.8 Cr, Mitaben ₹1.6 Cr, Vidhiben ₹1.0 Cr) — the bridge is not a future facility, it is already substantially drawn. Beshak villa WIP is ₹1.95 Cr spent of the ₹5.09 Cr commitment. Confirm how much of the ₹10 Cr FY27 standby remains as undrawn headroom going into September.",
+      "chart": {
+        "labels": ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar"],
+        "bal": [2.88, 2.82, 3.93, 5.58, 5.54, 7.24, 6.53, 6.54, 5.08, 2.59, 0, 0],
+        "opcf": [-0.01, 0.13, 0.39, 0.38, 0.60, 0.34, 0.71, 1.01, 1.45, 2.49, 2.76, 2.74]
+      }
+    },
+    "risks": [
+      ["1. COGS doesn't migrate to 19%", "Every 1pt = ₹40L. 23% case = ₹11.2 Cr EBITDA, +₹0.9 Cr cash.", "ALREADY TRIGGERED — Apr 23.5%, May 21.4%.", "COGS War Room active (Rock 8): weekly meeting, per-outlet yield audits, supplier renegotiation calendar.", "red"],
+      ["2. Mumbai underperforms ramp", "The swing factor — mature contribution exceeds Jaipur + Gandhinagar + Beshak combined.", "Pre-opening reservation < 40% Surat launch-week. Month 3 < 60% of Surat month-3.", "₹10–15L paid push pre-approved (flagged as a floor — likely under-sized). Month 3: full-day reset. Beshak Dec capex revisited.", "amber"],
+      ["3. ODC plateaus at ₹8 Cr", "₹1.5 Cr revenue miss.", "Q2 pipeline < ₹7 Cr annualised.", "ODC Sales Head hire accelerated. VV reviews pipeline monthly. Catering rebuild reviewed.", "amber"],
+      ["4. Headcount growth breaks quality", "Brand promise breaks. Hardest to recover late.", "Mystery diner < 7.5/10 at 2+ outlets same month.", "HK triggers full outlet audit. Manager + SOP retraining within 2 weeks. No new opening until cleared.", "amber"],
+      ["5. Beshak underperforms — capital committed pre-proof", "₹1.5 Cr FY27 miss. FY28 loses ₹4–5 Cr. ₹5.09 Cr already committed (₹1.95 Cr spent).", "Month 2 < 50% of Capiche Piplod launch trajectory.", "Jan–Feb re-positioning sprint. FY28 scale decision deferred to Apr 2027. FLAG: stage capex behind a cheap concept test rather than commit-then-pivot.", "amber"],
+      ["6. Correlated / combined stress — NEW", "2–3 tripwires firing together in one soft quarter — the real failure mode.", "COGS ~22% AND Mumbai < 60% at Month 3 in the same window.", "Treat as a single trigger — bridge plausibly > ₹8.5 Cr. SS + CFO + family office, freeze Beshak capex, model combined peak.", "red"],
+      ["7. Bridge provider / single-line risk — NEW", "Facility pulled/repriced at Sep peak = existential.", "Facility undocumented, or parent liquidity signal at peak.", "Confirm ₹10 Cr is papered &amp; committed now. Pre-arrange a fallback working-capital line as backstop.", "red"],
+      ["8. Key-person concentration — NEW", "Two people are the bottleneck; the model assumes they don't hit their limit.", "2+ rocks owned by the same person slip in the same month.", "Reassign the DRI, don't coach. Tech lead now named; SS still deputises one of {bridge, new-outlet dev}.", "amber"]
+    ],
+    "folio": [
+      ["Capiche", "THE BET", "7 (4 + 3 new)", "₹27 Cr", "Scale aggressively. Replicable via central kitchen.", "Mumbai ramp", "var(--capiche)"],
+      ["Aiko", "THE QUIETLY-GROWN", "2", "₹7 Cr", "Defend, don't expand in FY27. Define what Aiko owns.", "Identity drift", "var(--aiko)"],
+      ["Beshak", "THE NEW LAUNCH", "1 (Dec)", "₹1.5 Cr", "Test the concept. FY28 tells us if it scales.", "Concept clarity; capital pre-proof", "var(--ghaslet)"],
+      ["ODC / Catering", "THE ENGINE", "CK-fed", "₹10 Cr", "Double from FY26. Full rebuild. 50% advance mandatory.", "Scale quality", "var(--odc)"],
+      ["Ghaslet", "THE OPTION", "product", "Contribution", "Brand-building year. PMF before revenue scale.", "Distribution", "var(--navy)"]
+    ],
+    "traj": [
+      ["Outlets (year-end)", "6", "10", "14–15"],
+      ["Revenue (total)", "₹23.1 Cr", "₹45.1 Cr", "₹75–80 Cr*"],
+      ["Capiche", "₹12.0 Cr", "₹27.0 Cr", "₹42.0 Cr"],
+      ["Aiko", "₹6.0 Cr", "₹7.0 Cr", "₹10.0 Cr"],
+      ["Beshak", "—", "₹1.5 Cr", "₹4–6 Cr*"],
+      ["ODC / Catering", "₹5.0 Cr", "₹10.0 Cr", "₹17.0 Cr"],
+      ["COGS %", "25%", "19% target", "20%"],
+      ["EBITDA", "₹0.53 Cr", "₹13.17 Cr", "₹20.0 Cr"],
+      ["Headcount", "305", "~420", "~600"]
+    ],
+    "trajChart": {
+      "labels": ["FY26", "FY27", "FY28*"],
+      "rev": [23.1, 45.1, 77.5],
+      "ebitda": [0.53, 13.17, 20.0]
+    },
+    "outletRev": [
+      ["Capiche · Ambli Ahmedabad", 129.0, "var(--capiche)"],
+      ["Aiko · Ahmedabad", 92.3, "var(--aiko)"],
+      ["Capiche · Vesu Surat", 88.6, "var(--capiche)"],
+      ["Aiko · Pal Surat", 81.9, "var(--aiko)"],
+      ["Capiche · Piplod Surat", 67.4, "var(--capiche)"],
+      ["Capiche 2.0 · Ahmedabad", 65.8, "var(--capiche)"],
+      ["Aggregator sales (U/s 9(5))", 48.6, "var(--muted)"],
+      ["Party & Event", 24.2, "var(--odc)"]
+    ],
+    "rhythm": [
+      ["Daily Huddle", "10–15 min · every morning", "Outlet teams + a corporate stand-up (SS/AJ + rock DRIs)", "Yesterday's sales & COGS/wastage number, today's plan, one blocker each — \"where are you stuck?\" During the War Room, the daily COGS + wastage check lives here."],
+      ["Weekly Tactical", "60–90 min · same day weekly", "Leadership team — the 8 rock DRIs", "Rock progress vs done-when, every scoreboard Red, and the week's single priority. The weekly COGS War Room meeting feeds straight into this."],
+      ["Monthly Management", "Half day · by the 10th", "All function owners (FACe)", "The P&L habit (Rock 5): every owner reads and explains their own P&L lines and variances — straight off the Budget Variance tab. Full 11-metric scoreboard review."],
+      ["Quarterly Planning", "1 day · offsite", "Leadership + a family-office touchpoint", "Reset the 8 rocks, set next quarter's Critical Number + theme, re-model the bridge, and celebrate/reward the quarter's theme win."],
+      ["Annual Rebuild", "1–2 days · at FY27 close", "Leadership + family office", "Rebuild Book One, review/reset the BHAG, set the formal FY28 plan (April 2027, once Mumbai Q3 data is in), and run the people / Topgrading review."]
+    ],
+    "poo": {"rev": 3867, "cogsBase": 19, "ebitda": 1317, "opex": 1815, "dio": 34, "dso": 4, "dpo": 20}
+  }
+}

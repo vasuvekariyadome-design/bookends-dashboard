@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta name="robots" content="noindex,nofollow"/>
+<title>Bookends Strategic Cockpit — FY27 · Scaling Up</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
+<style>
+:root{color-scheme:light;
+ --bg:#FCF6EC;--card:#FFFCF5;--ink:#14110D;--muted:#7A7064;--line:#E7D9C2;
+ --navy:#00259A;--navy2:#001A6E;
+ --capiche:#F50C0C;--aiko:#EDB32B;--bookends:#00259A;--ghaslet:#E8431C;--odc:#2E7D4E;
+ --red:#C2080B;--amber:#B8780A;--green:#2E7D4E;
+ --redbg:#fbe9e8;--amberbg:#fbeccb;--greenbg:#e7f5ec;
+ --shadow:0 1px 2px rgba(31,41,51,.04),0 4px 16px rgba(31,41,51,.05);}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.hero{background:radial-gradient(120% 140% at 0% 0%,#1A3FB0 0%,var(--navy) 45%,var(--navy2) 100%);color:#fff;padding:30px 0 26px}
+.hero-in{max-width:1080px;margin:0 auto;padding:0 20px;display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px}
+.eyebrow{font-size:10px;letter-spacing:3.5px;text-transform:uppercase;color:#9db4cf;font-weight:700}
+.wordmark{font-family:"Anton","Oswald","Arial Narrow Bold","Arial Narrow",Impact,sans-serif;font-size:40px;letter-spacing:3px;font-weight:700;margin:4px 0 5px;color:#fff;line-height:1}
+.tagline{font-size:12.5px;color:#bccee2;font-style:italic}
+.hero-right{display:flex;align-items:center;gap:9px;padding-bottom:3px;flex-wrap:wrap;justify-content:flex-end}
+.brandstripe{display:flex;height:5px}
+.brandstripe i{flex:1}
+.wrap{max-width:1080px;margin:0 auto;padding:22px 20px 64px}
+.pill{font-size:11.5px;padding:4px 11px;border-radius:999px;background:rgba(255,255,255,.14);color:#dfeaf6;font-weight:600;letter-spacing:.2px}
+.pill.snap{background:#fbeccb;color:#8a5e00}
+.btn{font-size:12.5px;padding:6px 13px;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.12);border-radius:9px;cursor:pointer;color:#fff;font-weight:600;transition:all .15s;text-decoration:none;display:inline-block}
+.btn:hover{background:rgba(255,255,255,.22)}
+.msel{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.28);border-radius:9px;padding:3px 4px 3px 11px}
+.msel label{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#bccee2;font-weight:700}
+.msel select{background:#fff;color:var(--ink);border:none;border-radius:7px;padding:5px 8px;font-size:12.5px;font-weight:700;cursor:pointer;outline:none}
+.stamp{font-size:11px;color:#bccee2;width:100%;text-align:right;margin-top:2px}
+.tabs{display:flex;gap:7px;margin-bottom:18px;flex-wrap:wrap}
+.tab{padding:8px 15px;border-radius:10px;border:1px solid var(--line);background:#FFFCF5;cursor:pointer;font-weight:600;font-size:13px;color:var(--muted);display:flex;align-items:center;gap:7px;transition:all .15s}
+.tab:hover{border-color:#d3cbbb;transform:translateY(-1px)}
+.tab.active{color:var(--ink);border-color:#cdd6e0;box-shadow:var(--shadow);border-bottom:3px solid var(--navy)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:12px;margin-bottom:8px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;box-shadow:var(--shadow);transition:transform .15s}
+.kpi:hover{transform:translateY(-2px)}
+.kpi .lab{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+.kpi .val{font-size:25px;font-weight:700;margin:4px 0 2px;letter-spacing:-.5px;font-variant-numeric:tabular-nums;color:var(--navy)}
+.kpi .val.red{color:var(--red)}.kpi .val.amber{color:var(--amber)}.kpi .val.green{color:var(--green)}
+.kpi .note{font-size:11.5px;color:var(--muted)}
+.kpi .note.good{color:var(--green)}.kpi .note.warn{color:var(--red)}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-top:14px;box-shadow:var(--shadow)}
+.panel h2{font-size:12px;margin:0 0 12px;text-transform:uppercase;letter-spacing:.6px;color:var(--ink);font-weight:700;display:flex;align-items:center;gap:9px}
+.panel h2::before{content:"";width:3px;height:13px;background:var(--navy);border-radius:2px;display:inline-block;flex:none}
+.panel h2 .tagm{font-size:9.5px;background:#fbeccb;color:#8a5e00;padding:2px 8px;border-radius:999px;text-transform:none;letter-spacing:0;font-weight:600}
+.lead{font-size:13px;color:var(--muted);margin:-4px 0 4px;line-height:1.55}
+.chartbox{position:relative;height:260px}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th,td{text-align:right;padding:8px 9px;border-bottom:1px solid var(--line);vertical-align:top}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--muted);font-weight:700;font-size:10.5px;text-transform:uppercase;letter-spacing:.4px}
+tbody tr:hover{background:#faf7f0}
+.owner{font-size:11px;font-weight:700;color:var(--navy);background:#eef1fb;padding:2px 7px;border-radius:6px;white-space:nowrap}
+.rag{font-size:11px;font-weight:700;padding:2px 10px;border-radius:999px;white-space:nowrap}
+.rag.RED{background:var(--redbg);color:var(--red)}
+.rag.AMBER{background:var(--amberbg);color:var(--amber)}
+.rag.GREEN{background:var(--greenbg);color:var(--green)}
+.rag.NA{background:#f0efec;color:#8a8a8a}
+.flags{margin-top:2px}
+.flag{display:flex;gap:10px;padding:11px 13px;border-radius:11px;background:#faf7f0;border:1px solid var(--line);margin-bottom:8px;font-size:13px;line-height:1.5}
+.flag .ic{font-weight:700;flex:none}
+.flag.red{background:var(--redbg);border-color:#f3cfcb}
+.flag.amber{background:var(--amberbg);border-color:#f0dcae}
+.flag.green{background:var(--greenbg);border-color:#cce8d6}
+.banner{display:flex;gap:12px;padding:14px 16px;border-radius:13px;background:var(--redbg);border:1px solid #f3cfcb;margin-bottom:14px;align-items:flex-start}
+.banner .big{font-size:22px;line-height:1;flex:none}
+.banner b{color:var(--red)}
+.rocks{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.rock{border:1px solid var(--line);border-radius:12px;padding:13px 15px;background:#FFFCF5;position:relative}
+.rock.urgent{border-color:#f3cfcb;background:var(--redbg)}
+.rock .rnum{font-family:"Anton","Oswald",Impact,sans-serif;font-size:13px;color:var(--navy);letter-spacing:1px}
+.rock .rt{font-weight:700;font-size:14px;margin:3px 0 5px;letter-spacing:-.2px}
+.rock .rd{font-size:12px;color:var(--muted);line-height:1.45;margin-bottom:9px}
+.rock .rfoot{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.steps{display:flex;flex-direction:column;gap:9px}
+.step{display:flex;gap:12px;align-items:flex-start;padding:11px 14px;border:1px solid var(--line);border-radius:11px;background:#FFFCF5}
+.step .ph{font-family:"Anton","Oswald",Impact,sans-serif;font-size:12px;letter-spacing:.5px;color:#fff;background:var(--navy);padding:5px 9px;border-radius:8px;flex:none;min-width:118px;text-align:center;line-height:1.25}
+.step.peak .ph{background:var(--red)}
+.step.clear .ph{background:var(--green)}
+.step .sb{flex:1}
+.step .st{font-weight:700;font-size:13px}
+.step .ss{font-size:12px;color:var(--muted);margin-top:2px}
+.scen{font-size:11px;font-weight:700;padding:2px 9px;border-radius:999px}
+.scen.plan{background:var(--greenbg);color:var(--green)}
+.scen.cur{background:var(--amberbg);color:var(--amber)}
+.scen.worst{background:var(--redbg);color:var(--red)}
+.note2{font-size:11.5px;color:var(--muted);line-height:1.55;margin-top:10px;padding:10px 12px;background:#faf7f0;border:1px solid var(--line);border-radius:10px}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.bet{font-size:10px;font-weight:800;letter-spacing:.5px;padding:2px 8px;border-radius:6px;text-transform:uppercase;color:#fff}
+.gv{color:var(--green);font-weight:700}.bv{color:var(--red);font-weight:700}
+.vtable td,.vtable th{padding:6px 8px;font-variant-numeric:tabular-nums}
+.vtable tr.hd td{font-weight:800;background:#f4eddd}
+.vnote{font-size:10.5px;color:var(--muted);font-style:italic}
+.ctl{display:grid;grid-template-columns:172px 1fr 96px;align-items:center;gap:12px;margin:11px 0}
+.ctl label{font-size:12.5px;font-weight:600;color:var(--ink)}
+.ctl input[type=range]{width:100%;accent-color:var(--navy)}
+.ctl .vo{text-align:right;font-variant-numeric:tabular-nums;font-weight:700;color:var(--navy);font-size:13px}
+.poout{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:6px}
+.cccbar{display:flex;align-items:center;gap:10px;margin:8px 0;font-size:12.5px}
+.cccbar .cl{width:150px;font-weight:600}
+.cccbar .ct{flex:1;background:#efe9dd;border-radius:6px;height:18px;overflow:hidden}
+.cccbar .cf{display:block;height:100%;border-radius:6px}
+.cccbar .cv{width:160px;text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}
+.reset{font-size:11.5px;padding:5px 11px;border:1px solid var(--line);background:#fff;border-radius:8px;cursor:pointer;color:var(--navy);font-weight:600}
+.foot{margin-top:22px;font-size:11px;color:var(--muted);line-height:1.6;border-top:1px solid var(--line);padding-top:14px}
+.loaderr{padding:14px 16px;border-radius:13px;background:var(--amberbg);border:1px solid #f0dcae;margin-bottom:14px;font-size:13px;color:#8a5e00}
+@media(max-width:680px){.split{grid-template-columns:1fr}.rocks{grid-template-columns:1fr}.wordmark{font-size:28px;letter-spacing:5px}.step .ph{min-width:96px}.ctl{grid-template-columns:130px 1fr 70px}}
+/* password gate */
+.gate{position:fixed;inset:0;z-index:9999;background:radial-gradient(120% 140% at 0% 0%,#1A3FB0 0%,#00259A 45%,#001A6E 100%);display:flex;align-items:center;justify-content:center;padding:20px}
+.gatecard{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:32px 30px;width:100%;max-width:340px;box-shadow:0 10px 40px rgba(0,0,0,.25);text-align:center}
+.gateword{font-family:"Anton","Oswald","Arial Narrow Bold","Arial Narrow",Impact,sans-serif;font-size:34px;letter-spacing:3px;font-weight:700;color:var(--navy);line-height:1}
+.gatesub{font-size:12.5px;color:var(--muted);font-style:italic;margin:6px 0 22px}
+.gatecard input{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:10px;font-size:15px;text-align:center;letter-spacing:1px;outline:none}
+.gatecard input:focus{border-color:var(--navy)}
+.gatecard button{width:100%;margin-top:12px;padding:11px;border:none;border-radius:10px;background:var(--navy);color:#fff;font-size:14px;font-weight:700;cursor:pointer;transition:background .15s}
+.gatecard button:hover{background:var(--navy2)}
+.gateerr{font-size:12px;color:var(--red);margin-top:12px;min-height:16px}
+</style>
+</head>
+<body>
+<div id="gate" class="gate">
+  <div class="gatecard">
+    <div class="gateword">BOOKENDS</div>
+    <div class="gatesub">strategic cockpit — team access</div>
+    <input id="gatepass" type="password" placeholder="Enter passcode" autocomplete="off" autocapitalize="off"/>
+    <button id="gatebtn">Unlock</button>
+    <div id="gateerr" class="gateerr"></div>
+  </div>
+</div>
+<script>
+(function(){
+  var HASH="11bac86c2fb51522904f8f367e7a9433d82ee951a7ffb899e05a74f4ad3907c9";
+  var KEY="bookends_cockpit_unlock_v1";
+  var gate=document.getElementById("gate");
+  function unlock(){if(gate&&gate.parentNode)gate.parentNode.removeChild(gate);document.body.style.overflow="";}
+  if(localStorage.getItem(KEY)===HASH){unlock();return;}
+  document.body.style.overflow="hidden";
+  async function sha(s){var b=new TextEncoder().encode(s);var h=await crypto.subtle.digest("SHA-256",b);return Array.from(new Uint8Array(h)).map(function(x){return x.toString(16).padStart(2,"0");}).join("");}
+  async function tryit(){
+    var err=document.getElementById("gateerr");
+    try{
+      var h=await sha(document.getElementById("gatepass").value);
+      if(h===HASH){localStorage.setItem(KEY,HASH);unlock();}
+      else{err.textContent="Wrong passcode — try again.";}
+    }catch(e){err.textContent="Open this via the live https link to unlock.";}
+  }
+  document.getElementById("gatebtn").onclick=tryit;
+  document.getElementById("gatepass").addEventListener("keydown",function(e){if(e.key==="Enter")tryit();});
+  document.getElementById("gatepass").focus();
+})();
+</script>
+<header class="hero">
+  <div class="hero-in">
+    <div>
+      <div class="eyebrow">Strategic Cockpit · FY27 · Scaling Up</div>
+      <div class="wordmark">BOOKENDS</div>
+      <div class="tagline">the most respected hospitality group in our markets — BHAG ₹17 Cr EBITDA</div>
+    </div>
+    <div class="hero-right">
+      <div class="msel"><label>Month</label><select id="monthSel" onchange="onMonth(this.value)"></select></div>
+      <span class="pill snap" id="snapPill">Loading…</span>
+      <a class="btn" href="./update.html">✎ Update P&amp;L</a>
+      <button class="btn" onclick="location.reload()">↻ Refresh</button>
+      <div class="stamp" id="stamp"></div>
+    </div>
+  </div>
+</header>
+<div class="brandstripe"><i style="background:var(--bookends)"></i><i style="background:var(--capiche)"></i><i style="background:var(--aiko)"></i><i style="background:var(--odc)"></i><i style="background:var(--ghaslet)"></i></div>
+<div class="wrap">
+  <div id="loaderr"></div>
+  <div class="tabs" id="tabs"></div>
+  <div id="view"></div>
+  <div class="foot">
+    A live Scaling Up cockpit for the FY26-27 &amp; FY27-28 Strategic Business Plan (v5), prepared by Siddhant Shah · June 2026 · Confidential. Figures are fed monthly from the Tally P&amp;L via the Update page. Read monthly · update quarterly · rebuild at FY27 close. The ₹13.17 Cr EBITDA anchor is the optimistic case, conditional on COGS returning to 19%; the risk-adjusted band is ₹11.2–13.17 Cr.
+  </div>
+</div>
+
+<script id="seed" type="application/json">{
+  "meta": {
+    "title": "Bookends Strategic Cockpit",
+    "fy": "FY27",
+    "latestMonth": "FY27-05",
+    "anchorEbitdaCr": 13.17,
+    "band": "11.2–13.17",
+    "snapshotLabel": "Actuals · Apr–May FY27",
+    "updatedAt": "2026-06-20",
+    "updatedBy": "Seed (Apr–May FY27)"
+  },
+  "lines": [
+    {"key": "net_rev", "label": "Net Revenue (ex-GST)", "higherGood": true, "head": false, "computed": false, "note": "May beat budget by ₹43.5L"},
+    {"key": "cogs", "label": "Less: COGS (consumption)", "higherGood": false, "head": true, "computed": false, "note": "23.5% Apr / 21.4% May vs 19% budget — the single biggest variance driver"},
+    {"key": "gross_profit", "label": "Gross Profit", "higherGood": true, "head": true, "computed": true, "note": ""},
+    {"key": "sal_resto", "label": "Salary — Restaurant", "higherGood": false, "head": false, "computed": false, "note": "~₹53L resto staff + ~₹1L Facets"},
+    {"key": "sal_corp", "label": "Salary — Corporate", "higherGood": false, "head": false, "computed": false, "note": "Termination not as planned"},
+    {"key": "rent", "label": "Rent", "higherGood": false, "head": false, "computed": false, "note": "Revised to actual FY27 schedule; FY total ₹2.62 Cr"},
+    {"key": "electricity", "label": "Electricity", "higherGood": false, "head": false, "computed": false, "note": ""},
+    {"key": "staff_welfare", "label": "Staff Welfare", "higherGood": false, "head": false, "computed": false, "note": "One-off items (PG dinners, frisbee event, penthouse) removed forward"},
+    {"key": "staff_welfare_facets", "label": "Staff Welfare (Facets)", "higherGood": false, "head": false, "computed": false, "note": "incl Ranchi girls lunch"},
+    {"key": "housekeeping", "label": "Housekeeping", "higherGood": false, "head": false, "computed": false, "note": "Tightened with process review"},
+    {"key": "travelling", "label": "Travelling", "higherGood": false, "head": false, "computed": false, "note": "Facets + offside + marketing travel"},
+    {"key": "kitchen_equip", "label": "Kitchen Equipment & Utensil", "higherGood": false, "head": false, "computed": false, "note": ""},
+    {"key": "courier", "label": "Courier & Transport", "higherGood": false, "head": false, "computed": false, "note": ""},
+    {"key": "rent_maint", "label": "Rent Maintenance", "higherGood": false, "head": false, "computed": false, "note": "Outlet-wise revised"},
+    {"key": "repairs", "label": "Repairing & Maintenance", "higherGood": false, "head": false, "computed": false, "note": "Offside ₹80k + other ₹2L"},
+    {"key": "property_tax", "label": "Property Tax", "higherGood": false, "head": false, "computed": false, "note": ""},
+    {"key": "rnd", "label": "Research & Development", "higherGood": false, "head": false, "computed": false, "note": ""},
+    {"key": "vehicle_fuel", "label": "Vehicle Fuel & Service", "higherGood": false, "head": false, "computed": false, "note": "Fuel price increase"},
+    {"key": "online_platform", "label": "Online Platform", "higherGood": false, "head": false, "computed": false, "note": "Capiche Uni Zomato onboarding"},
+    {"key": "biz_promo", "label": "Business Promotion", "higherGood": false, "head": false, "computed": false, "note": "Ahm valet cost"},
+    {"key": "stationery", "label": "Stationery & Printing", "higherGood": false, "head": false, "computed": false, "note": "Switching to washable menus"},
+    {"key": "uniform", "label": "Uniform", "higherGood": false, "head": false, "computed": false, "note": ""},
+    {"key": "water", "label": "Water", "higherGood": false, "head": false, "computed": false, "note": ""},
+    {"key": "electric_exp", "label": "Electric Expense", "higherGood": false, "head": false, "computed": false, "note": "Merge with R&M"},
+    {"key": "software", "label": "Software", "higherGood": false, "head": false, "computed": false, "note": ""},
+    {"key": "internet", "label": "Internet", "higherGood": false, "head": false, "computed": false, "note": ""},
+    {"key": "legal", "label": "Legal", "higherGood": false, "head": false, "computed": false, "note": ""},
+    {"key": "office", "label": "Office", "higherGood": false, "head": false, "computed": false, "note": ""},
+    {"key": "prof_fee", "label": "Professional Fee", "higherGood": false, "head": false, "computed": false, "note": ""},
+    {"key": "marketing", "label": "Marketing", "higherGood": false, "head": false, "computed": false, "note": "Apr–Aug ₹11.2L/mo (in-house + agency); post-Aug ~₹5L — planned transition"},
+    {"key": "event_expense", "label": "Event Expense", "higherGood": false, "head": false, "computed": false, "note": ""},
+    {"key": "total_opex", "label": "Total Operating Expenses", "higherGood": false, "head": true, "computed": true, "note": ""},
+    {"key": "ebitda", "label": "EBITDA", "higherGood": true, "head": true, "computed": true, "note": "Apr −11% margin (loss) → May +15%"}
+  ],
+  "opexKeys": ["sal_resto","sal_corp","rent","electricity","staff_welfare","staff_welfare_facets","housekeeping","travelling","kitchen_equip","courier","rent_maint","repairs","property_tax","rnd","vehicle_fuel","online_platform","biz_promo","stationery","uniform","water","electric_exp","software","internet","legal","office","prof_fee","marketing","event_expense"],
+  "budgetNew": {
+    "sal_resto": 54.0, "sal_corp": 22.0, "rent": 22.0, "electricity": 6.0, "staff_welfare": 7.6,
+    "staff_welfare_facets": 1.69, "housekeeping": 3.0, "travelling": 2.0, "kitchen_equip": 2.14,
+    "courier": 3.0, "rent_maint": 1.15, "repairs": 2.8, "property_tax": 0.52, "rnd": 1.0,
+    "vehicle_fuel": 1.5, "online_platform": 4.5, "biz_promo": 1.0, "stationery": 1.5, "uniform": 0.54,
+    "water": 0.23, "electric_exp": 0.55, "software": 2.0, "internet": 0.5, "legal": 0.44,
+    "office": 0.25, "prof_fee": 0.9, "marketing": 8.0
+  },
+  "monthOrder": ["FY27-04", "FY27-05"],
+  "months": {
+    "FY27-04": {
+      "label": "Apr FY27",
+      "budget": {"net_rev":203.4,"cogs":38.65,"gross_profit":164.79,"sal_resto":53.0,"sal_corp":20.0,"rent":28.0,"electricity":6.0,"staff_welfare":7.6,"staff_welfare_facets":1.69,"housekeeping":4.0,"travelling":1.0,"kitchen_equip":2.14,"courier":5.8,"rent_maint":0.71,"repairs":2.0,"property_tax":0.52,"rnd":0.08,"vehicle_fuel":1.29,"online_platform":4.39,"biz_promo":0.22,"stationery":1.5,"uniform":0.54,"water":0.23,"electric_exp":0.55,"software":2.0,"internet":0.5,"legal":0.44,"office":0.25,"prof_fee":0.9,"marketing":5.83,"event_expense":null,"total_opex":151.18,"ebitda":13.6},
+      "actual": {"net_rev":201.8,"cogs":47.46,"gross_profit":154.34,"sal_resto":59.6,"sal_corp":17.59,"rent":25.17,"electricity":6.11,"staff_welfare":11.85,"staff_welfare_facets":2.89,"housekeeping":5.49,"travelling":9.70,"kitchen_equip":4.66,"courier":1.95,"rent_maint":0.87,"repairs":2.77,"property_tax":0,"rnd":0,"vehicle_fuel":1.49,"online_platform":4.64,"biz_promo":0.27,"stationery":2.09,"uniform":4.03,"water":0.15,"electric_exp":0.91,"software":0.82,"internet":0.10,"legal":0.01,"office":0.43,"prof_fee":1.32,"marketing":11.39,"event_expense":null,"total_opex":176.30,"ebitda":-21.97}
+    },
+    "FY27-05": {
+      "label": "May FY27",
+      "budget": {"net_rev":222.8,"cogs":43.55,"gross_profit":179.28,"sal_resto":53.0,"sal_corp":20.0,"rent":28.0,"electricity":6.0,"staff_welfare":7.6,"staff_welfare_facets":1.69,"housekeeping":4.0,"travelling":1.0,"kitchen_equip":2.14,"courier":5.8,"rent_maint":0.71,"repairs":2.0,"property_tax":0.52,"rnd":0.08,"vehicle_fuel":1.29,"online_platform":4.39,"biz_promo":0.22,"stationery":1.5,"uniform":0.54,"water":0.23,"electric_exp":0.55,"software":2.0,"internet":0.5,"legal":0.44,"office":0.25,"prof_fee":0.9,"marketing":5.83,"event_expense":null,"total_opex":151.18,"ebitda":28.1},
+      "actual": {"net_rev":266.3,"cogs":57.11,"gross_profit":209.2,"sal_resto":53.95,"sal_corp":24.37,"rent":25.65,"electricity":8.07,"staff_welfare":10.86,"staff_welfare_facets":2.41,"housekeeping":5.51,"travelling":2.10,"kitchen_equip":1.90,"courier":2.14,"rent_maint":0.87,"repairs":4.30,"property_tax":0,"rnd":0,"vehicle_fuel":2.04,"online_platform":4.06,"biz_promo":0.93,"stationery":2.85,"uniform":0.17,"water":0.02,"electric_exp":1.24,"software":0.48,"internet":0.19,"legal":0.25,"office":0.47,"prof_fee":1.78,"marketing":9.52,"event_expense":2.68,"total_opex":168.80,"ebitda":40.40}
+    }
+  },
+  "config": {
+    "bannerHtml": "<b>One genuine RED: COGS.</b> 23.5% April, 21.4% May vs a 19% budget (consumption variance −₹8.8L in April alone) — War Room active. April closed at an EBITDA <b>loss of −₹22L</b> on year-opening one-offs; May recovered to <b>+₹40L (+15%)</b> and beat budget. Everything else on the scoreboard is Green or Amber; the marketing Amber is by design through August.",
+    "honestRead": "Three things are simultaneously true going into FY27, and the plan honours all three: (1) the business has scale (₹23.1 Cr FY26 revenue) but not yet sustained profitability (₹0.53 Cr cleaned EBITDA, and April FY27 was an outright loss); (2) FY27 demands a step-change to ₹13.17 Cr — explicitly the optimistic case, conditional on COGS returning to 19% and ODC doubling to ₹10 Cr; (3) four new outlets land on top of all of that, funded by a family-office bridge that peaks dangerously in September and only clears if Q4 delivers.",
+    "kpis": [
+      {"lab": "EBITDA · Apr→May actual", "val": "−₹22L → +₹40L", "cls": "amber", "note": "April was a loss (year-opening one-offs); May +15% margin, beat budget by ₹12.3L"},
+      {"lab": "COGS actual", "val": "23.5% → 21.4%", "cls": "red", "note": "Apr 23.5% · May 21.4% vs 19% budget · every 1pt = ₹40L · ACTIVE CRISIS"},
+      {"lab": "Net revenue · May", "val": "₹2.66 Cr", "cls": "green", "note": "beat budget by ₹43.5L · Apr ₹2.02 Cr (on budget)"},
+      {"lab": "FY27 EBITDA anchor", "val": "₹13.17 Cr", "cls": "amber", "note": "34% existing · band ₹11.2–13.17 Cr · COGS-conditional"},
+      {"lab": "Parent loans · BS 15 Jun", "val": "₹25.4 Cr", "cls": "", "note": "unsecured family funding already on the books — the bridge is deep in"},
+      {"lab": "Sept bridge peak", "val": "₹7.24 Cr+", "cls": "amber", "note": "re-model required · weakest season"}
+    ],
+    "riskFlags": [
+      {"c": "red", "i": "●", "t": "<b>COGS is the one genuine RED.</b> 23.5% April, 21.4% May against a 19% target. Every 1pt = ₹40L of EBITDA. The ₹13.17 Cr anchor is conditional on closing this. COGS War Room (Rock 8) is active — weekly meeting, per-outlet yield audits, supplier renegotiation calendar live."},
+      {"c": "amber", "i": "◆", "t": "<b>Marketing spend above 3% through August — by design.</b> Agency + in-house run in parallel during the handover (HoM hired). A planned transition cost, not an overrun. Normalises to ~2.7% from September."},
+      {"c": "amber", "i": "◆", "t": "<b>September is the peak-crunch month.</b> Gandhinagar opening + Mumbai pre-opening/opening + Beshak signing now all cluster here, in the weakest season. Peak likely exceeds ₹7.24 Cr — re-model required."},
+      {"c": "amber", "i": "◆", "t": "<b>Key-person concentration.</b> SS and AJ each own 4–5 critical functions plus most rocks, and the exec team is green by our own admission. Tech lead now named; SS still to deputise one of {bridge, new-outlet dev}."},
+      {"c": "green", "i": "✓", "t": "<b>May recovery is real.</b> April's −₹22L EBITDA loss became +₹40.4L (+15% margin) in May, beating budget. ODC Sales Head hired; 50% advance now mandatory on bookings > ₹50,000."}
+    ],
+    "score": [
+      ["Monthly Revenue", "≥95% of plan", "85–95%", "<85%", "CFO / SS", "GREEN"],
+      ["EBITDA % (consolidated)", "On/above plan", "Within 2pts", "<2pts below", "CFO", "AMBER"],
+      ["COGS %", "<19%", "19–21%", ">21%", "AS / PP / YG", "RED"],
+      ["Inventory Days", "<15", "15–20", ">20", "Stock Tally Head", "RED"],
+      ["Bridge vs plan", "On plan", "+10%", "+25%", "CFO", "AMBER"],
+      ["ODC monthly revenue", "≥95%", "80–95%", "<80%", "VV", "GREEN"],
+      ["Rock progress", "On plan", "1-wk slip", ">1-wk slip", "SS", "AMBER"],
+      ["New outlet ramp", "≥90%", "75–90%", "<75%", "HK", "AMBER"],
+      ["Role overlap conflicts", "0", "1–2", "3+", "AJ", "AMBER"],
+      ["Marketing Spend %", "<3%", "3–4%", ">4%", "AJ / HoM", "AMBER"],
+      ["Staff Attrition (annualised)", "<35%", "35–50%", ">50%", "AJ", "NA"]
+    ],
+    "scoreNote": {
+      "9": "Above 3% through August by design (agency + in-house parallel). Annotated as a planned transition cost; normalises from September.",
+      "10": "New metric — live from Q2. Staff retention is now a scoreboard metric, not a Q1 to-do."
+    },
+    "rocks": [
+      [1, "Org structure audit", "Org mapped. Zero unresolved role overlaps. Q1-critical hires made. Staff retention metric live.", "AJ", false],
+      [2, "Ghaslet — brand year begins", "Brand identity, marketing plan, content cadence locked. Revenue is not the target.", "RB", false],
+      [3, "Catering full rebuild", "SOP rulebook, T&C, vendor policy, billing, season/offseason pricing, brochure, client database.", "VV", false],
+      [4, "AI for systems & efficiency", "Inventory control + KPI dashboard scoped. Dashboard live Q2.", "DK", false],
+      [5, "P&L habit — read, segregate, own", "Every leadership owner reads their P&L lines by the 10th of each month and explains variances. No exception.", "AJ", false],
+      [6, "Marketing in-house build", "HoM hired. In-house team build underway; agency off-boarded by September.", "AJ", false],
+      [7, "Accounts hardening (3 sub-projects)", "(a) 100% PO compliance via Petpooja. (b) Structured petty cash. (c) Zoho maker/checker. Tracked separately.", "AS", false],
+      [8, "COGS War Room — NEW", "Weekly COGS meeting running. Per-outlet yield audits done. Supplier renegotiation calendar with named dates live. Weekly COGS dashboard active.", "PP + YG", true]
+    ],
+    "bridge": {
+      "steps": [
+        ["Apr 2026", "₹2.88 Cr draw", "Largest single-month draw — pre-FY27 pending capex + Mumbai signing. (Gandhinagar build now shifts later with its September opening.)", "normal"],
+        ["Sep 2026 — PEAK", "₹7.24 Cr+ (re-model)", "Gandhinagar opening + Mumbai pre-opening &amp; opening + Beshak signing now all cluster here. Highest bridge-risk month, in the weakest season — peak likely exceeds ₹7.24 Cr.", "peak"],
+        ["Feb 2027", "Bridge cleared", "Q4 portfolio strength (₹250L+ EBITDA/month Jan–Mar) repays the bridge.", "clear"],
+        ["Mar 2027", "+₹2.90 Cr", "FY27 closes net cash-positive — in the 19% COGS case.", "clear"]
+      ],
+      "capexLoc": [
+        ["Capiche Jaipur (kitchen partner)", "Aug-26", "₹0.40 Cr"],
+        ["Capiche Gandhinagar", "Sep-26", "₹1.84 Cr"],
+        ["Capiche Mumbai", "Sep-26", "₹2.81 Cr"],
+        ["Beshak Ahmedabad (ground-up)", "Dec-26", "₹5.09 Cr"],
+        ["Pre-FY27 pending capex", "Apr-26", "₹1.00 Cr"]
+      ],
+      "funding": [
+        ["Operating cash (existing + new)", "+₹12.98 Cr", "green"],
+        ["Family-office bridge (peak need)", "₹7.24 Cr", "amber"],
+        ["Recommended standby (peak + 30%)", "₹10.0 Cr", "navy"],
+        ["Net FY27 surplus", "+₹2.90 Cr", "green"],
+        ["Bridge outstanding (Mar-27)", "₹0.00", "green"]
+      ],
+      "cogsScen": [
+        ["Returns to 19% (plan)", "₹13.17 Cr", "+₹2.90 Cr", "plan"],
+        ["Holds at 21% (current)", "₹12.4 Cr", "+₹2.1 Cr", "cur"],
+        ["Holds at 23% (worst case)", "₹11.2 Cr", "+₹0.9 Cr", "worst"]
+      ],
+      "tripwires": [
+        ["Bridge > ₹8.5 Cr at any point", "Emergency cash review within 48 hours. Defer non-critical capex. SS + CFO + family-office contact.", "red"],
+        ["Mumbai Month 3 < 60% of plan", "Full-day leadership reset. Bridge timeline revision. Beshak Dec capex decision reviewed.", "amber"],
+        ["ODC invoices > 45 days outstanding", "Collections escalation. New bookings require full prepay until AR < 30 days.", "amber"],
+        ["COGS > 22% at Q2 end", "Escalate the War Room. Pricing + sourcing levers pulled harder; review against the 23% scenario.", "amber"],
+        ["COMBINED: COGS ~22% AND Mumbai < 60% at M3 — NEW", "Treat as one trigger — plausibly pushes the bridge past ₹8.5 Cr. SS + CFO + family office, freeze Beshak capex, model the combined peak.", "red"]
+      ],
+      "cashNote": "Two cash fragilities to name: (1) Repayment is a single-quarter bullet — the whole bridge clears on Jan–Mar throwing off ₹250L+/month, with no buffer if Q4 disappoints by even 10%. (2) The ₹10 Cr facility is a single-provider family-office line — confirm it is documented &amp; committed, not a handshake, before the September peak, and pre-arrange a fallback working-capital line. <b>Reality from the books (BS 15 Jun):</b> ₹25.4 Cr of unsecured parent loans already sit on the balance sheet (Siddhant ₹22.8 Cr, Mitaben ₹1.6 Cr, Vidhiben ₹1.0 Cr) — the bridge is not a future facility, it is already substantially drawn. Beshak villa WIP is ₹1.95 Cr spent of the ₹5.09 Cr commitment. Confirm how much of the ₹10 Cr FY27 standby remains as undrawn headroom going into September.",
+      "chart": {
+        "labels": ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar"],
+        "bal": [2.88, 2.82, 3.93, 5.58, 5.54, 7.24, 6.53, 6.54, 5.08, 2.59, 0, 0],
+        "opcf": [-0.01, 0.13, 0.39, 0.38, 0.60, 0.34, 0.71, 1.01, 1.45, 2.49, 2.76, 2.74]
+      }
+    },
+    "risks": [
+      ["1. COGS doesn't migrate to 19%", "Every 1pt = ₹40L. 23% case = ₹11.2 Cr EBITDA, +₹0.9 Cr cash.", "ALREADY TRIGGERED — Apr 23.5%, May 21.4%.", "COGS War Room active (Rock 8): weekly meeting, per-outlet yield audits, supplier renegotiation calendar.", "red"],
+      ["2. Mumbai underperforms ramp", "The swing factor — mature contribution exceeds Jaipur + Gandhinagar + Beshak combined.", "Pre-opening reservation < 40% Surat launch-week. Month 3 < 60% of Surat month-3.", "₹10–15L paid push pre-approved (flagged as a floor — likely under-sized). Month 3: full-day reset. Beshak Dec capex revisited.", "amber"],
+      ["3. ODC plateaus at ₹8 Cr", "₹1.5 Cr revenue miss.", "Q2 pipeline < ₹7 Cr annualised.", "ODC Sales Head hire accelerated. VV reviews pipeline monthly. Catering rebuild reviewed.", "amber"],
+      ["4. Headcount growth breaks quality", "Brand promise breaks. Hardest to recover late.", "Mystery diner < 7.5/10 at 2+ outlets same month.", "HK triggers full outlet audit. Manager + SOP retraining within 2 weeks. No new opening until cleared.", "amber"],
+      ["5. Beshak underperforms — capital committed pre-proof", "₹1.5 Cr FY27 miss. FY28 loses ₹4–5 Cr. ₹5.09 Cr already committed (₹1.95 Cr spent).", "Month 2 < 50% of Capiche Piplod launch trajectory.", "Jan–Feb re-positioning sprint. FY28 scale decision deferred to Apr 2027. FLAG: stage capex behind a cheap concept test rather than commit-then-pivot.", "amber"],
+      ["6. Correlated / combined stress — NEW", "2–3 tripwires firing together in one soft quarter — the real failure mode.", "COGS ~22% AND Mumbai < 60% at Month 3 in the same window.", "Treat as a single trigger — bridge plausibly > ₹8.5 Cr. SS + CFO + family office, freeze Beshak capex, model combined peak.", "red"],
+      ["7. Bridge provider / single-line risk — NEW", "Facility pulled/repriced at Sep peak = existential.", "Facility undocumented, or parent liquidity signal at peak.", "Confirm ₹10 Cr is papered &amp; committed now. Pre-arrange a fallback working-capital line as backstop.", "red"],
+      ["8. Key-person concentration — NEW", "Two people are the bottleneck; the model assumes they don't hit their limit.", "2+ rocks owned by the same person slip in the same month.", "Reassign the DRI, don't coach. Tech lead now named; SS still deputises one of {bridge, new-outlet dev}.", "amber"]
+    ],
+    "folio": [
+      ["Capiche", "THE BET", "7 (4 + 3 new)", "₹27 Cr", "Scale aggressively. Replicable via central kitchen.", "Mumbai ramp", "var(--capiche)"],
+      ["Aiko", "THE QUIETLY-GROWN", "2", "₹7 Cr", "Defend, don't expand in FY27. Define what Aiko owns.", "Identity drift", "var(--aiko)"],
+      ["Beshak", "THE NEW LAUNCH", "1 (Dec)", "₹1.5 Cr", "Test the concept. FY28 tells us if it scales.", "Concept clarity; capital pre-proof", "var(--ghaslet)"],
+      ["ODC / Catering", "THE ENGINE", "CK-fed", "₹10 Cr", "Double from FY26. Full rebuild. 50% advance mandatory.", "Scale quality", "var(--odc)"],
+      ["Ghaslet", "THE OPTION", "product", "Contribution", "Brand-building year. PMF before revenue scale.", "Distribution", "var(--navy)"]
+    ],
+    "traj": [
+      ["Outlets (year-end)", "6", "10", "14–15"],
+      ["Revenue (total)", "₹23.1 Cr", "₹45.1 Cr", "₹75–80 Cr*"],
+      ["Capiche", "₹12.0 Cr", "₹27.0 Cr", "₹42.0 Cr"],
+      ["Aiko", "₹6.0 Cr", "₹7.0 Cr", "₹10.0 Cr"],
+      ["Beshak", "—", "₹1.5 Cr", "₹4–6 Cr*"],
+      ["ODC / Catering", "₹5.0 Cr", "₹10.0 Cr", "₹17.0 Cr"],
+      ["COGS %", "25%", "19% target", "20%"],
+      ["EBITDA", "₹0.53 Cr", "₹13.17 Cr", "₹20.0 Cr"],
+      ["Headcount", "305", "~420", "~600"]
+    ],
+    "trajChart": {
+      "labels": ["FY26", "FY27", "FY28*"],
+      "rev": [23.1, 45.1, 77.5],
+      "ebitda": [0.53, 13.17, 20.0]
+    },
+    "outletRev": [
+      ["Capiche · Ambli Ahmedabad", 129.0, "var(--capiche)"],
+      ["Aiko · Ahmedabad", 92.3, "var(--aiko)"],
+      ["Capiche · Vesu Surat", 88.6, "var(--capiche)"],
+      ["Aiko · Pal Surat", 81.9, "var(--aiko)"],
+      ["Capiche · Piplod Surat", 67.4, "var(--capiche)"],
+      ["Capiche 2.0 · Ahmedabad", 65.8, "var(--capiche)"],
+      ["Aggregator sales (U/s 9(5))", 48.6, "var(--muted)"],
+      ["Party & Event", 24.2, "var(--odc)"]
+    ],
+    "rhythm": [
+      ["Daily Huddle", "10–15 min · every morning", "Outlet teams + a corporate stand-up (SS/AJ + rock DRIs)", "Yesterday's sales & COGS/wastage number, today's plan, one blocker each — \"where are you stuck?\" During the War Room, the daily COGS + wastage check lives here."],
+      ["Weekly Tactical", "60–90 min · same day weekly", "Leadership team — the 8 rock DRIs", "Rock progress vs done-when, every scoreboard Red, and the week's single priority. The weekly COGS War Room meeting feeds straight into this."],
+      ["Monthly Management", "Half day · by the 10th", "All function owners (FACe)", "The P&L habit (Rock 5): every owner reads and explains their own P&L lines and variances — straight off the Budget Variance tab. Full 11-metric scoreboard review."],
+      ["Quarterly Planning", "1 day · offsite", "Leadership + a family-office touchpoint", "Reset the 8 rocks, set next quarter's Critical Number + theme, re-model the bridge, and celebrate/reward the quarter's theme win."],
+      ["Annual Rebuild", "1–2 days · at FY27 close", "Leadership + family office", "Rebuild Book One, review/reset the BHAG, set the formal FY28 plan (April 2027, once Mumbai Q3 data is in), and run the people / Topgrading review."]
+    ],
+    "poo": {"rev": 3867, "cogsBase": 19, "ebitda": 1317, "opex": 1815, "dio": 34, "dso": 4, "dpo": 20}
+  }
+}
+</script>
+<script>
+/* ================= DATA LOADING ================= */
+let DATA=JSON.parse(document.getElementById("seed").textContent);
+let charts=[];
+let current="risk";
+let currentMonth=DATA.meta.latestMonth;
+
+const TABS=[
+ ["risk","◆ Live Risk View"],
+ ["score","📊 Scoreboard"],
+ ["variance","📈 Budget Variance"],
+ ["rocks","🎯 The 8 Rocks"],
+ ["rhythm","🔁 Rhythm & Focus"],
+ ["cash","💰 Cash Bridge"],
+ ["power","🔑 Power of One"],
+ ["risks","⚠️ Risk Register"],
+ ["folio","🍽 Portfolio & Trajectory"]
+];
+
+async function init(){
+  try{
+    const r=await fetch("./data.json",{cache:"no-store"});
+    if(r.ok){
+      const j=await r.json();
+      if(j&&j.months&&j.lines){DATA=j;}
+    }else{
+      showLoadErr("Showing the built-in snapshot — data.json returned "+r.status+". Once it's published to the repo this will go live.");
+    }
+  }catch(e){
+    showLoadErr("Showing the built-in snapshot — couldn't fetch data.json (open via the https link to load live figures).");
+  }
+  currentMonth=(DATA.meta&&DATA.meta.latestMonth)||DATA.monthOrder[DATA.monthOrder.length-1];
+  buildHeader();
+  render();
+}
+function showLoadErr(msg){
+  const e=document.getElementById("loaderr");
+  if(e){e.className="loaderr";e.textContent=msg;}
+}
+function buildHeader(){
+  const sel=document.getElementById("monthSel");
+  sel.innerHTML=DATA.monthOrder.map(m=>`<option value="${m}"${m===currentMonth?" selected":""}>${DATA.months[m].label}</option>`).join("");
+  document.getElementById("snapPill").textContent=(DATA.meta&&DATA.meta.snapshotLabel)||"Actuals";
+  const st=document.getElementById("stamp");
+  if(DATA.meta&&DATA.meta.updatedAt){st.textContent="updated "+DATA.meta.updatedAt+(DATA.meta.updatedBy?" · "+DATA.meta.updatedBy:"");}
+}
+function onMonth(m){currentMonth=m;if(current==="variance")render();}
+
+/* ================= HELPERS ================= */
+const C=()=>DATA.config;
+function lineByKey(k){return DATA.lines.find(l=>l.key===k);}
+function mget(month,scope,key){const m=DATA.months[month];return m&&m[scope]?m[scope][key]:null;}
+function prevMonth(month){const i=DATA.monthOrder.indexOf(month);return i>0?DATA.monthOrder[i-1]:null;}
+function fL(x){return x==null?'—':(x<0?'−'+Math.abs(x).toFixed(2):x.toFixed(2));}
+function fSign(x){return x==null?'—':(x>=0?'+':'−')+Math.abs(x).toFixed(2);}
+function vcls(a,b,hg){if(a==null||b==null)return "";const v=a-b;if(Math.abs(v)<0.005)return "";const good=hg?v>0:v<0;return good?"gv":"bv";}
+function cogsPct(month,scope){const c=mget(month,scope,"cogs"),r=mget(month,scope,"net_rev");return (c!=null&&r)?c/r*100:null;}
+function marginPct(month,scope){const e=mget(month,scope,"ebitda"),r=mget(month,scope,"net_rev");return (e!=null&&r)?e/r*100:null;}
+
+/* ================= TABS / RENDER ================= */
+function buildTabs(){
+  const t=document.getElementById("tabs");t.innerHTML="";
+  TABS.forEach(([k,label])=>{
+    const el=document.createElement("div");el.className="tab"+(k===current?" active":"");
+    el.textContent=label;el.onclick=()=>{current=k;render();};t.appendChild(el);
+  });
+}
+function render(){
+  charts.forEach(c=>{try{c.destroy();}catch(e){}});charts=[];
+  buildTabs();
+  const v=document.getElementById("view");
+  if(current==="risk")v.innerHTML=renderRisk();
+  if(current==="score")v.innerHTML=renderScore();
+  if(current==="variance")v.innerHTML=renderVariance(currentMonth);
+  if(current==="rocks")v.innerHTML=renderRocks();
+  if(current==="rhythm")v.innerHTML=renderRhythm();
+  if(current==="cash"){v.innerHTML=renderCash();drawBridge();}
+  if(current==="power"){v.innerHTML=renderPower();recalcPOO();}
+  if(current==="risks")v.innerHTML=renderRisks();
+  if(current==="folio"){v.innerHTML=renderFolio();drawTraj();}
+}
+
+/* ---------- RISK VIEW ---------- */
+function renderRisk(){
+  const cards=C().kpis.map(k=>`<div class="kpi"><div class="lab">${k.lab}</div><div class="val ${k.cls||''}">${k.val}</div><div class="note">${k.note||''}</div></div>`).join("");
+  const banner=`<div class="banner"><span class="big">🚨</span><div>${C().bannerHtml||''}</div></div>`;
+  const flags=C().riskFlags.map(f=>`<div class="flag ${f.c}"><span class="ic">${f.i}</span><span>${f.t}</span></div>`).join("");
+  return `<div class="cards">${cards}</div>`+banner+
+   `<div class="panel"><h2>What needs attention</h2><div class="flags">${flags}</div></div>`+
+   `<div class="panel"><h2>The honest read</h2><p class="lead">${C().honestRead||''}</p></div>`;
+}
+
+/* ---------- SCOREBOARD ---------- */
+function autoRag(metric){
+  // live RAG for the P&L-derived metrics, computed from the latest month
+  const m=DATA.meta.latestMonth;
+  if(metric==="Monthly Revenue"){const a=mget(m,"actual","net_rev"),b=mget(m,"budget","net_rev");if(a==null||!b)return null;const p=a/b*100;return p>=95?"GREEN":p>=85?"AMBER":"RED";}
+  if(metric==="EBITDA % (consolidated)"){const am=marginPct(m,"actual"),bm=marginPct(m,"budget");if(am==null||bm==null)return null;const d=am-bm;return d>=0?"GREEN":d>=-2?"AMBER":"RED";}
+  if(metric==="COGS %"){const p=cogsPct(m,"actual");if(p==null)return null;return p<19?"GREEN":p<=21?"AMBER":"RED";}
+  if(metric==="Marketing Spend %"){const a=mget(m,"actual","marketing"),r=mget(m,"actual","net_rev");if(a==null||!r)return null;const p=a/r*100;return p<3?"GREEN":p<=4?"AMBER":"RED";}
+  return null;
+}
+function renderScore(){
+  const SN=C().scoreNote||{};
+  const rows=C().score.map((r,i)=>{
+    const note=SN[i]?`<div style="font-size:11px;color:var(--muted);margin-top:3px">${SN[i]}</div>`:"";
+    const live=autoRag(r[0]);
+    const rag=live||r[5];
+    const liveTag=live?` <span class="tagm" title="auto-computed from ${DATA.months[DATA.meta.latestMonth].label}">live</span>`:"";
+    return `<tr><td><b>${r[0]}</b>${liveTag}${note}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td><span class="owner">${r[4]}</span></td><td><span class="rag ${rag}">${rag==="NA"?"Q2":rag}</span></td></tr>`;
+  }).join("");
+  return `<div class="panel"><h2>The Scoreboard — 11 metrics <span class="tagm">reviewed monthly</span></h2>`+
+   `<p class="lead">Red triggers an intervention plan, not a discussion. Two consecutive Ambers are treated as Red. Metrics tagged <span class="tagm">live</span> auto-colour from the latest month's P&amp;L.</p>`+
+   `<table><thead><tr><th>Metric</th><th>Green</th><th>Amber</th><th>Red</th><th>Owner</th><th>${DATA.months[DATA.meta.latestMonth].label}</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+
+/* ---------- BUDGET VARIANCE ---------- */
+function computeMisses(month){
+  const b=DATA.months[month].budget,a=DATA.months[month].actual;
+  const items=[];
+  DATA.lines.forEach(l=>{
+    if(l.computed||l.key==="net_rev")return;
+    const bv=b[l.key],av=a[l.key];if(bv==null||av==null)return;
+    const mag=l.higherGood?(bv-av):(av-bv); // positive = unfavourable
+    if(mag>0.05)items.push({l,bv,av,mag});
+  });
+  items.sort((x,y)=>y.mag-x.mag);
+  const top=items.slice(0,5);
+  const flags=top.map(it=>{
+    const cls=it.mag>=5?"red":"amber";const ic=it.mag>=5?"●":"▲";
+    const note=it.l.note?` — ${it.l.note}`:"";
+    return `<div class="flag ${cls}"><span class="ic">${ic}</span><span><b>${it.l.label} over by ₹${it.mag.toFixed(1)}L</b> (₹${it.av.toFixed(2)}L actual vs ₹${it.bv.toFixed(2)}L budget)${note}</span></div>`;
+  });
+  // favourable highlights
+  const eA=a.ebitda,eB=b.ebitda,rA=a.net_rev,rB=b.net_rev;
+  const wins=[];
+  if(rA!=null&&rB!=null&&rA>rB)wins.push(`revenue (+₹${(rA-rB).toFixed(1)}L)`);
+  if(eA!=null&&eB!=null&&eA>eB)wins.push(`EBITDA (+₹${(eA-eB).toFixed(1)}L)`);
+  if(wins.length)flags.push(`<div class="flag green"><span class="ic">✓</span><span><b>${DATA.months[month].label} beat budget on ${wins.join(" and ")}</b> — EBITDA ₹${(eA!=null?eA.toFixed(1):'—')}L at ${marginPct(month,"actual")!=null?marginPct(month,"actual").toFixed(0):'—'}% margin.</span></div>`);
+  if(!flags.length)flags.push(`<div class="flag green"><span class="ic">✓</span><span>No material unfavourable variances this month.</span></div>`);
+  return flags.join("");
+}
+function renderVariance(month){
+  const b=DATA.months[month].budget,a=DATA.months[month].actual,bn=DATA.budgetNew||{};
+  const eA=a.ebitda,eB=b.ebitda,emar=marginPct(month,"actual");
+  const cogsA=cogsPct(month,"actual"),cogsB=cogsPct(month,"budget");
+  const cogsVar=(a.cogs!=null&&b.cogs!=null)?a.cogs-b.cogs:null;
+  const opexVar=(a.total_opex!=null&&b.total_opex!=null)?a.total_opex-b.total_opex:null;
+  const ebCls=eA==null?'':(eA<0?'red':(eB!=null&&eA>=eB?'green':'amber'));
+  const ebNote=(eA!=null&&eB!=null)?((eA>=eB?'beat':'missed')+' budget by ₹'+Math.abs(eA-eB).toFixed(1)+'L · '+(emar!=null?emar.toFixed(0)+'% margin':'')):'';
+  const cards=`<div class="cards">
+     <div class="kpi"><div class="lab">${DATA.months[month].label} EBITDA</div><div class="val ${ebCls}">${eA==null?'—':(eA<0?'−₹'+Math.abs(eA).toFixed(1)+'L':'+₹'+eA.toFixed(1)+'L')}</div><div class="note ${eA!=null&&eB!=null&&eA>=eB?'good':'warn'}">${ebNote}</div></div>
+     <div class="kpi"><div class="lab">${DATA.months[month].label} COGS %</div><div class="val ${cogsA==null?'':(cogsA<19?'green':cogsA<=21?'amber':'red')}">${cogsA==null?'—':cogsA.toFixed(1)+'%'}</div><div class="note">vs ${cogsB==null?'—':cogsB.toFixed(1)+'%'} budget · target 19%</div></div>
+     <div class="kpi"><div class="lab">COGS variance</div><div class="val ${cogsVar==null?'':(cogsVar>0?'red':'green')}">${cogsVar==null?'—':(cogsVar>0?'−':'+')+'₹'+Math.abs(cogsVar).toFixed(1)+'L'}</div><div class="note">actual vs budget consumption</div></div>
+     <div class="kpi"><div class="lab">Opex variance</div><div class="val ${opexVar==null?'':(opexVar>0?'red':'green')}">${opexVar==null?'—':(opexVar>0?'−':'+')+'₹'+Math.abs(opexVar).toFixed(1)+'L'}</div><div class="note">₹${a.total_opex!=null?a.total_opex.toFixed(1):'—'}L actual vs ₹${b.total_opex!=null?b.total_opex.toFixed(1):'—'}L budget</div></div>
+   </div>`;
+  // trend strip across all months
+  const trendRows=[
+    ["Net Revenue (₹L)",m=>fL(mget(m,"actual","net_rev"))],
+    ["COGS %",m=>{const p=cogsPct(m,"actual");return p==null?'—':p.toFixed(1)+'%';}],
+    ["EBITDA (₹L)",m=>{const e=mget(m,"actual","ebitda");return e==null?'—':(e<0?'−'+Math.abs(e).toFixed(1):e.toFixed(1));}],
+    ["EBITDA margin",m=>{const p=marginPct(m,"actual");return p==null?'—':p.toFixed(0)+'%';}]
+  ];
+  const trendHead=`<th>Particulars</th>`+DATA.monthOrder.map(m=>`<th>${DATA.months[m].label}</th>`).join("");
+  const trendBody=trendRows.map(r=>`<tr><td><b>${r[0]}</b></td>${DATA.monthOrder.map(m=>`<td>${r[1](m)}</td>`).join("")}</tr>`).join("");
+  const trend=`<div class="panel"><h2>Trend across the year <span class="tagm">actuals</span></h2><table class="vtable"><thead><tr>${trendHead}</tr></thead><tbody>${trendBody}</tbody></table></div>`;
+  // full table for selected month
+  const rows=DATA.lines.map(l=>{
+    const bv=b[l.key],av=a[l.key],nv=bn[l.key];
+    const variance=(bv!=null&&av!=null)?av-bv:null;
+    const noteHtml=l.note?`<div class="vnote">${l.note}</div>`:"";
+    return `<tr class="${l.head?'hd':''}"><td style="text-align:left">${l.label}${noteHtml}</td>`+
+      `<td>${fL(bv)}</td><td class="${vcls(av,bv,l.higherGood)}">${fL(av)}</td>`+
+      `<td class="${variance==null?'':(((l.higherGood?variance<0:variance>0))?'bv':'gv')}">${variance==null?'—':fSign(variance)}</td>`+
+      `<td>${nv==null?'—':fL(nv)}</td></tr>`;
+  }).join("");
+  const table=`<div class="panel"><h2>Monthly P&amp;L — ${DATA.months[month].label} budget vs actual <span class="tagm">₹ Lakhs</span></h2>`+
+   `<p class="lead">Each line reviewed monthly: maker books → checker verifies → signature authorises. Green = favourable to budget, red = unfavourable. Pick a month above to change the view.</p>`+
+   `<table class="vtable"><thead><tr><th style="text-align:left">Particulars</th><th>Budget</th><th>Actual</th><th>Variance</th><th>New Budget</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+  return cards+
+   `<div class="panel"><h2>Biggest misses &amp; the recovery <span class="tagm">Rock 5 · P&amp;L habit · auto</span></h2><div class="flags">${computeMisses(month)}</div></div>`+
+   trend+table;
+}
+
+/* ---------- ROCKS ---------- */
+function renderRocks(){
+  const cards=C().rocks.map(r=>`<div class="rock${r[4]?' urgent':''}"><div class="rnum">ROCK ${r[0]}${r[4]?' · MOST URGENT':''}</div><div class="rt">${r[1]}</div><div class="rd">${r[2]}</div><div class="rfoot"><span class="owner">DRI · ${r[3]}</span>${r[4]?'<span class="rag RED">ACTIVE</span>':''}</div></div>`).join("");
+  return `<div class="panel"><h2>The 8 Rocks <span class="tagm">single DRI each</span></h2>`+
+   `<p class="lead">Quarterly theme: <b>Build the spine.</b> Fix structure, resolve overlaps, run the COGS War Room, land Jaipur (Aug) then Gandhinagar &amp; Mumbai (Sep) without drama. Fewer rocks executed fully beats more rocks attempted. No rock without a name on it.</p>`+
+   `<div class="rocks">${cards}</div></div>`;
+}
+
+/* ---------- RHYTHM ---------- */
+function renderRhythm(){
+  const steps=C().rhythm.map(s=>`<div class="step"><span class="ph">${s[0]}<br><span style="font-weight:400;font-size:9px;opacity:.85">${s[1]}</span></span><div class="sb"><div class="st">${s[2]}</div><div class="ss">${s[3]}</div></div></div>`).join("");
+  return `<div class="panel"><h2>This quarter's focus — one Critical Number <span class="tagm">Scaling Up</span></h2>`+
+   `<p class="lead">Scaling Up's discipline: behind the 8 rocks and 11 metrics sits exactly <b>one</b> number that matters most this quarter — paired with a counterbalance so chasing it doesn't break something else. The annual Critical Number is ₹13.17 Cr EBITDA; the one lever that unlocks it right now is COGS.</p>`+
+   `<div class="split">`+
+   `<div class="panel" style="margin-top:0;border-color:#f3cfcb;background:var(--redbg)"><div style="font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-weight:600">The one number · this quarter</div><div style="font-size:30px;font-weight:700;color:var(--red);margin:4px 0;letter-spacing:-.5px">COGS → 19%</div><div style="font-size:12.5px;color:var(--ink)">Currently ~21–23% (RED). Every 1pt = ₹40L of EBITDA — the ₹13.17 Cr anchor and the September bridge both hinge on this single number.</div><div style="margin-top:8px"><span class="owner">DRI · PP + YG · COGS War Room</span></div></div>`+
+   `<div class="panel" style="margin-top:0;border-color:#cce8d6;background:var(--greenbg)"><div style="font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-weight:600">The counterbalance · so we don't game it</div><div style="font-size:30px;font-weight:700;color:var(--green);margin:4px 0;letter-spacing:-.5px">Mystery diner ≥ 7.5/10</div><div style="font-size:12.5px;color:var(--ink)">Squeeze food cost and you can quietly break the brand promise. This keeps quality honest while COGS falls — no winning the number by losing the guest.</div><div style="margin-top:8px"><span class="owner">DRI · HK · ties to Risk 4</span></div></div>`+
+   `</div></div>`+
+   `<div class="panel"><h2>The meeting rhythm <span class="tagm">the execution engine</span></h2>`+
+   `<p class="lead">Scaling Up's biggest claim: strategy fails on rhythm, not on the plan. For a green exec team carrying a live COGS crisis, the cadence below is worth more than any document — each meeting feeds the next, and every Red on the scoreboard has a forum that owns it.</p>`+
+   `<div class="steps">${steps}</div>`+
+   `<div class="note2">The daily huddle runs the War Room, the monthly is Rock 5 (the P&L habit) off the Variance tab, the quarterly resets the rocks and the Critical Number, and the annual rebuilds Book One and sets the FY28 plan.</div></div>`;
+}
+
+/* ---------- CASH BRIDGE ---------- */
+function renderCash(){
+  const B=C().bridge;
+  const steps=B.steps.map(b=>`<div class="step ${b[3]}"><span class="ph">${b[0]}</span><div class="sb"><div class="st">${b[1]}</div><div class="ss">${b[2]}</div></div></div>`).join("");
+  const cogsRows=B.cogsScen.map(c=>`<tr><td><span class="scen ${c[3]}">${c[0]}</span></td><td>${c[1]}</td><td>${c[2]}</td></tr>`).join("");
+  const tw=B.tripwires.map(t=>`<div class="flag ${t[2]}"><span class="ic">${t[2]==="red"?"●":"◆"}</span><span><b>${t[0]}</b> — ${t[1]}</span></div>`).join("");
+  const capRows=B.capexLoc.map(c=>`<tr><td><b>${c[0]}</b></td><td>${c[1]}</td><td>${c[2]}</td></tr>`).join("");
+  const fundRows=B.funding.map(f=>`<tr><td><b>${f[0]}</b></td><td><span class="${f[2]==='green'?'gv':(f[2]==='amber'?'bv':'')}" style="${f[2]==='navy'?'color:var(--navy);font-weight:700':''}">${f[1]}</span></td></tr>`).join("");
+  return `<div class="panel"><h2>The FY27 Cash Bridge <span class="tagm">real profile · Apr-26 base case</span></h2>`+
+   `<p class="lead">Capex outflow ₹10.08 Cr vs net operating cashflow ₹12.98 Cr — existing operations fund ~95% of the ₹10 Cr expansion; the rest is timing. The bars are the real monthly bridge balance from the funding brief; the green line is monthly operating cashflow — watch it surge in Q4 and crush the bridge to zero by February.</p>`+
+   `<div class="chartbox"><canvas id="bridgeChart"></canvas></div>`+
+   `<div class="steps" style="margin-top:14px">${steps}</div>`+
+   `<div class="note2"><b>Re-model still required.</b> The capex table now reflects the pushed Aug/Sep-26 dates, but the monthly bars below are still the April base-case profile (built on Jun/Jul openings). With Gandhinagar + Mumbai + Beshak signing now clustered in September, the real peak likely exceeds the ₹7.24 Cr shown.</div></div>`+
+   `<div class="split">`+
+   `<div class="panel"><h2>Capex by location <span class="tagm">₹11.14 Cr total</span></h2><table><thead><tr><th>Location</th><th>Opens</th><th>Capex</th></tr></thead><tbody>${capRows}</tbody></table><div class="note2">4 new outlets = ₹10.14 Cr; + ₹1.00 Cr pre-FY27 pending = ₹11.14 Cr total; − ₹1.06 Cr already spent pre-Apr-26 = <b>₹10.08 Cr hits the FY27 cash window</b>. Jaipur &amp; Gandhinagar are shown at their pushed Aug/Sep-26 dates (+2 months from the April base case).</div></div>`+
+   `<div class="panel"><h2>Funding stack</h2><table><thead><tr><th>Source</th><th>Amount</th></tr></thead><tbody>${fundRows}</tbody></table><div class="note2">Even if Mumbai lands at 30% margin instead of 38%, FY27 still closes positive (~₹1 Cr surplus). The 30% standby buffer (₹10 Cr vs ₹7.24 Cr peak) covers capex-timing slippage or ramp underperformance.</div></div>`+
+   `</div>`+
+   `<div class="split">`+
+   `<div class="panel"><h2>COGS scenarios → FY27 outcome</h2><table><thead><tr><th>Scenario</th><th>EBITDA</th><th>Closing cash</th></tr></thead><tbody>${cogsRows}</tbody></table><div class="note2">The 23% case eats most of the FY27 cash buffer. The honest posture for the next six months: "are we closing the gap to 19%, or holding at 22%?"</div></div>`+
+   `<div class="panel"><h2>Bridge red lines — pre-decided</h2><div class="flags">${tw}</div></div>`+
+   `</div>`+
+   `<div class="panel"><h2>Two cash fragilities to name</h2><p class="lead">${B.cashNote}</p></div>`;
+}
+
+/* ---------- POWER OF ONE ---------- */
+function setTxt(id,t){const e=document.getElementById(id);if(e)e.textContent=t;}
+function recalcPOO(){
+  const POO=C().poo;
+  const g=id=>parseFloat(document.getElementById(id).value);
+  const dp=g('pPrice'),dv=g('pVol'),cogs=g('pCogs'),doh=g('pOh'),dio=g('pDio'),dso=g('pDso'),dpo=g('pDpo');
+  setTxt('vPrice',(dp>0?'+':'')+dp.toFixed(1)+'%');
+  setTxt('vVol',(dv>0?'+':'')+dv.toFixed(1)+'%');
+  setTxt('vCogs',cogs.toFixed(1)+'%');
+  setTxt('vOh',(doh>0?'+':'')+doh.toFixed(1)+'%');
+  setTxt('vDio',dio.toFixed(0)+' d');
+  setTxt('vDso',dso.toFixed(0)+' d');
+  setTxt('vDpo',dpo.toFixed(0)+' d');
+  const revP=POO.rev*(dp/100), revV=POO.rev*(dv/100);
+  const totRev=POO.rev+revP+revV;
+  const dE_price=revP;
+  const dE_vol=revV*(1-cogs/100);
+  const dE_cogs=-(cogs-POO.cogsBase)*POO.rev/100;
+  const dE_oh=-POO.opex*(doh/100);
+  const ebitda=POO.ebitda+dE_price+dE_vol+dE_cogs+dE_oh;
+  const dE=ebitda-POO.ebitda;
+  const ebitdaPct=ebitda/totRev*100;
+  const annCogs=totRev*(cogs/100);
+  const wc=-(dio-POO.dio)*annCogs/365-(dso-POO.dso)*totRev/365+(dpo-POO.dpo)*annCogs/365;
+  const ccc=dio+dso-dpo;
+  const cls=x=>x>0.5?'green':(x<-0.5?'red':'');
+  setTxt('oEbitda','₹'+(ebitda/100).toFixed(2)+' Cr');
+  const oe=document.getElementById('oEbitda');if(oe)oe.className='val '+cls(dE);
+  setTxt('oEbitdaD',(dE>=0?'+':'−')+'₹'+Math.abs(dE).toFixed(0)+'L vs ₹13.17 Cr anchor');
+  const od=document.getElementById('oEbitdaD');if(od)od.className='note '+(dE>=0?'good':'warn');
+  setTxt('oPct',ebitdaPct.toFixed(1)+'%');
+  setTxt('oCcc',ccc.toFixed(0)+' days');
+  const occ=document.getElementById('oCcc');if(occ)occ.className='val '+cls(POO.dio+POO.dso-POO.dpo-ccc);
+  setTxt('oWc',(wc>=0?'+':'−')+'₹'+Math.abs(wc).toFixed(0)+'L');
+  const ow=document.getElementById('oWc');if(ow)ow.className='val '+cls(wc);
+  setTxt('oWcD',wc>=0?'cash freed (one-time)':'cash tied up (one-time)');
+  setTxt('oAllin',((dE+wc)>=0?'+':'−')+'₹'+Math.abs(dE+wc).toFixed(0)+'L');
+  const brk=[['Price',dE_price],['Volume',dE_vol],['COGS',dE_cogs],['Overheads',dE_oh]];
+  const bmax=Math.max(1,...brk.map(b=>Math.abs(b[1])));
+  setTxt('oBrkLabel','EBITDA impact by lever (₹L):');
+  const bel=document.getElementById('oBrk');
+  if(bel)bel.innerHTML=brk.map(b=>`<div class="cccbar"><span class="cl">${b[0]}</span><span class="ct"><span class="cf" style="width:${Math.abs(b[1])/bmax*100}%;background:${b[1]>=0?'var(--green)':'var(--red)'}"></span></span><span class="cv">${b[1]>=0?'+':'−'}₹${Math.abs(b[1]).toFixed(0)}L</span></div>`).join("");
+}
+function resetPOO(){const POO=C().poo;['pPrice','pVol','pOh'].forEach(id=>document.getElementById(id).value=0);document.getElementById('pCogs').value=22;document.getElementById('pDio').value=POO.dio;document.getElementById('pDso').value=POO.dso;document.getElementById('pDpo').value=POO.dpo;recalcPOO();}
+function renderPower(){
+  const POO=C().poo;
+  const slider=(id,lab,min,max,step,val)=>`<div class="ctl"><label>${lab}</label><input type="range" id="${id}" min="${min}" max="${max}" step="${step}" value="${val}" oninput="recalcPOO()"><span class="vo" id="v${id.slice(1)}"></span></div>`;
+  const ref=[
+   ["Price +1%","+₹38.7L EBITDA","Pure margin — no extra cost. The most powerful lever; the question is how much pricing power the brand promise buys.","green"],
+   ["Volume +1%","+₹31.3L EBITDA","Adds revenue but COGS rides along (81% drops through at 19% COGS). Also pulls more working capital.","green"],
+   ["COGS −1 pt","+₹38.7L EBITDA","The War Room lever — \"every 1pt = ₹40L.\" Closing 22%→19% is worth ~₹116L of EBITDA.","green"],
+   ["Overheads −1%","+₹18.2L EBITDA","On a ₹18.2 Cr opex base. Smaller per-point, but the budget-variance file shows real fat (travel, welfare).","green"],
+   ["Inventory −1 day","+₹2.0L cash","Frees cash tied in stock. You're at ~34 days vs a <20 target — the biggest CCC lever.","navy"],
+   ["Receivables −1 day","+₹10.6L cash","Worth most per day (on revenue) — but DSO is already low (~4d). The real AR is ODC/catering.","navy"],
+   ["Payables +1 day","+₹2.0L cash","Stretching supplier terms frees cash — but watch the COGS war room's renegotiation, don't undercut it.","navy"]
+  ];
+  const refRows=ref.map(r=>`<tr><td><b>${r[0]}</b></td><td><span class="${r[3]==='green'?'gv':''}" style="${r[3]==='navy'?'color:var(--navy);font-weight:700':''}">${r[1]}</span></td><td style="text-align:left;color:var(--muted)">${r[2]}</td></tr>`).join("");
+  return `<div class="panel"><h2>Power of One — the levers <span class="tagm">Scaling Up · annual base ₹38.67 Cr</span></h2>`+
+   `<p class="lead">Alan Miltz's Power of One: model the profit and cash impact of a 1-unit move in each of the seven levers. Grounded in your FY27 existing-base anchor (₹38.67 Cr revenue, 19% target COGS, ₹13.17 Cr EBITDA). The four profit levers feed EBITDA; the three cash levers feed the Cash Conversion Cycle.</p>`+
+   `<table><thead><tr><th>1-unit improvement</th><th>Impact</th><th style="text-align:left">Read for Bookends</th></tr></thead><tbody>${refRows}</tbody></table></div>`+
+   `<div class="panel"><h2>Live scenario — pull the levers <span class="tagm">interactive</span></h2>`+
+   `<p class="lead">Drag the levers and watch EBITDA and cash move. COGS defaults to the current ~22% so you can see the war-room prize: drag it to 19% to recover ~₹116L.</p>`+
+   `<div class="poout">`+
+   `<div class="kpi"><div class="lab">Annual EBITDA</div><div class="val" id="oEbitda">—</div><div class="note" id="oEbitdaD"></div></div>`+
+   `<div class="kpi"><div class="lab">EBITDA margin</div><div class="val" id="oPct">—</div><div class="note">on existing base</div></div>`+
+   `<div class="kpi"><div class="lab">Cash Conversion Cycle</div><div class="val" id="oCcc">—</div><div class="note">days cash is tied up</div></div>`+
+   `<div class="kpi"><div class="lab">Working capital</div><div class="val" id="oWc">—</div><div class="note" id="oWcD"></div></div>`+
+   `</div>`+
+   `<div class="split" style="margin-top:8px">`+
+   `<div><div style="font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);font-weight:700;margin:6px 0 4px">Profit levers</div>`+
+   slider('pPrice','Price change %',-5,5,0.5,0)+
+   slider('pVol','Volume change %',-10,10,0.5,0)+
+   slider('pCogs','COGS % of sales',17,24,0.5,22)+
+   slider('pOh','Overheads change %',-15,10,0.5,0)+
+   `</div>`+
+   `<div><div style="font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);font-weight:700;margin:6px 0 4px">Cash levers (CCC)</div>`+
+   slider('pDio','Inventory days',10,45,1,POO.dio)+
+   slider('pDso','Receivable days',0,30,1,POO.dso)+
+   slider('pDpo','Payable days',5,45,1,POO.dpo)+
+   `<div style="margin-top:10px"><button class="reset" onclick="resetPOO()">↺ Reset to current</button></div>`+
+   `</div></div>`+
+   `<div style="margin-top:14px"><div style="font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);font-weight:700;margin-bottom:4px" id="oBrkLabel"></div><div id="oBrk"></div></div>`+
+   `<div class="note2">All-in annual swing vs the ₹13.17 Cr plan (EBITDA change + one-time working-capital release): <b id="oAllin">—</b>.</div></div>`+
+   `<div class="panel"><h2>Cash Conversion Cycle — the real cycle <span class="tagm">BS 15 Jun</span></h2>`+
+   `<p class="lead">CCC = Inventory days + Receivable days − Payable days. Cash is tied up almost entirely in <b>inventory</b> — dine-in is cash/card so receivables are tiny; the ODC/catering book is the only real AR (₹29.8L of the ₹41.2L debtors).</p>`+
+   `<div class="cccbar"><span class="cl">Inventory (DIO)</span><span class="ct"><span class="cf" style="width:90%;background:var(--red)"></span></span><span class="cv">~34 days · ₹68L stock</span></div>`+
+   `<div class="cccbar"><span class="cl">+ Receivables (DSO)</span><span class="ct"><span class="cf" style="width:11%;background:var(--amber)"></span></span><span class="cv">~4 days · ₹41L (ODC-led)</span></div>`+
+   `<div class="cccbar"><span class="cl">− Payables (DPO)</span><span class="ct"><span class="cf" style="width:53%;background:var(--green)"></span></span><span class="cv">~20 days · ₹39L creditors</span></div>`+
+   `<div class="note2"><b>Net CCC ≈ 18 days</b>, dominated by inventory. With the bridge this tight, getting inventory days from ~34 toward the &lt;20 target frees real working capital — and it's the same discipline as the COGS war room.</div></div>`;
+}
+
+/* ---------- RISK REGISTER ---------- */
+function renderRisks(){
+  const rows=C().risks.map(r=>`<tr><td><b>${r[0]}</b><div style="font-size:11.5px;color:var(--muted);margin-top:3px">${r[1]}</div></td><td style="text-align:left">${r[2]}</td><td style="text-align:left">${r[3]}</td><td><span class="rag ${r[4]==="red"?"RED":"AMBER"}">${r[4]==="red"?"HIGH":"WATCH"}</span></td></tr>`).join("");
+  return `<div class="panel"><h2>Risk Register &amp; Tripwires <span class="tagm">risks 6–8 new this revision</span></h2>`+
+   `<p class="lead">Eight real risks, each with a pre-decided operational tripwire and response. The plan does not wait for a discussion when a tripwire fires — the response is already decided.</p>`+
+   `<table><thead><tr><th style="width:26%">Risk &amp; impact</th><th style="text-align:left">Tripwire</th><th style="text-align:left">Pre-decided response</th><th>Level</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+
+/* ---------- PORTFOLIO ---------- */
+function renderFolio(){
+  const rows=C().folio.map(f=>`<tr><td><b style="color:${f[6]}">${f[0]}</b></td><td><span class="bet" style="background:${f[6]}">${f[1]}</span></td><td>${f[2]}</td><td><b>${f[3]}</b></td><td style="text-align:left">${f[4]}</td><td style="text-align:left;color:var(--muted)">${f[5]}</td></tr>`).join("");
+  const trows=C().traj.map(t=>`<tr><td><b>${t[0]}</b></td><td>${t[1]}</td><td>${t[2]}</td><td style="color:var(--muted)">${t[3]}</td></tr>`).join("");
+  const OUTLETREV=C().outletRev;
+  const mx=Math.max.apply(null,OUTLETREV.map(o=>o[1]));
+  const obars=OUTLETREV.map(o=>`<div class="cccbar"><span class="cl" style="width:210px">${o[0]}</span><span class="ct"><span class="cf" style="width:${o[1]/mx*100}%;background:${o[2]}"></span></span><span class="cv" style="width:64px">₹${o[1].toFixed(1)}L</span></div>`).join("");
+  return `<div class="panel"><h2>Brand Portfolio — roles &amp; bets</h2>`+
+   `<p class="lead">Capiche is the bet, ODC is the engine — and Aiko, Beshak, Ghaslet get less leadership attention in FY27 by choice. If FY27 wraps with Capiche at 7 outlets working and ODC at ₹10 Cr, the year is a success even if Beshak underperforms. The reverse is not true.</p>`+
+   `<table><thead><tr><th>Brand</th><th>Role</th><th>Outlets EoFY27</th><th>FY27 Rev</th><th style="text-align:left">Stance</th><th style="text-align:left">Risk</th></tr></thead><tbody>${rows}</tbody></table></div>`+
+   `<div class="panel"><h2>Outlet revenue — actuals <span class="tagm">1 Apr–18 Jun FY27 · ₹L</span></h2>`+
+   `<p class="lead">From the Tally P&amp;L — the six live outlets ranked by revenue. Capiche Ambli leads; Surat (Vesu + Piplod) and Ahmedabad each carry roughly half the base. Aggregator and event sales sit on top.</p>`+
+   obars+`</div>`+
+   `<div class="panel"><h2>The 2-year trajectory <span class="tagm">FY28 directional</span></h2><div class="chartbox"><canvas id="trajChart"></canvas></div>`+
+   `<table style="margin-top:14px"><thead><tr><th>Metric</th><th>FY26 actual</th><th>FY27 plan</th><th>FY28 direction*</th></tr></thead><tbody>${trows}</tbody></table>`+
+   `<div class="note2">*FY28 is a directional target, not a committed plan — formal FY28 plan set at the April 2027 review once Mumbai Q3 data is in. Beshak FY28 is a ₹4–6 Cr range with ₹4 Cr as the planning case; ₹6 Cr is upside only.</div></div>`;
+}
+
+/* ---------- CHARTS ---------- */
+function drawBridge(){
+  const el=document.getElementById("bridgeChart");if(!el)return;
+  const ch=C().bridge.chart;
+  charts.push(new Chart(el,{data:{labels:ch.labels,datasets:[
+    {type:"bar",label:"Bridge outstanding (₹ Cr)",data:ch.bal,
+     backgroundColor:ch.bal.map(v=>v>=7?"#C2080B":v>=5?"#B8780A":"#00259A"),borderRadius:5,order:2},
+    {type:"line",label:"Net operating cashflow (₹ Cr/mo)",data:ch.opcf,borderColor:"#2E7D4E",backgroundColor:"#2E7D4E",borderWidth:2,tension:.3,pointRadius:3,order:1}
+  ]},options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:"bottom"},tooltip:{callbacks:{label:c=>c.dataset.label+": ₹"+c.parsed.y.toFixed(2)+" Cr"+(c.dataset.type==="bar"&&c.parsed.y>=7?" · PEAK":"")}}},
+    scales:{y:{beginAtZero:true,title:{display:true,text:"₹ Cr"},grid:{color:"#eee4d2"}},x:{grid:{display:false}}}}}));
+}
+function drawTraj(){
+  const el=document.getElementById("trajChart");if(!el)return;
+  const tc=C().trajChart;
+  charts.push(new Chart(el,{type:"bar",data:{labels:tc.labels,datasets:[
+    {label:"Revenue (₹ Cr)",data:tc.rev,backgroundColor:"#00259A",borderRadius:5,yAxisID:"y"},
+    {label:"EBITDA (₹ Cr)",data:tc.ebitda,backgroundColor:"#EDB32B",borderRadius:5,yAxisID:"y"}
+  ]},options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:"bottom"},tooltip:{callbacks:{label:c=>c.dataset.label+": ₹"+c.parsed.y+" Cr"}}},
+    scales:{y:{beginAtZero:true,title:{display:true,text:"₹ Cr"},grid:{color:"#eee4d2"}},x:{grid:{display:false}}}}}));
+}
+
+init();
+</script>
+</body>
+</html>

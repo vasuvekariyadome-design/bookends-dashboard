@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta name="robots" content="noindex,nofollow"/>
+<title>Bookends Cockpit — Update P&L</title>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+<style>
+:root{color-scheme:light;
+ --bg:#FCF6EC;--card:#FFFCF5;--ink:#14110D;--muted:#7A7064;--line:#E7D9C2;
+ --navy:#00259A;--navy2:#001A6E;--red:#C2080B;--amber:#B8780A;--green:#2E7D4E;
+ --redbg:#fbe9e8;--amberbg:#fbeccb;--greenbg:#e7f5ec;
+ --shadow:0 1px 2px rgba(31,41,51,.04),0 4px 16px rgba(31,41,51,.05);}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;font-size:14px;line-height:1.5}
+.hero{background:radial-gradient(120% 140% at 0% 0%,#1A3FB0 0%,var(--navy) 45%,var(--navy2) 100%);color:#fff;padding:24px 0 22px}
+.hero-in{max-width:1000px;margin:0 auto;padding:0 20px;display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:14px}
+.eyebrow{font-size:10px;letter-spacing:3.5px;text-transform:uppercase;color:#9db4cf;font-weight:700}
+.wordmark{font-family:"Anton","Oswald","Arial Narrow Bold","Arial Narrow",Impact,sans-serif;font-size:32px;letter-spacing:3px;font-weight:700;margin:4px 0 3px;color:#fff;line-height:1}
+.tagline{font-size:12px;color:#bccee2}
+.btn{font-size:12.5px;padding:7px 13px;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.12);border-radius:9px;cursor:pointer;color:#fff;font-weight:600;text-decoration:none;display:inline-block}
+.btn:hover{background:rgba(255,255,255,.22)}
+.wrap{max-width:1000px;margin:0 auto;padding:22px 20px 80px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-top:14px;box-shadow:var(--shadow)}
+.panel h2{font-size:12px;margin:0 0 10px;text-transform:uppercase;letter-spacing:.6px;font-weight:700;display:flex;align-items:center;gap:9px}
+.panel h2 .step{font-family:"Anton","Oswald",Impact,sans-serif;background:var(--navy);color:#fff;border-radius:7px;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-size:12px;flex:none}
+.lead{font-size:12.5px;color:var(--muted);margin:-2px 0 10px;line-height:1.5}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}
+.fld{display:flex;flex-direction:column;gap:4px}
+.fld label{font-size:10.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);font-weight:700}
+.fld input,.fld select{padding:8px 10px;border:1px solid var(--line);border-radius:9px;font-size:13px;background:#fff;outline:none}
+.fld input:focus,.fld select:focus{border-color:var(--navy)}
+.bigbtn{padding:9px 16px;border:none;border-radius:9px;background:var(--navy);color:#fff;font-weight:700;font-size:13px;cursor:pointer}
+.bigbtn:hover{background:var(--navy2)}
+.bigbtn.ghost{background:#fff;color:var(--navy);border:1px solid var(--line)}
+.bigbtn:disabled{opacity:.5;cursor:not-allowed}
+.drop{border:2px dashed var(--line);border-radius:12px;padding:18px;text-align:center;color:var(--muted);background:#fff;cursor:pointer;font-size:13px}
+.drop.drag{border-color:var(--navy);background:#f3f6ff}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th,td{padding:5px 7px;border-bottom:1px solid var(--line);text-align:right}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--muted);font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.4px}
+tr.hd td{font-weight:800;background:#f4eddd}
+tr.computed td{background:#eef1fb;font-weight:700}
+td input{width:84px;padding:4px 6px;border:1px solid var(--line);border-radius:6px;text-align:right;font-size:12.5px;font-variant-numeric:tabular-nums;background:#fff}
+td input.note{width:100%;text-align:left;color:var(--muted)}
+td input.filled{background:var(--greenbg);border-color:#aacdb6}
+.cell-comp{font-variant-numeric:tabular-nums;font-weight:700}
+.sumcards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:6px}
+.sc{border:1px solid var(--line);border-radius:11px;padding:10px 12px;background:#fff}
+.sc .l{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);font-weight:700}
+.sc .v{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--navy);margin-top:2px}
+.sc .v.red{color:var(--red)}.sc .v.green{color:var(--green)}.sc .v.amber{color:var(--amber)}
+.msg{padding:10px 12px;border-radius:10px;font-size:12.5px;margin-top:10px;line-height:1.5}
+.msg.ok{background:var(--greenbg);border:1px solid #cce8d6;color:#1f6b3e}
+.msg.err{background:var(--redbg);border:1px solid #f3cfcb;color:var(--red)}
+.msg.info{background:var(--amberbg);border:1px solid #f0dcae;color:#8a5e00}
+.unmatched{font-size:11.5px;color:var(--muted);margin-top:8px}
+.unmatched span{display:inline-block;background:#f0efec;border-radius:6px;padding:2px 7px;margin:2px}
+details{margin-top:10px}
+summary{cursor:pointer;font-weight:700;font-size:12px;color:var(--navy)}
+textarea{width:100%;min-height:64px;padding:8px;border:1px solid var(--line);border-radius:9px;font-size:12px;font-family:inherit}
+.hint{font-size:11px;color:var(--muted);margin-top:4px}
+code{background:#f0efec;padding:1px 5px;border-radius:5px;font-size:11.5px}
+/* gate */
+.gate{position:fixed;inset:0;z-index:9999;background:radial-gradient(120% 140% at 0% 0%,#1A3FB0 0%,#00259A 45%,#001A6E 100%);display:flex;align-items:center;justify-content:center;padding:20px}
+.gatecard{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:32px 30px;width:100%;max-width:340px;box-shadow:0 10px 40px rgba(0,0,0,.25);text-align:center}
+.gateword{font-family:"Anton","Oswald",Impact,sans-serif;font-size:34px;letter-spacing:3px;font-weight:700;color:var(--navy)}
+.gatesub{font-size:12.5px;color:var(--muted);font-style:italic;margin:6px 0 22px}
+.gatecard input{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:10px;font-size:15px;text-align:center;outline:none}
+.gatecard button{width:100%;margin-top:12px;padding:11px;border:none;border-radius:10px;background:var(--navy);color:#fff;font-size:14px;font-weight:700;cursor:pointer}
+.gateerr{font-size:12px;color:var(--red);margin-top:12px;min-height:16px}
+</style>
+</head>
+<body>
+<div id="gate" class="gate">
+  <div class="gatecard">
+    <div class="gateword">BOOKENDS</div>
+    <div class="gatesub">cockpit — editor access</div>
+    <input id="gatepass" type="password" placeholder="Enter passcode" autocomplete="off"/>
+    <button id="gatebtn">Unlock</button>
+    <div id="gateerr" class="gateerr"></div>
+  </div>
+</div>
+<script>
+(function(){
+  var HASH="11bac86c2fb51522904f8f367e7a9433d82ee951a7ffb899e05a74f4ad3907c9";
+  var KEY="bookends_cockpit_unlock_v1";
+  var gate=document.getElementById("gate");
+  function unlock(){if(gate&&gate.parentNode)gate.parentNode.removeChild(gate);document.body.style.overflow="";}
+  if(localStorage.getItem(KEY)===HASH){unlock();return;}
+  document.body.style.overflow="hidden";
+  async function sha(s){var b=new TextEncoder().encode(s);var h=await crypto.subtle.digest("SHA-256",b);return Array.from(new Uint8Array(h)).map(function(x){return x.toString(16).padStart(2,"0");}).join("");}
+  async function tryit(){var err=document.getElementById("gateerr");try{var h=await sha(document.getElementById("gatepass").value);if(h===HASH){localStorage.setItem(KEY,HASH);unlock();}else{err.textContent="Wrong passcode — try again.";}}catch(e){err.textContent="Open this via the live https link to unlock.";}}
+  document.getElementById("gatebtn").onclick=tryit;
+  document.getElementById("gatepass").addEventListener("keydown",function(e){if(e.key==="Enter")tryit();});
+  document.getElementById("gatepass").focus();
+})();
+</script>
+
+<header class="hero"><div class="hero-in">
+  <div>
+    <div class="eyebrow">Strategic Cockpit · Monthly P&amp;L Update</div>
+    <div class="wordmark">UPDATE</div>
+    <div class="tagline">feed the month's Tally P&amp;L · review · publish to the live cockpit</div>
+  </div>
+  <a class="btn" href="./index.html">← Back to cockpit</a>
+</div></header>
+
+<div class="wrap">
+  <div id="boot" class="panel"><div class="lead">Loading current data…</div></div>
+
+  <div id="app" style="display:none">
+    <!-- STEP 1 -->
+    <div class="panel">
+      <h2><span class="step">1</span> Choose the month</h2>
+      <p class="lead">Edit a month that already exists, or add a new one. Adding a new month pre-fills its budget from the previous month so you only enter the actuals.</p>
+      <div class="row">
+        <div class="fld"><label>Month</label>
+          <select id="monthPick" onchange="onPick()"></select>
+        </div>
+        <div class="fld" id="newWrap" style="display:none"><label>Fiscal year</label><input id="fyIn" value="FY27" size="6"></div>
+        <div class="fld" id="newWrap2" style="display:none"><label>Calendar month</label>
+          <select id="monIn">
+            <option value="04">April</option><option value="05">May</option><option value="06">June</option>
+            <option value="07">July</option><option value="08">August</option><option value="09">September</option>
+            <option value="10">October</option><option value="11">November</option><option value="12">December</option>
+            <option value="01">January</option><option value="02">February</option><option value="03">March</option>
+          </select>
+        </div>
+        <button class="bigbtn" onclick="loadMonth()">Load into form ↓</button>
+      </div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="panel">
+      <h2><span class="step">2</span> Auto-fill from Tally export <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted);font-size:11px">— optional accelerator</span></h2>
+      <p class="lead">Drop the month's Tally P&amp;L (Excel <code>.xlsx/.xls/.csv</code> or <code>.pdf</code>). It best-effort matches lines and fills the <b>Actual</b> column — then you review every number. It never publishes anything on its own.</p>
+      <div class="row" style="margin-bottom:10px">
+        <div class="fld"><label>Numbers in the file are in</label>
+          <select id="unitSel">
+            <option value="100000">Rupees (₹) — divide by 1,00,000</option>
+            <option value="1000">Thousands (₹ '000)</option>
+            <option value="1" selected>Lakhs (₹ L)</option>
+            <option value="0.01">Crores (₹ Cr)</option>
+          </select>
+        </div>
+        <div class="fld"><label>Fill which column</label>
+          <select id="fillCol"><option value="a" selected>Actual</option><option value="b">Budget</option></select>
+        </div>
+      </div>
+      <div id="drop" class="drop">Click to choose a file, or drag it here<br><span style="font-size:11px">.xlsx · .xls · .csv · .pdf</span></div>
+      <input id="fileIn" type="file" accept=".xlsx,.xls,.csv,.pdf" style="display:none">
+      <div id="parseMsg"></div>
+      <div id="unmatched" class="unmatched"></div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="panel">
+      <h2><span class="step">3</span> Review &amp; correct <span id="formMonth" style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--navy);font-size:12px"></span></h2>
+      <p class="lead">Subtotals (Gross Profit, Total Opex, EBITDA) compute automatically as you type. Green = auto-filled from the upload; check each against its label. All values in <b>₹ Lakhs</b>.</p>
+      <div class="sumcards" id="sumcards"></div>
+      <table><thead><tr><th>Particulars</th><th>Budget</th><th>Actual</th><th>New Budget</th><th style="text-align:left">Note (shown on cockpit)</th></tr></thead>
+        <tbody id="formBody"></tbody></table>
+    </div>
+
+    <!-- STEP 4 -->
+    <div class="panel">
+      <h2><span class="step">4</span> Stamp it</h2>
+      <div class="row">
+        <div class="fld"><label>Updated by</label><input id="byIn" placeholder="e.g. Vasu / Accounts"></div>
+        <div class="fld"><label>Date</label><input id="dateIn" type="date"></div>
+      </div>
+      <details>
+        <summary>Advanced — edit the Risk-View headline &amp; banner (optional)</summary>
+        <div style="margin-top:10px">
+          <label class="hint">Top banner (HTML allowed):</label>
+          <textarea id="bannerIn"></textarea>
+          <label class="hint">"The honest read" paragraph:</label>
+          <textarea id="honestIn"></textarea>
+          <div class="hint">Leave these as-is unless the strategic story changed. The three financial KPI cards and the scoreboard colours update automatically from your numbers.</div>
+        </div>
+      </details>
+    </div>
+
+    <!-- STEP 5 -->
+    <div class="panel">
+      <h2><span class="step">5</span> Publish to the live cockpit</h2>
+      <p class="lead">Publishing commits <code>cockpit/data.json</code> to the repo; the team sees it within ~1 minute. Your GitHub token is stored only in this browser and is never committed.</p>
+      <div class="row">
+        <div class="fld" style="flex:1;min-width:260px"><label>GitHub token (fine-grained PAT · Contents: Read &amp; Write)</label><input id="tokIn" type="password" placeholder="github_pat_…" style="width:100%"></div>
+        <label style="font-size:11.5px;color:var(--muted);display:flex;align-items:center;gap:5px"><input type="checkbox" id="tokSave" checked> remember on this device</label>
+      </div>
+      <div class="hint">Repo: <code id="repoLabel"></code></div>
+      <div class="row" style="margin-top:12px">
+        <button class="bigbtn" id="pubBtn" onclick="publish()">⬆ Publish to GitHub</button>
+        <button class="bigbtn ghost" onclick="downloadJson()">↓ Download data.json (manual fallback)</button>
+      </div>
+      <div id="pubMsg"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const GH={owner:"vasuvekariyadome-design",repo:"bookends-dashboard",path:"cockpit/data.json",branch:"main"};
+const COMPUTED=["gross_profit","total_opex","ebitda"];
+const MONNAME={ "01":"Jan","02":"Feb","03":"Mar","04":"Apr","05":"May","06":"Jun","07":"Jul","08":"Aug","09":"Sep","10":"Oct","11":"Nov","12":"Dec" };
+// keyword aliases to match messy Tally line names → dashboard line keys (best-effort)
+const ALIASES={
+ net_rev:["net revenue","revenue","sales","total income","total revenue","income","net sales","total sales"],
+ cogs:["cost of goods","consumption","cogs","material consumed","purchase","food cost","raw material","cost of sales","provisions"],
+ sal_resto:["salary restaurant","restaurant salary","staff salary","wages","salaries and wages","kitchen salary","outlet salary"],
+ sal_corp:["salary corporate","corporate salary","admin salary","office salary","management salary","head office"],
+ rent:["rent"],
+ electricity:["electricity","power charges","electric charges","power & fuel"],
+ staff_welfare:["staff welfare","employee welfare","welfare"],
+ staff_welfare_facets:["facets welfare","staff welfare facets"],
+ housekeeping:["housekeeping","house keeping","cleaning"],
+ travelling:["travelling","travel","conveyance"],
+ kitchen_equip:["kitchen equipment","utensil","kitchen utensils","equipment & utensil"],
+ courier:["courier","transport","freight","cartage"],
+ rent_maint:["rent maintenance","maintenance charges","cam"],
+ repairs:["repairing","repairs","repair & maintenance","repairs and maintenance"],
+ property_tax:["property tax"],
+ rnd:["research","research & development","r&d"],
+ vehicle_fuel:["vehicle fuel","fuel & service","petrol","diesel","vehicle running","vehicle maintenance"],
+ online_platform:["online platform","zomato","swiggy","aggregator commission","platform fee","commission"],
+ biz_promo:["business promotion","promotion","valet","sales promotion"],
+ stationery:["stationery","printing","printing & stationery"],
+ uniform:["uniform"],
+ water:["water charges","water"],
+ electric_exp:["electric expense","electrical expense","electric items"],
+ software:["software","subscription","saas"],
+ internet:["internet","broadband","wifi"],
+ legal:["legal","legal & professional","legal charges"],
+ office:["office expense","office exp","general office"],
+ prof_fee:["professional fee","professional charges","consultancy","audit fee"],
+ marketing:["marketing","advertisement","advertising","ad spend","digital marketing"],
+ event_expense:["event expense","event exp","party expense"]
+};
+let DATA=null, LINES=[], OPEX=[], curKey=null;
+
+async function boot(){
+  try{
+    const r=await fetch("./data.json",{cache:"no-store"});
+    DATA=await r.json();
+  }catch(e){
+    document.getElementById("boot").innerHTML='<div class="msg err">Could not load data.json. Open this page via the live https link (not a local file).</div>';
+    return;
+  }
+  LINES=DATA.lines; OPEX=DATA.opexKeys;
+  document.getElementById("boot").style.display="none";
+  document.getElementById("app").style.display="block";
+  document.getElementById("repoLabel").textContent=GH.owner+"/"+GH.repo+" · "+GH.path;
+  // month picker
+  const sel=document.getElementById("monthPick");
+  sel.innerHTML=DATA.monthOrder.map(m=>`<option value="${m}">Edit ${DATA.months[m].label}</option>`).join("")+`<option value="__new__">➕ Add a new month…</option>`;
+  // defaults
+  const tok=localStorage.getItem("bookends_cockpit_ghtoken"); if(tok)document.getElementById("tokIn").value=tok;
+  document.getElementById("byIn").value=(DATA.meta&&DATA.meta.updatedBy&&DATA.meta.updatedBy.indexOf("Seed")<0)?DATA.meta.updatedBy:"";
+  document.getElementById("dateIn").value=todayISO();
+  document.getElementById("bannerIn").value=(DATA.config.bannerHtml||"");
+  document.getElementById("honestIn").value=(DATA.config.honestRead||"");
+  buildForm();
+  onPick();
+  loadMonth();
+  // dropzone
+  const drop=document.getElementById("drop"),fi=document.getElementById("fileIn");
+  drop.onclick=()=>fi.click();
+  fi.onchange=e=>{if(e.target.files[0])handleFile(e.target.files[0]);};
+  drop.ondragover=e=>{e.preventDefault();drop.classList.add("drag");};
+  drop.ondragleave=()=>drop.classList.remove("drag");
+  drop.ondrop=e=>{e.preventDefault();drop.classList.remove("drag");if(e.dataTransfer.files[0])handleFile(e.dataTransfer.files[0]);};
+}
+function todayISO(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
+function onPick(){
+  const isNew=document.getElementById("monthPick").value==="__new__";
+  document.getElementById("newWrap").style.display=isNew?"flex":"none";
+  document.getElementById("newWrap2").style.display=isNew?"flex":"none";
+}
+function fiscalIndex(key){const mm=key.split("-")[1];const n=parseInt(mm,10);return n>=4?n-4:n+8;}
+function buildForm(){
+  const tb=document.getElementById("formBody");
+  tb.innerHTML=LINES.map(l=>{
+    const comp=l.computed;
+    const cls=(l.head?"hd ":"")+(comp?"computed":"");
+    const bcell=comp?`<span class="cell-comp" id="cb_${l.key}">—</span>`:`<input id="b_${l.key}" inputmode="decimal" oninput="recompute()">`;
+    const acell=comp?`<span class="cell-comp" id="ca_${l.key}">—</span>`:`<input id="a_${l.key}" inputmode="decimal" oninput="markEdited('a_${l.key}');recompute()">`;
+    const ncell=comp?"":`<input id="n_${l.key}" inputmode="decimal">`;
+    const note=comp?"":`<input class="note" id="note_${l.key}" placeholder="optional">`;
+    return `<tr class="${cls}"><td>${l.label}</td><td>${bcell}</td><td>${acell}</td><td>${ncell}</td><td style="text-align:left">${note}</td></tr>`;
+  }).join("");
+}
+function setVal(id,v){const e=document.getElementById(id);if(e)e.value=(v==null?"":v);}
+function getNum(id){const e=document.getElementById(id);if(!e||e.value.trim()==="")return null;const n=parseFloat(e.value.replace(/,/g,""));return isNaN(n)?null:n;}
+function markEdited(id){const e=document.getElementById(id);if(e)e.classList.remove("filled");}
+function loadMonth(){
+  const pick=document.getElementById("monthPick").value;
+  let key,label,budget,actual,notesFrom;
+  if(pick==="__new__"){
+    const fy=document.getElementById("fyIn").value.trim()||"FY27";
+    const mm=document.getElementById("monIn").value;
+    key=fy+"-"+mm; label=MONNAME[mm]+" "+fy;
+    // prefill budget from previous month (by fiscal order) or budgetNew
+    const prev=DATA.monthOrder[DATA.monthOrder.length-1];
+    budget=prev?Object.assign({},DATA.months[prev].budget):{};
+    actual={};
+  }else{
+    key=pick; label=DATA.months[key].label;
+    budget=Object.assign({},DATA.months[key].budget||{});
+    actual=Object.assign({},DATA.months[key].actual||{});
+  }
+  curKey=key;
+  document.getElementById("formMonth").textContent="· "+label+" ("+key+")";
+  LINES.forEach(l=>{
+    if(l.computed)return;
+    setVal("b_"+l.key,budget[l.key]);
+    setVal("a_"+l.key,actual[l.key]);
+    setVal("n_"+l.key,(DATA.budgetNew||{})[l.key]);
+    setVal("note_"+l.key,l.note||"");
+    const ae=document.getElementById("a_"+l.key);if(ae)ae.classList.remove("filled");
+  });
+  recompute();
+}
+function compute(scope){ // scope 'b' or 'a'
+  const nr=getNum(scope+"_net_rev"), cg=getNum(scope+"_cogs");
+  const gp=(nr!=null&&cg!=null)?nr-cg:null;
+  let ox=0,any=false;
+  OPEX.forEach(k=>{const v=getNum(scope+"_"+k);if(v!=null){ox+=v;any=true;}});
+  const topex=any?ox:null;
+  const eb=(gp!=null&&topex!=null)?gp-topex:(gp!=null&&!any?gp:null);
+  return {gross_profit:gp,total_opex:topex,ebitda:eb,net_rev:nr,cogs:cg};
+}
+function recompute(){
+  const b=compute("b"),a=compute("a");
+  const f=x=>x==null?"—":(x<0?"−"+Math.abs(x).toFixed(2):x.toFixed(2));
+  document.getElementById("cb_gross_profit").textContent=f(b.gross_profit);
+  document.getElementById("ca_gross_profit").textContent=f(a.gross_profit);
+  document.getElementById("cb_total_opex").textContent=f(b.total_opex);
+  document.getElementById("ca_total_opex").textContent=f(a.total_opex);
+  document.getElementById("cb_ebitda").textContent=f(b.ebitda);
+  document.getElementById("ca_ebitda").textContent=f(a.ebitda);
+  // summary cards
+  const cogsP=(a.cogs!=null&&a.net_rev)?a.cogs/a.net_rev*100:null;
+  const mar=(a.ebitda!=null&&a.net_rev)?a.ebitda/a.net_rev*100:null;
+  const cards=[
+    ["Net revenue", a.net_rev==null?"—":"₹"+a.net_rev.toFixed(1)+"L",""],
+    ["COGS %", cogsP==null?"—":cogsP.toFixed(1)+"%", cogsP==null?"":(cogsP<19?"green":cogsP<=21?"amber":"red")],
+    ["EBITDA", a.ebitda==null?"—":(a.ebitda<0?"−₹"+Math.abs(a.ebitda).toFixed(1)+"L":"+₹"+a.ebitda.toFixed(1)+"L"), a.ebitda==null?"":(a.ebitda<0?"red":"green")],
+    ["EBITDA margin", mar==null?"—":mar.toFixed(1)+"%",""]
+  ];
+  document.getElementById("sumcards").innerHTML=cards.map(c=>`<div class="sc"><div class="l">${c[0]}</div><div class="v ${c[2]}">${c[1]}</div></div>`).join("");
+}
+
+/* ---------- FILE PARSING ---------- */
+function normalize(s){return (s||"").toString().toLowerCase().replace(/[^a-z0-9 ]/g," ").replace(/\s+/g," ").trim();}
+function parseNumber(s){
+  if(s==null)return null;
+  let t=s.toString().trim();
+  if(t==="")return null;
+  let neg=false;
+  if(/^\(.*\)$/.test(t)){neg=true;t=t.replace(/[()]/g,"");}
+  if(/(^|\s)dr$/i.test(t)){} // debit positive
+  if(/(^|\s)cr$/i.test(t)){neg=!neg;}
+  t=t.replace(/cr|dr/ig,"").replace(/[₹,\s]/g,"");
+  if(t===""||isNaN(t))return null;
+  let n=parseFloat(t);
+  return neg?-n:n;
+}
+function bestLineFor(text){
+  const n=normalize(text);
+  if(!n)return null;
+  let best=null,bestScore=0;
+  LINES.forEach(l=>{
+    if(l.computed)return;
+    const al=ALIASES[l.key]||[];
+    let score=0;
+    al.forEach(a=>{const an=normalize(a);if(an&&n.indexOf(an)>=0)score=Math.max(score,an.length);});
+    // also match the dashboard label tokens
+    const ln=normalize(l.label);
+    if(ln&&n.indexOf(ln)>=0)score=Math.max(score,ln.length);
+    if(score>bestScore){bestScore=score;best=l;}
+  });
+  return bestScore>=3?best:null;
+}
+async function handleFile(file){
+  const msg=document.getElementById("parseMsg");
+  msg.className="msg info";msg.textContent="Reading "+file.name+"…";
+  document.getElementById("unmatched").innerHTML="";
+  try{
+    let pairs=[];
+    const ext=file.name.split(".").pop().toLowerCase();
+    if(ext==="pdf"){pairs=await parsePdf(file);}
+    else{pairs=await parseSheet(file);}
+    applyPairs(pairs);
+  }catch(e){
+    msg.className="msg err";msg.textContent="Couldn't parse that file: "+e.message+". You can still enter the numbers by hand.";
+  }
+}
+async function parseSheet(file){
+  const buf=await file.arrayBuffer();
+  const wb=XLSX.read(buf,{type:"array"});
+  const pairs=[];
+  wb.SheetNames.forEach(name=>{
+    const rows=XLSX.utils.sheet_to_json(wb.Sheets[name],{header:1,blankrows:false});
+    rows.forEach(row=>{
+      if(!row||!row.length)return;
+      // label = first non-empty text cell; amount = last numeric-looking cell
+      let label=null,amount=null;
+      for(let i=0;i<row.length;i++){const c=row[i];if(label==null&&typeof c==="string"&&normalize(c).length>2)label=c;}
+      for(let i=row.length-1;i>=0;i--){const c=row[i];const n=(typeof c==="number")?c:parseNumber(c);if(n!=null){amount=n;break;}}
+      if(label!=null&&amount!=null)pairs.push([label,amount]);
+    });
+  });
+  return pairs;
+}
+async function parsePdf(file){
+  const buf=await file.arrayBuffer();
+  const pdf=await pdfjsLib.getDocument({data:buf}).promise;
+  const pairs=[];
+  for(let p=1;p<=pdf.numPages;p++){
+    const page=await pdf.getPage(p);
+    const tc=await page.getTextContent();
+    // group items into visual lines by y
+    const lines={};
+    tc.items.forEach(it=>{
+      const y=Math.round(it.transform[5]);
+      const key=y;
+      if(!lines[key])lines[key]=[];
+      lines[key].push([it.transform[4],it.str]);
+    });
+    Object.keys(lines).forEach(k=>{
+      const parts=lines[k].sort((a,b)=>a[0]-b[0]).map(x=>x[1]);
+      const text=parts.join(" ").replace(/\s+/g," ").trim();
+      if(!text)return;
+      // last number token on the line
+      const matches=text.match(/\(?-?[₹]?[\d,]+\.?\d*\)?(\s*(cr|dr))?/ig);
+      if(!matches)return;
+      const amount=parseNumber(matches[matches.length-1]);
+      const label=text.replace(/[\d,()₹.\-]+(\s*(cr|dr))?\s*$/i,"").trim();
+      if(label&&amount!=null)pairs.push([label,amount]);
+    });
+  }
+  return pairs;
+}
+function applyPairs(pairs){
+  const unit=parseFloat(document.getElementById("unitSel").value); // multiply factor: rupees=100000 means divide
+  const col=document.getElementById("fillCol").value; // 'a' or 'b'
+  const toLakh=v=>v/unit; // unit is divisor expressed; for lakhs unit=1
+  const used={}, unmatched=[];
+  let filled=0;
+  pairs.forEach(([label,amount])=>{
+    const line=bestLineFor(label);
+    if(!line){unmatched.push(label);return;}
+    if(used[line.key])return; // first match wins
+    used[line.key]=true;
+    const val=toLakh(amount);
+    const id=col+"_"+line.key;
+    const el=document.getElementById(id);
+    if(el){el.value=(Math.round(val*100)/100);el.classList.add("filled");filled++;}
+  });
+  recompute();
+  const msg=document.getElementById("parseMsg");
+  msg.className="msg ok";
+  msg.innerHTML="Filled <b>"+filled+"</b> of "+(LINES.length-COMPUTED.length)+" input lines into the <b>"+(col==="a"?"Actual":"Budget")+"</b> column (green cells). <b>Review every one</b> against its label — subtotals recomputed below.";
+  const um=document.getElementById("unmatched");
+  const interesting=unmatched.filter(u=>normalize(u).length>3).slice(0,40);
+  um.innerHTML=interesting.length?("Couldn't place these rows (enter manually if needed): "+interesting.map(u=>`<span>${u.replace(/</g,"&lt;").slice(0,40)}</span>`).join("")):"";
+}
+
+/* ---------- BUILD + PUBLISH ---------- */
+function gather(){
+  const budget={},actual={},newB={};
+  LINES.forEach(l=>{
+    if(l.computed)return;
+    const b=getNum("b_"+l.key),a=getNum("a_"+l.key),n=getNum("n_"+l.key);
+    if(b!=null)budget[l.key]=b;
+    if(a!=null)actual[l.key]=a;
+    if(n!=null)newB[l.key]=n;
+  });
+  const cb=compute("b"),ca=compute("a");
+  ["gross_profit","total_opex","ebitda"].forEach(k=>{if(cb[k]!=null)budget[k]=round2(cb[k]);if(ca[k]!=null)actual[k]=round2(ca[k]);});
+  return {budget,actual,newB};
+}
+function round2(x){return Math.round(x*100)/100;}
+function buildData(){
+  const d=JSON.parse(JSON.stringify(DATA)); // deep clone
+  const {budget,actual,newB}=gather();
+  const label=(curKey.split("-")[1]?MONNAME[curKey.split("-")[1]]:"")+" "+curKey.split("-")[0];
+  d.months[curKey]={label:label,budget:budget,actual:actual};
+  d.budgetNew=newB;
+  // notes back onto line defs
+  d.lines=d.lines.map(l=>{const ne=document.getElementById("note_"+l.key);return l.computed?l:Object.assign({},l,{note:ne?ne.value:l.note});});
+  // month order by fiscal sequence
+  const order=Object.keys(d.months).sort((x,y)=>{const fx=x.split("-")[0],fy=y.split("-")[0];if(fx!==fy)return fx<fy?-1:1;return fiscalIndex(x)-fiscalIndex(y);});
+  d.monthOrder=order;
+  const latest=order[order.length-1];
+  const prev=order.length>1?order[order.length-2]:null;
+  d.meta=d.meta||{};
+  d.meta.latestMonth=latest;
+  d.meta.updatedAt=document.getElementById("dateIn").value||todayISO();
+  d.meta.updatedBy=document.getElementById("byIn").value.trim()||"Accounts";
+  const sh=k=>d.months[k].label.split(" ")[0];
+  d.meta.snapshotLabel="Actuals · "+sh(order[0])+"–"+sh(latest)+" "+(d.meta.fy||"FY27");
+  // banner / honest read
+  d.config.bannerHtml=document.getElementById("bannerIn").value;
+  d.config.honestRead=document.getElementById("honestIn").value;
+  // refresh the 3 financial KPI cards from latest (+prev)
+  refreshKpis(d,latest,prev);
+  // refresh scoreboard RAG for the 4 P&L metrics
+  refreshScore(d,latest);
+  return d;
+}
+function ebStr(v){return v==null?"—":(v<0?"−₹"+Math.abs(v).toFixed(0)+"L":"+₹"+v.toFixed(0)+"L");}
+function cogsOf(m){const a=m.actual;return (a&&a.cogs!=null&&a.net_rev)?a.cogs/a.net_rev*100:null;}
+function refreshKpis(d,latest,prev){
+  const L=d.months[latest],P=prev?d.months[prev]:null;
+  const lE=L.actual.ebitda, lB=L.budget?L.budget.ebitda:null;
+  const k=d.config.kpis;
+  if(k&&k.length>=3){
+    const sh=m=>m.label.split(" ")[0];
+    k[0].lab="EBITDA · "+(P?sh(P)+"→"+sh(L):sh(L))+" actual";
+    k[0].val=(P?ebStr(P.actual.ebitda)+" → ":"")+ebStr(lE);
+    k[0].cls=lE==null?"":(lE<0?"red":(lB!=null&&lE>=lB?"green":"amber"));
+    k[0].note=L.label+": EBITDA "+ebStr(lE)+(lB!=null?(lE>=lB?" · beat budget by ₹"+Math.abs(lE-lB).toFixed(1)+"L":" · missed budget by ₹"+Math.abs(lE-lB).toFixed(1)+"L"):"");
+    const lc=cogsOf(L),pc=P?cogsOf(P):null;
+    k[1].val=(pc!=null?pc.toFixed(1)+"% → ":"")+(lc!=null?lc.toFixed(1)+"%":"—");
+    k[1].cls=lc==null?"":(lc<19?"green":lc<=21?"amber":"red");
+    k[1].note=L.label+" COGS "+(lc!=null?lc.toFixed(1)+"%":"—")+" vs 19% target · every 1pt ≈ ₹40L";
+    const nr=L.actual.net_rev;
+    k[2].val=nr==null?"—":"₹"+(nr/100).toFixed(2)+" Cr";
+    k[2].cls=(nr!=null&&L.budget&&L.budget.net_rev!=null)?(nr>=L.budget.net_rev?"green":"amber"):"";
+    k[2].lab="Net revenue · "+L.label;
+    k[2].note=(nr!=null&&L.budget&&L.budget.net_rev!=null)?((nr>=L.budget.net_rev?"beat":"missed")+" budget by ₹"+Math.abs(nr-L.budget.net_rev).toFixed(1)+"L"):"";
+  }
+}
+function refreshScore(d,latest){
+  const L=d.months[latest];const a=L.actual,b=L.budget||{};
+  const set=(name,rag)=>{const row=d.config.score.find(r=>r[0]===name);if(row&&rag)row[5]=rag;};
+  if(a.net_rev!=null&&b.net_rev){const p=a.net_rev/b.net_rev*100;set("Monthly Revenue",p>=95?"GREEN":p>=85?"AMBER":"RED");}
+  const am=(a.ebitda!=null&&a.net_rev)?a.ebitda/a.net_rev*100:null, bm=(b.ebitda!=null&&b.net_rev)?b.ebitda/b.net_rev*100:null;
+  if(am!=null&&bm!=null){const dd=am-bm;set("EBITDA % (consolidated)",dd>=0?"GREEN":dd>=-2?"AMBER":"RED");}
+  const cp=cogsOf(L);if(cp!=null)set("COGS %",cp<19?"GREEN":cp<=21?"AMBER":"RED");
+  if(a.marketing!=null&&a.net_rev){const p=a.marketing/a.net_rev*100;set("Marketing Spend %",p<3?"GREEN":p<=4?"AMBER":"RED");}
+}
+function validate(){
+  if(!curKey){alert("Load a month into the form first (Step 1).");return false;}
+  const a=compute("a");
+  if(a.net_rev==null){return confirm("Net Revenue (Actual) is empty — publish anyway?");}
+  return true;
+}
+function downloadJson(){
+  if(!validate())return;
+  const d=buildData();
+  const blob=new Blob([JSON.stringify(d,null,2)],{type:"application/json"});
+  const u=URL.createObjectURL(blob);const a=document.createElement("a");a.href=u;a.download="data.json";a.click();URL.revokeObjectURL(u);
+  showPub("ok","Downloaded <b>data.json</b>. Upload it to the repo at <code>"+GH.path+"</code> via GitHub → Add file → Upload files → Commit.");
+}
+function utf8b64(str){return btoa(unescape(encodeURIComponent(str)));}
+async function publish(){
+  if(!validate())return;
+  const token=document.getElementById("tokIn").value.trim();
+  if(!token){showPub("err","Paste a GitHub token, or use Download as the manual fallback.");return;}
+  if(document.getElementById("tokSave").checked)localStorage.setItem("bookends_cockpit_ghtoken",token);else localStorage.removeItem("bookends_cockpit_ghtoken");
+  const btn=document.getElementById("pubBtn");btn.disabled=true;
+  showPub("info","Publishing…");
+  try{
+    const d=buildData();
+    const apiBase="https://api.github.com/repos/"+GH.owner+"/"+GH.repo+"/contents/"+GH.path;
+    const hdr={Authorization:"Bearer "+token,Accept:"application/vnd.github+json","X-GitHub-Api-Version":"2022-11-28"};
+    // get current sha
+    let sha=null;
+    const g=await fetch(apiBase+"?ref="+GH.branch,{headers:hdr});
+    if(g.status===200){const gj=await g.json();sha=gj.sha;}
+    else if(g.status!==404){throw new Error("GitHub read failed ("+g.status+"). Check the token has Contents access to this repo.");}
+    const body={message:"P&L update — "+d.months[curKey].label+" ("+d.meta.updatedBy+")",content:utf8b64(JSON.stringify(d,null,2)),branch:GH.branch};
+    if(sha)body.sha=sha;
+    const put=await fetch(apiBase,{method:"PUT",headers:hdr,body:JSON.stringify(body)});
+    if(put.status===200||put.status===201){
+      const pj=await put.json();
+      const url=pj.commit&&pj.commit.html_url?pj.commit.html_url:"";
+      showPub("ok","✓ Published <b>"+d.months[curKey].label+"</b>. The team sees it within ~1 min (GitHub Pages rebuild). "+(url?'<a href="'+url+'" target="_blank">View commit</a>.':"")+' <a href="./index.html">Open the cockpit →</a>');
+      DATA=d; // keep editing against latest
+      const sel=document.getElementById("monthPick");
+      sel.innerHTML=DATA.monthOrder.map(m=>`<option value="${m}"${m===curKey?" selected":""}>Edit ${DATA.months[m].label}</option>`).join("")+`<option value="__new__">➕ Add a new month…</option>`;
+    }else{
+      const t=await put.text();
+      throw new Error("Publish failed ("+put.status+"). "+(put.status===401||put.status===403?"Token rejected or lacks Contents:write on this repo.":t.slice(0,160)));
+    }
+  }catch(e){showPub("err",e.message);}
+  finally{btn.disabled=false;}
+}
+function showPub(kind,html){const m=document.getElementById("pubMsg");m.className="msg "+kind;m.innerHTML=html;}
+
+boot();
+</script>
+</body>
+</html>
