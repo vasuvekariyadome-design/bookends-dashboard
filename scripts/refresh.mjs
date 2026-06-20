@@ -127,6 +127,97 @@ async function buildRows(b) {
   return rows;
 }
 
+// ---- Phase 2: deep panels (account insights + follower demographics) --------
+// Pulls daily reach/profile-views (→ trend + month-over-month) and follower
+// age/gender/city. Fully isolated: any failure throws and is caught by the
+// caller, leaving that brand's deep:{} block as the existing snapshot. It never
+// touches reels/stories/comments, and never zeroes a value it couldn't fetch.
+const AGE_ORDER = ['13-17', '18-24', '25-34', '35-44', '45-54', '55-64', '65+'];
+const unixDaysAgo = n => { const d = new Date(); d.setUTCDate(d.getUTCDate() - n); return Math.floor(d.getTime() / 1000); };
+
+async function fetchDailySeries(acct) {
+  // reach + profile_views, daily, ~60 days. The day-period range caps at 30 days,
+  // so we ask in two windows. If profile_views is unsupported, fall back to reach only.
+  const series = {};
+  for (const [since, until] of [[unixDaysAgo(60), unixDaysAgo(30)], [unixDaysAgo(30), unixDaysAgo(0)]]) {
+    let data = null;
+    try { data = (await api(`/${acct}/insights`, { metric: 'reach,profile_views', period: 'day', since, until })).data; }
+    catch { try { data = (await api(`/${acct}/insights`, { metric: 'reach', period: 'day', since, until })).data; } catch { data = null; } }
+    for (const d of (data || [])) for (const v of (d.values || [])) {
+      const day = (v.end_time || '').slice(0, 10); if (!day) continue;
+      series[day] = series[day] || { reach: 0, pv: 0 };
+      if (d.name === 'reach') series[day].reach = v.value || 0;
+      if (d.name === 'profile_views') series[day].pv = v.value || 0;
+    }
+  }
+  return series;
+}
+
+async function fetchFollowerCount30(acct) {
+  try {
+    const data = (await api(`/${acct}/insights`, { metric: 'follower_count', period: 'day', since: unixDaysAgo(30), until: unixDaysAgo(0) })).data;
+    let sum = 0; for (const d of (data || [])) for (const v of (d.values || [])) sum += (v.value || 0);
+    return sum;
+  } catch { return null; }
+}
+
+async function fetchDemoBreakdown(acct, breakdown) {
+  const j = await api(`/${acct}/insights`, { metric: 'follower_demographics', period: 'lifetime', metric_type: 'total_value', breakdown });
+  const tv = (((j.data || [])[0] || {}).total_value) || {};
+  const results = ((tv.breakdowns || [])[0] || {}).results || [];
+  return results.map(r => [((r.dimension_values || [''])[0]), r.value || 0]);
+}
+
+const fmtPairs = pairs => '[' + pairs.map(([k, v]) => `["${String(k).replace(/"/g, '')}",${Math.round(v)}]`).join(',') + ']';
+
+function oldMom(html, acct) {
+  // last-known values, so fields we can't refresh are preserved, never invented or zeroed
+  const m = html.match(new RegExp('acct:"' + acct + '"[\\s\\S]*?mom:\\{newFoll:(\\d+),perDay:([\\d.]+),reachL:\\d+,reachP:\\d+,reachD:[-\\d.]+,pvL:(\\d+),pvP:(\\d+),pvD:([-\\d.]+)\\}'));
+  return m ? { newFoll: +m[1], perDay: +m[2], pvL: +m[3], pvP: +m[4], pvD: +m[5] } : {};
+}
+
+async function applyDeep(html, b) {
+  const acct = b.acct;
+  const series = await fetchDailySeries(acct);
+  const days = Object.keys(series).sort();
+  if (days.length < 10) throw new Error('insufficient daily insights');
+  const last = days.slice(-30), prior = days.slice(-60, -30);
+  const sum = (arr, key) => arr.reduce((s, d) => s + (series[d][key] || 0), 0);
+  const prev = oldMom(html, acct);
+
+  const reachL = sum(last, 'reach'), reachP = sum(prior, 'reach');
+  const reachD = reachP ? (reachL - reachP) / reachP * 100 : 0;
+  const pvFresh = days.some(d => series[d].pv > 0);
+  const pvL = pvFresh ? sum(last, 'pv') : (prev.pvL ?? 0);
+  const pvP = pvFresh ? sum(prior, 'pv') : (prev.pvP ?? 0);
+  const pvD = pvFresh ? (pvP ? (pvL - pvP) / pvP * 100 : 0) : (prev.pvD ?? 0);
+
+  let newFoll = await fetchFollowerCount30(acct);
+  let perDay;
+  if (newFoll == null) { newFoll = prev.newFoll ?? 0; perDay = prev.perDay ?? 0; }
+  else perDay = +(newFoll / 30).toFixed(1);
+
+  // demographics — require all three present, else leave the whole block as snapshot
+  const ageRaw = await fetchDemoBreakdown(acct, 'age');
+  const genRaw = await fetchDemoBreakdown(acct, 'gender');
+  const cityRaw = await fetchDemoBreakdown(acct, 'city');
+  if (!ageRaw.length || !genRaw.length || !cityRaw.length) throw new Error('demographics empty');
+  const agePairs = AGE_ORDER.map(a => [a, (ageRaw.find(x => x[0] === a) || [a, 0])[1]]).filter(p => p[1] > 0);
+  const g = { M: 0, F: 0, U: 0 }; for (const [k, v] of genRaw) g[k] = v;
+  const cities = cityRaw.map(([c, v]) => [String(c).split(',')[0].trim(), v]).sort((a, c) => c[1] - a[1]).slice(0, 8);
+
+  const mom = `mom:{newFoll:${Math.round(newFoll)},perDay:${perDay},reachL:${Math.round(reachL)},reachP:${Math.round(reachP)},reachD:${reachD.toFixed(1)},pvL:${Math.round(pvL)},pvP:${Math.round(pvP)},pvD:${(+pvD).toFixed(1)}}`;
+  const daily = 'daily:[' + days.map(d => `["${d.slice(5)}",${Math.round(series[d].reach)},${Math.round(series[d].pv)}]`).join(',') + ']';
+  const age = 'age:' + fmtPairs(agePairs);
+  const gender = `gender:{male:${Math.round(g.M)},female:${Math.round(g.F)},undef:${Math.round(g.U)}}`;
+  const citiesS = 'cities:' + fmtPairs(cities);
+
+  const txt = `\n   ${mom},\n   ${daily},\n   ${age},\n   ${gender},\n   ${citiesS},`;
+  const re = new RegExp('(acct:"' + acct + '"[\\s\\S]*?deep:\\{)([\\s\\S]*?)(\\n\\s*reels:)');
+  if (!re.test(html)) throw new Error('deep anchor not found');
+  return html.replace(re, (_m, a, _b, c) => a + txt + c);
+}
+
 (async () => {
   let html = readFileSync(FILE, 'utf8');
   const caps = existingCaptions(html);
@@ -141,6 +232,9 @@ async function buildRows(b) {
       if (prof) { html = replaceNum(html, b.acct, 'followers', prof.followers_count); html = replaceNum(html, b.acct, 'media', prof.media_count); }
       okBrands.push(`${b.key}(${rows.length})`);
       console.log(`${b.key}: ${rows.length} posts refreshed.`);
+      // Deep panels are isolated: a failure here leaves the snapshot, never the posts.
+      try { html = await applyDeep(html, b); console.log(`${b.key}: deep panels (reach/audience) refreshed.`); }
+      catch (e) { console.warn(`${b.key}: deep panels left as snapshot — ${e.message}`); }
     } catch (e) {
       console.error(`${b.key}: FAILED — ${e.message}. Leaving its data untouched.`);
     }
