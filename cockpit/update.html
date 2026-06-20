@@ -142,7 +142,7 @@ code{background:#f0efec;padding:1px 5px;border-radius:5px;font-size:11.5px}
         <div class="fld"><label>Numbers in the file are in</label>
           <select id="unitSel">
             <option value="100000">Rupees (₹) — divide by 1,00,000</option>
-            <option value="1000">Thousands (₹ '000)</option>
+            <option value="100">Thousands (₹ '000)</option>
             <option value="1" selected>Lakhs (₹ L)</option>
             <option value="0.01">Crores (₹ Cr)</option>
           </select>
@@ -360,14 +360,14 @@ function parseNumber(s){
   if(s==null)return null;
   let t=s.toString().trim();
   if(t==="")return null;
-  let neg=false;
-  if(/^\(.*\)$/.test(t)){neg=true;t=t.replace(/[()]/g,"");}
-  if(/(^|\s)dr$/i.test(t)){} // debit positive
-  if(/(^|\s)cr$/i.test(t)){neg=!neg;}
-  t=t.replace(/cr|dr/ig,"").replace(/[₹,\s]/g,"");
-  if(t===""||isNaN(t))return null;
+  // Parentheses = negative (accounting contra). Dr/Cr indicators are stripped, NOT sign-flipped:
+  // a P&L line's sign is set by which line it is, and "Cr" also collides with a Crores unit suffix.
+  const neg=/^\(.*\)$/.test(t);
+  t=t.replace(/[^0-9.\-]/g,""); // keep digits, dot, minus — drops ₹, commas, spaces, Dr/Cr, any letters
+  if(t===""||t==="-"||t==="."||isNaN(t))return null;
   let n=parseFloat(t);
-  return neg?-n:n;
+  if(isNaN(n))return null;
+  return neg?-Math.abs(n):n;
 }
 function bestLineFor(text){
   const n=normalize(text);
