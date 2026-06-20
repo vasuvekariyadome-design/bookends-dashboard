@@ -3,7 +3,6 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<meta name="robots" content="noindex,nofollow"/>
 <title>Bookends Brand Auditor — Live Engagement Dashboard</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
 <style>
@@ -98,50 +97,29 @@ td a:hover{text-decoration:underline}
 .cmt .meta{font-size:11px;color:var(--muted);margin-top:3px}
 .cmt a{color:var(--blue);text-decoration:none}
 @media(max-width:620px){.split{grid-template-columns:1fr}.fmt{grid-template-columns:1fr}.wordmark{font-size:28px;letter-spacing:5px}}
-/* password gate */
-.gate{position:fixed;inset:0;z-index:9999;background:radial-gradient(120% 140% at 0% 0%,#1A3FB0 0%,#00259A 45%,#001A6E 100%);display:flex;align-items:center;justify-content:center;padding:20px}
-.gatecard{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:32px 30px;width:100%;max-width:340px;box-shadow:0 10px 40px rgba(0,0,0,.25);text-align:center}
-.gateword{font-family:"Anton","Oswald","Arial Narrow Bold","Arial Narrow",Impact,sans-serif;font-size:34px;letter-spacing:3px;font-weight:700;color:var(--navy);line-height:1}
-.gatesub{font-size:12.5px;color:var(--muted);font-style:italic;margin:6px 0 22px}
-.gatecard input{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:10px;font-size:15px;text-align:center;letter-spacing:1px;outline:none}
-.gatecard input:focus{border-color:var(--navy)}
-.gatecard button{width:100%;margin-top:12px;padding:11px;border:none;border-radius:10px;background:var(--navy);color:#fff;font-size:14px;font-weight:700;cursor:pointer;transition:background .15s}
-.gatecard button:hover{background:var(--navy2)}
-.gateerr{font-size:12px;color:var(--dud);margin-top:12px;min-height:16px}
+
+.calgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.caldow{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;text-align:center;padding:4px 0}
+.calcell{border:1px solid var(--line);border-radius:11px;min-height:94px;padding:6px;background:var(--card);display:flex;flex-direction:column;gap:3px}
+.calcell.empty{background:transparent;border:0}
+.calcell.wknd{background:#faf5ec}
+.calcell.today{border:2px solid var(--navy);box-shadow:0 0 0 3px rgba(0,37,154,.08)}
+.caldate{font-size:11px;font-weight:700;color:var(--muted);display:flex;justify-content:space-between;align-items:center;margin-bottom:1px}
+.caldate .tdy{font-size:8px;background:var(--navy);color:#fff;border-radius:999px;padding:1px 6px;letter-spacing:.3px}
+.ev{display:flex;align-items:center;gap:5px;border-radius:6px;padding:3px 6px;font-size:10.5px;line-height:1.3;transition:transform .1s}
+.ev:hover{transform:translateX(1px)}
+.ev .fmt{font-size:8px;font-weight:800;letter-spacing:.3px;flex:none}
+.ev .ttl{color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+.calgrid .calcell{min-height:62px}
+.calcell.has{cursor:pointer}
+.calcell.has:hover{background:#fffdf5;border-color:#d8cdb4}
+.calcell.sel{border:2px solid var(--navy);box-shadow:0 0 0 3px rgba(0,37,154,.10)}
+.cdots{display:flex;flex-wrap:wrap;gap:3px;margin-top:auto;padding-top:4px}
+.cdot{width:7px;height:7px;border-radius:50%;display:inline-block}
 </style>
 </head>
 <body>
-<div id="gate" class="gate">
-  <div class="gatecard">
-    <div class="gateword">BOOKENDS</div>
-    <div class="gatesub">brand dashboard — team access</div>
-    <input id="gatepass" type="password" placeholder="Enter passcode" autocomplete="off" autocapitalize="off"/>
-    <button id="gatebtn">Unlock</button>
-    <div id="gateerr" class="gateerr"></div>
-  </div>
-</div>
-<script>
-(function(){
-  var HASH="11bac86c2fb51522904f8f367e7a9433d82ee951a7ffb899e05a74f4ad3907c9";
-  var KEY="bookends_dash_unlock_v1";
-  var gate=document.getElementById("gate");
-  function unlock(){if(gate&&gate.parentNode)gate.parentNode.removeChild(gate);document.body.style.overflow="";}
-  if(localStorage.getItem(KEY)===HASH){unlock();return;}
-  document.body.style.overflow="hidden";
-  async function sha(s){var b=new TextEncoder().encode(s);var h=await crypto.subtle.digest("SHA-256",b);return Array.from(new Uint8Array(h)).map(function(x){return x.toString(16).padStart(2,"0");}).join("");}
-  async function tryit(){
-    var err=document.getElementById("gateerr");
-    try{
-      var h=await sha(document.getElementById("gatepass").value);
-      if(h===HASH){localStorage.setItem(KEY,HASH);unlock();}
-      else{err.textContent="Wrong passcode — try again.";}
-    }catch(e){err.textContent="Open this via the live https link to unlock.";}
-  }
-  document.getElementById("gatebtn").onclick=tryit;
-  document.getElementById("gatepass").addEventListener("keydown",function(e){if(e.key==="Enter")tryit();});
-  document.getElementById("gatepass").focus();
-})();
-</script>
 <header class="hero">
   <div class="hero-in">
     <div>
@@ -166,7 +144,7 @@ td a:hover{text-decoration:underline}
 
 <script>
 const SERVER="mcp__8fc949c9-81dd-4966-a30a-5e7223ce57c8";
-const SNAPSHOT_DATE="2026-06-20";
+const SNAPSHOT_DATE="2026-06-19";
 let charts=[];
 
 // row: [date, type, likes, comments, saves, shares, reach, interactions, url, caption]
@@ -174,26 +152,25 @@ const DATA={
  capiche:{name:"Capiche",handle:"@pizza.capiche",acct:"17841418368091658",color:"#F50C0C",followers:22096,media:1063,
   thr:{dudInt:250,hitInt:800,dudER:0.04,hitER:0.09},
   posts:[
-   ["2026-05-19","Reel",807,67,28,183,13890,1115,"https://www.instagram.com/reel/DYhMU2-s2IS/","frisbees before flipping pizzas"],
-   ["2026-05-01","Carousel",696,0,89,1015,16620,1801,"https://www.instagram.com/p/DXy8O6ZDM0z/","new dishes for the season"],
-   ["2026-05-09","Carousel",588,6,32,155,10100,787,"https://www.instagram.com/p/DYHdCtFjJKx/","new menu>>"],
-   ["2026-05-05","Carousel",519,0,85,273,15499,878,"https://www.instagram.com/p/DX9N3-TDN0m/","too many pizzas?"],
-   ["2026-05-28","Reel",464,18,4,37,6595,536,"https://www.instagram.com/reel/DY4fmgBtjPF/","pizza boys on the field"],
-   ["2026-04-30","Reel",432,2,13,85,9429,544,"https://www.instagram.com/reel/DXwbFzzteTT/","all this over new dishes"],
-   ["2026-03-26","Reel",392,23,63,109,8871,597,"https://www.instagram.com/reel/DWWOA9ajLP-/","we would've done the same"],
-   ["2026-06-05","Carousel",372,3,7,28,4046,418,"https://www.instagram.com/p/DZNDRC7jGQf/","the ny pies brought us here"],
-   ["2026-05-21","Carousel",335,0,10,9,4039,354,"https://www.instagram.com/p/DYmVqmpjLb6/","we love the creativity"],
-   ["2026-06-19","Reel",331,5,8,99,5345,444,"https://www.instagram.com/reel/DZxHTwxsy2G/","Capiche Prive — open for bookings"],
-   ["2026-05-12","Reel",322,1,10,21,4560,359,"https://www.instagram.com/reel/DYPUZ-lsvas/","new menu szn"],
-   ["2026-05-30","Carousel",306,2,15,16,4891,342,"https://www.instagram.com/p/DY9aM6-DBSf/","houseparty in Delhi"],
-   ["2026-04-22","Reel",270,6,14,49,9420,340,"https://www.instagram.com/reel/DXa7DSfDMv0/","not just dinner anymore"],
-   ["2026-05-26","Carousel",265,2,12,60,3612,341,"https://www.instagram.com/p/DYze7lNjFtm/","reserve your table"],
-   ["2026-06-12","Carousel",257,1,8,82,13981,348,"https://www.instagram.com/p/DZfFecJjMQf/","capiche x jaywalking merch"],
-   ["2026-04-03","Carousel",243,1,14,16,3873,276,"https://www.instagram.com/p/DWlfNtqjOtY/","made himself at home"],
-   ["2026-06-01","Carousel",199,1,15,19,2598,235,"https://www.instagram.com/p/DZC0agnjKpD/","meet the summer regulars"],
-   ["2026-03-23","Reel",183,0,59,50,4764,293,"https://www.instagram.com/reel/DWOnr3fDA7T/","exactly how we like it"],
-   ["2026-04-13","Reel",150,0,7,10,4120,168,"https://www.instagram.com/reel/DXEp7PNMYgk/","april fool's, 13 days late"],
-   ["2026-04-18","Image",126,0,18,19,3996,163,"https://www.instagram.com/p/DXRfQZ0jJye/","meet hulk (pesto pizza)"]
+   ["2026-05-19","Reel",806,67,28,183,13886,1115,"https://www.instagram.com/reel/DYhMU2-s2IS/","frisbees before flipping pizzas"],
+   ["2026-05-01","Carousel",696,0,89,1015,16612,1801,"https://www.instagram.com/p/DXy8O6ZDM0z/","new dishes for the season"],
+   ["2026-05-09","Carousel",587,6,31,154,10084,784,"https://www.instagram.com/p/DYHdCtFjJKx/","new menu>>"],
+   ["2026-05-05","Carousel",519,0,85,273,15490,878,"https://www.instagram.com/p/DX9N3-TDN0m/","too many pizzas?"],
+   ["2026-05-28","Reel",464,18,4,37,6545,536,"https://www.instagram.com/reel/DY4fmgBtjPF/","pizza boys on the field"],
+   ["2026-04-30","Reel",432,2,13,85,9418,544,"https://www.instagram.com/reel/DXwbFzzteTT/","all this over new dishes"],
+   ["2026-03-26","Reel",392,23,63,109,8858,597,"https://www.instagram.com/reel/DWWOA9ajLP-/","we would've done the same"],
+   ["2026-06-05","Carousel",370,3,7,28,3989,416,"https://www.instagram.com/p/DZNDRC7jGQf/","the ny pies brought us here"],
+   ["2026-05-21","Carousel",335,0,10,9,4032,354,"https://www.instagram.com/p/DYmVqmpjLb6/","we love the creativity"],
+   ["2026-05-12","Reel",321,1,10,21,4560,358,"https://www.instagram.com/reel/DYPUZ-lsvas/","new menu szn"],
+   ["2026-05-30","Carousel",306,2,14,16,4869,341,"https://www.instagram.com/p/DY9aM6-DBSf/","houseparty in Delhi"],
+   ["2026-04-22","Reel",270,6,14,49,9395,340,"https://www.instagram.com/reel/DXa7DSfDMv0/","not just dinner anymore"],
+   ["2026-05-26","Carousel",265,2,12,60,3589,341,"https://www.instagram.com/p/DYze7lNjFtm/","reserve your table"],
+   ["2026-06-12","Carousel",255,1,8,81,13953,345,"https://www.instagram.com/p/DZfFecJjMQf/","capiche x jaywalking merch"],
+   ["2026-04-03","Carousel",243,1,14,16,3867,276,"https://www.instagram.com/p/DWlfNtqjOtY/","made himself at home"],
+   ["2026-06-01","Carousel",199,1,15,19,2563,235,"https://www.instagram.com/p/DZC0agnjKpD/","meet the summer regulars"],
+   ["2026-03-23","Reel",183,0,59,49,4764,292,"https://www.instagram.com/reel/DWOnr3fDA7T/","exactly how we like it"],
+   ["2026-04-13","Reel",149,0,7,10,4105,167,"https://www.instagram.com/reel/DXEp7PNMYgk/","april fool's, 13 days late"],
+   ["2026-04-18","Image",126,0,17,10,3996,153,"https://www.instagram.com/p/DXRfQZ0jJye/","meet hulk (pesto pizza)"]
   ],
   deep:{
    mom:{newFoll:388,perDay:15.5,reachL:78660,reachP:92583,reachD:-15.0,pvL:387496,pvP:441837,pvD:-12.3},
@@ -214,32 +191,32 @@ const DATA={
  aiko:{name:"Aiko",handle:"@aikomfort",acct:"17841449386057518",color:"#EDB32B",followers:11407,media:553,
   thr:{dudInt:120,hitInt:350,dudER:0.04,hitER:0.09},
   posts:[
-   ["2026-05-04","Carousel",327,3,57,391,6108,778,"https://www.instagram.com/p/DX66jsmjOoT/","this season feels different"],
-   ["2026-05-01","Reel",325,14,5,25,6287,381,"https://www.instagram.com/reel/DXzCSQDMtaY/","5 khoka. no negotiations"],
+   ["2026-05-04","Carousel",327,3,57,389,6049,776,"https://www.instagram.com/p/DX66jsmjOoT/","this season feels different"],
    ["2026-05-07","Reel",325,7,20,56,4505,413,"https://www.instagram.com/reel/DYCV2GNPTka/","behind the pass"],
-   ["2026-06-09","Reel",256,8,5,23,5846,297,"https://www.instagram.com/reel/DZXXEeVMLSR/","food jutsu"],
-   ["2026-04-06","Reel",208,0,25,38,6348,274,"https://www.instagram.com/reel/DWyivJ3DKz_/","sounds of aiko"],
+   ["2026-05-01","Reel",324,14,5,25,6284,380,"https://www.instagram.com/reel/DXzCSQDMtaY/","5 khoka. no negotiations"],
+   ["2026-06-09","Reel",254,8,5,23,5785,295,"https://www.instagram.com/reel/DZXXEeVMLSR/","food jutsu"],
+   ["2026-04-06","Reel",208,0,24,38,6339,273,"https://www.instagram.com/reel/DWyivJ3DKz_/","sounds of aiko"],
    ["2026-03-23","Reel",193,1,40,66,4626,301,"https://www.instagram.com/reel/DWOhDMvjHWO/","ahmedabad in motion"],
    ["2026-04-25","Carousel",182,1,29,61,4017,274,"https://www.instagram.com/p/DXjlMhIjCJ2/","chef's on katsu duty"],
-   ["2026-05-26","Carousel",167,0,15,102,3264,285,"https://www.instagram.com/p/DYzVP0hjChv/","a sushi roll for the table"],
+   ["2026-05-26","Carousel",167,0,15,101,3245,284,"https://www.instagram.com/p/DYzVP0hjChv/","a sushi roll for the table"],
    ["2026-04-16","Reel",166,0,13,23,3407,206,"https://www.instagram.com/reel/DXMT18vERDT/","aiko in motion"],
-   ["2026-06-01","Carousel",160,1,11,32,2149,204,"https://www.instagram.com/p/DZCsZGiD7OD/","the noodle section"],
-   ["2026-05-23","Reel",159,1,1,3,2807,164,"https://www.instagram.com/reel/DYrg3H6sf8K/","chef's off duty"],
-   ["2026-05-20","Reel",154,2,13,52,3720,222,"https://www.instagram.com/reel/DYjy0-QsyTK/","tofu bao"],
-   ["2026-03-28","Reel",146,4,5,7,3309,164,"https://www.instagram.com/reel/DWbUrEUDFQr/","not on the menu"],
-   ["2026-05-16","Reel",141,1,6,8,2587,159,"https://www.instagram.com/reel/DYZgAANMMtK/","still time for lunch"],
-   ["2026-06-12","Carousel",138,0,16,43,2696,197,"https://www.instagram.com/p/DZfC1epj6us/","sweet tooth o'clock"],
-   ["2026-04-12","Carousel",137,0,5,26,2421,168,"https://www.instagram.com/p/DXCCKIyjPVT/","you'll find your way back"],
-   ["2026-05-28","Carousel",136,0,16,62,3014,215,"https://www.instagram.com/p/DY4h6Ilj5SV/","reserve your table"],
-   ["2026-05-12","Reel",130,0,7,17,2457,156,"https://www.instagram.com/reel/DYPOdPBsFYa/","what makes aiko, aiko"],
-   ["2026-03-26","Reel",128,2,14,13,4307,158,"https://www.instagram.com/reel/DWWMys1DK-C/","good food should be heard"],
-   ["2026-06-17","Carousel",122,0,1,3,1382,128,"https://www.instagram.com/p/DZr5bIyDFci/","cooked up back here"],
-   ["2026-05-09","Carousel",115,0,3,2,1753,120,"https://www.instagram.com/p/DYHkOyFjBNy/","straight outta the kitchen"],
-   ["2026-04-18","Carousel",104,0,14,42,2155,160,"https://www.instagram.com/p/DXRgEbhjAGr/","pours for the heat"],
-   ["2026-06-04","Reel",92,5,3,9,2670,109,"https://www.instagram.com/reel/DZKa8wWv_J-/","a komfort order"],
-   ["2026-06-15","Reel",92,0,8,19,1837,119,"https://www.instagram.com/reel/DZmuMO6sFkA/","this season brought along"],
-   ["2026-04-09","Reel",88,0,17,24,2563,131,"https://www.instagram.com/reel/DW6TVxUDDEq/","never not ordering this"],
-   ["2026-04-03","Carousel",68,0,10,4,1938,82,"https://www.instagram.com/p/DWq0NtTDK8S/","one spoon is never enough"]
+   ["2026-06-01","Carousel",160,1,11,32,2132,204,"https://www.instagram.com/p/DZCsZGiD7OD/","the noodle section"],
+   ["2026-05-23","Reel",159,1,1,3,2800,164,"https://www.instagram.com/reel/DYrg3H6sf8K/","chef's off duty"],
+   ["2026-05-20","Reel",154,2,13,51,3642,221,"https://www.instagram.com/reel/DYjy0-QsyTK/","tofu bao"],
+   ["2026-03-28","Reel",146,4,5,7,3299,164,"https://www.instagram.com/reel/DWbUrEUDFQr/","not on the menu"],
+   ["2026-05-16","Reel",141,1,6,8,2580,159,"https://www.instagram.com/reel/DYZgAANMMtK/","still time for lunch"],
+   ["2026-06-12","Carousel",138,0,16,42,2659,196,"https://www.instagram.com/p/DZfC1epj6us/","sweet tooth o'clock"],
+   ["2026-04-12","Carousel",137,0,5,26,2414,168,"https://www.instagram.com/p/DXCCKIyjPVT/","you'll find your way back"],
+   ["2026-05-28","Carousel",135,0,16,62,2997,214,"https://www.instagram.com/p/DY4h6Ilj5SV/","reserve your table"],
+   ["2026-05-12","Reel",130,0,7,17,2447,156,"https://www.instagram.com/reel/DYPOdPBsFYa/","what makes aiko, aiko"],
+   ["2026-03-26","Reel",128,2,13,13,4299,157,"https://www.instagram.com/reel/DWWMys1DK-C/","good food should be heard"],
+   ["2026-06-17","Carousel",119,0,1,3,1303,125,"https://www.instagram.com/p/DZr5bIyDFci/","cooked up back here"],
+   ["2026-05-09","Carousel",115,0,3,2,1749,120,"https://www.instagram.com/p/DYHkOyFjBNy/","straight outta the kitchen"],
+   ["2026-04-18","Carousel",104,0,14,41,2155,159,"https://www.instagram.com/p/DXRgEbhjAGr/","pours for the heat"],
+   ["2026-06-04","Reel",92,5,3,9,2652,109,"https://www.instagram.com/reel/DZKa8wWv_J-/","a komfort order"],
+   ["2026-06-15","Reel",92,0,8,16,1791,116,"https://www.instagram.com/reel/DZmuMO6sFkA/","this season brought along"],
+   ["2026-04-09","Reel",88,0,16,24,2549,130,"https://www.instagram.com/reel/DW6TVxUDDEq/","never not ordering this"],
+   ["2026-04-03","Carousel",68,0,10,4,1928,82,"https://www.instagram.com/p/DWq0NtTDK8S/","one spoon is never enough"]
   ],
   deep:{
    mom:{newFoll:254,perDay:10.2,reachL:42830,reachP:44657,reachD:-4.1,pvL:239647,pvP:226491,pvD:5.8},
@@ -259,13 +236,13 @@ const DATA={
  bookends:{name:"Bookends",handle:"@bookendshospitality",acct:"17841463855235063",color:"#00259A",followers:691,media:36,histStart:"2024-06-20",
   thr:{dudInt:200,hitInt:500,dudER:0.03,hitER:0.06},
   posts:[
-   ["2026-01-27","Carousel",464,2,27,59,9860,557,"https://www.instagram.com/p/DUA4odCktJ8/","1,000+ guests, 200+ team"],
+   ["2026-01-27","Carousel",464,2,27,59,9845,557,"https://www.instagram.com/p/DUA4odCktJ8/","1,000+ guests, 200+ team"],
    ["2026-02-19","Reel",416,13,9,50,8747,495,"https://www.instagram.com/reel/DU8KZNxDa41/","wedding after-movie 3/3"],
-   ["2026-01-30","Reel",355,13,16,29,8324,421,"https://www.instagram.com/reel/DUI3dNCDYcn/","wedding after-movie 1/3"],
-   ["2026-02-01","Reel",354,5,14,42,8403,425,"https://www.instagram.com/reel/DUNX4LjDd2n/","wedding after-movie 2/3"],
-   ["2026-03-05","Reel",340,8,6,16,7021,376,"https://www.instagram.com/reel/DVgBbfcDUpg/","Mayra celebration catering"],
+   ["2026-01-30","Reel",355,13,16,29,8307,421,"https://www.instagram.com/reel/DUI3dNCDYcn/","wedding after-movie 1/3"],
+   ["2026-02-01","Reel",354,5,14,42,8379,424,"https://www.instagram.com/reel/DUNX4LjDd2n/","wedding after-movie 2/3"],
+   ["2026-03-05","Reel",339,8,6,16,7018,375,"https://www.instagram.com/reel/DVgBbfcDUpg/","Mayra celebration catering"],
    ["2026-03-31","Reel",320,14,8,43,8690,393,"https://www.instagram.com/reel/DWjDHA8je4L/","Bookends Retreat 2026"],
-   ["2026-02-02","Carousel",131,0,17,31,5878,180,"https://www.instagram.com/p/DUP_P4eEi1j/","hiring — team over title"]
+   ["2026-02-02","Carousel",131,0,17,31,5868,180,"https://www.instagram.com/p/DUP_P4eEi1j/","hiring — team over title"]
   ],
   deep:{
    mom:{newFoll:31,perDay:1.2,reachL:1385,reachP:2626,reachD:-47.3,pvL:7334,pvP:12013,pvD:-38.9},
@@ -324,15 +301,7 @@ const EXTRA={
 };
 
 // TickTick "Bookends Marketing" backlog (live projectId + snapshot)
-const BACKLOG={projectId:"6a2cfbb9ebcdba000000029f",total:41,groups:[
- ["🎬 Reels",["Pasta Steam Video","Ghaslet Jacket","Aiko Ahmedabad Thirst Trap","Ghaslet Horror","Yash × Thirst-Trap Comments","Central Kitchen Tour with Husen","Doughj0e-Style Pizza Rolling","Jaywalking Merch Drop — with Jay","Pranjal × Anirudh Branding Recap","Denis Prokopyev reference","Pizza & Coke with Dipak Patel"]],
- ["📺 Series",["Bookends R&D Trials Reel","Foodaholics Dish-Led Marketing"]],
- ["🎯 Campaigns & Brand",["Capiche Privé Launch — Pranjal","Beshak + South Indian Full Identity","Brand Thesis: Human Connection & Courtship","Capiche NY-Style Positioning","Growth: Ahmedabad IG Share 6% → 30% (due Dec 10)"]],
- ["🎨 Assets",["Annual Cultural Event Roster + Live Coverage","Bookends Fleet Livery Design","Jaywalking Jacket Patches — Team Badges","Cathay Pacific-Style Kids' Kit","Artwork Taglines — Foodaholics","Customized pens"]],
- ["🎞️ Films",["Don't Work At Bookends — Recruitment","Gujarat Does Pizza Right — Cultural Piece"]],
- ["🤝 Events / Collabs / Ops",["First-Ever 1000 Pizza Day — Capiche","Suggahunny DJ Set","All Team Members Follow Brand Instagrams"]],
- ["💡 Concepts & Ideas",["The Hotline","Smells Like Capiche","The Disloyalty Card","The Capiche Entrance Exam","Menu Graveyard","Slice Insurance","Transfer Window","MSCHF-Style Marketing Pipeline","Bumper Sticker idea","Celebrity Logo Equivalents","Libertario Coffee reference"]]
-]};
+const BACKLOG={projectId:"6a2cfbb9ebcdba000000029f",total:40,groups:[["🎬 Reels", [{"title": "Reel: Pranjal × Anirudh Branding Recap", "id": "683b01c3cbb6df253feff7fb", "due": null, "content": "STRATEGIC CONTEXT Brand: Portfolio (whichever brands Pranjal & Anirudh's work touched). Type: Recap reel — documenting the branding work done with Pra", "items": 1}, {"title": "Reel: Jaywalking Merch Drop — with Jay", "id": "68ac8701079ed107ad3c162f", "due": null, "content": "STRATEGIC CONTEXT Brand: Bookends/Capiche × Jaywalking (collab). Type: Collab merch-drop reel — doubles as recruitment and brand-awareness piece. Stat", "items": 0}, {"title": "Reel: Ghaslet Horror", "id": "6a16ce54faf8f435630f9b4b", "due": null, "content": "STRATEGIC CONTEXT Brand: Ghaslet. Type: Genre-treatment reel — horror styling, night shoot, sound design doing the heavy lifting. Status: Concept stag", "items": 0}, {"title": "Reel: Denis Prokopyev [ - YouTube](", "id": "6a299eecebcdb900000005dd", "due": null, "content": "STRATEGIC CONTEXT Brand: Capiche (pasta). Type: Trend-format reel — Denis Prokopyev–style pasta POV. Camera as the hands/eater, tight close-ups, satis", "items": 0}, {"title": "Reel: Aiko Ahmedabad Thirst Trap", "id": "6a2af0b6cbb6e79192803c69", "due": null, "content": "STRATEGIC CONTEXT Brand: Aiko (Ahmedabad outlet). Type: High-gloss, fast-cut venue reel — food close-ups, interiors, energy. Pure craveability and ven", "items": 0}, {"title": "Reel: Pasta Steam Video", "id": "6a2af0e2cbb6e79192803caa", "due": null, "content": "STRATEGIC CONTEXT Brand: Capiche / Aiko. Type: Ambient craveability reel — compilation of pasta/noodles steaming at guests' tables. Sensory, low-narra", "items": 0}, {"title": "Reel: Central Kitchen Tour with Husen", "id": "6a2afcedcbb6e79192803cfb", "due": null, "content": "STRATEGIC CONTEXT Brand: Cross-brand (central kitchen serves all outlets). Type: Trust/transparency content — walkthrough of the central kitchen with ", "items": 0}, {"title": "Reel: Doughj0e-Style Pizza Rolling", "id": "6a2b0070cbb6e79192803d4c", "due": null, "content": "STRATEGIC CONTEXT Brand: Bookends (pizza). Type: Craft skill reel in the style of @doughj0e — dough rolling/tossing, satisfying, craft-forward, loopab", "items": 0}, {"title": "Reel: Yash × Thirst-Trap Comments", "id": "6a2b0023cbb6e79192803d3b", "due": null, "content": "STRATEGIC CONTEXT Brand: TBC (driven by our IG account's comment section). Type: Personality-led reel — built around Yash and real thirst-trap comment", "items": 0}, {"title": "Reel: Ghaslet Jacket", "id": "6a2becfb17547cd078c8e6ea", "due": null, "content": "STRATEGIC CONTEXT Brand: Ghaslet. Type: Merch/product-forward reel built around the Ghaslet jacket. Status: Hero piece, location and talent not confir", "items": 0}]], ["📺 Series", [{"title": "Series: Bookends R&D Trials Reel", "id": "69f9a744faf8c323b250ea54", "due": null, "content": "STRATEGIC CONTEXT Brand: Bookends. Type: BTS / process content — documenting R&D sessions where chefs develop and trial new dishes. Status: No format ", "items": 0}, {"title": "Series: Foodaholics Dish-Led Marketing", "id": "6a2af15acbb6e79192803cdb", "due": null, "content": "STRATEGIC CONTEXT Brand: Foodaholics. Type: Content strategy shift — from venue-led posts to dish-led content. One hero dish per post/reel. Status: Di", "items": 0}]], ["🎯 Campaigns & Brand", [{"title": "Growth: Ahmedabad IG Share 6% → 30%", "id": "693addcecdb551cd52c95be0", "due": "10 Dec", "content": "STRATEGIC CONTEXT Brand: Portfolio-wide (Bookends, Capiche, Aiko, Foodaholics). Type: Growth initiative — grow share of Ahmedabad's food & lifestyle I", "items": 0}, {"title": "Brand: Beshak + South Indian Full Identity — Pranjal", "id": "68e4fe44ac1b112a0d437304", "due": null, "content": "STRATEGIC CONTEXT Brand: Beshak (+ South Indian concept). Type: Full brand identity build — name, logo, visual language, tone of voice, packaging, pos", "items": 0}, {"title": "Campaign: Capiche Privé Launch — Pranjal", "id": "693adceb9de091cd52c95b91", "due": null, "content": "STRATEGIC CONTEXT Brand: Capiche Privé. Type: Launch campaign — premium, exclusive dining experience. Teasers, invite-only previews, press, social. St", "items": 0}, {"title": "Brand: Capiche NY-Style Positioning", "id": "69945ae46a568c2e3cf54a24", "due": null, "content": "STRATEGIC CONTEXT Brand: Capiche. Type: Positioning work — establish Capiche as the definitive NY-style pizza destination in Ahmedabad across all touc", "items": 0}, {"title": "Brand Thesis: Human Connection & Courtship", "id": "6a1ec4fb0634e1bc915cf8eb", "due": null, "content": "STRATEGIC CONTEXT Brand: Bookends. Type: Brand thesis — not an executable task yet. Human connection and courtship as the lens for Bookends content: s", "items": 0}]], ["🎨 Assets", [{"title": "Asset: Annual Cultural Event Roster + Live Coverage", "id": "693add90ee0d91cd52c95bd1", "due": null, "content": "STRATEGIC CONTEXT Brand: Bookends (portfolio-wide applicable). Type: Planning asset — annual calendar of cultural moments (Garba, Navratri, Diwali, lo", "items": 0}, {"title": "Asset: Jaywalking Jacket Patches — Team Badges", "id": "69dce606b8a296541e469f1d", "due": null, "content": "STRATEGIC CONTEXT Brand: Bookends (the badge is the unifier — it's the thing that says \"we're one house\" across Capiche, Aiko, Oosari. If it's a Capic", "items": 0}, {"title": "Asset: Bookends Fleet Livery Design", "id": "69ea245bfaf86ef5206b92f4", "due": null, "content": "STRATEGIC CONTEXT Brand: Bookends (NOT Capiche — the original task title is misleading. The brand on the vans is Bookends. Worth renaming this task on", "items": 0}, {"title": "Asset: Cathay Pacific-Style Kids' Kit — Cross-Brand", "id": "6a005ea5ebcdb90000000227", "due": null, "content": "STRATEGIC CONTEXT Brands: Cross-brand (Capiche, Aiko, Bookends — different format per brand). Type: Multi-brand operational + brand + content asset. S", "items": 0}, {"title": "Asset: Artwork Taglines — Every Piece Gets One - Foodaholics", "id": "6a08178d721e51ba0c508ae9", "due": null, "content": "STRATEGIC CONTEXT Brand: Bookends (house-level standard — the format travels across Capiche, Aiko, and Oosari even though the art on each wall is diff", "items": 0}]], ["🎞️ Films", [{"title": "Film: Gujarat Does Pizza Right — Cultural Piece", "id": "699d85b4cbb68c2e3bed7789", "due": null, "content": "STRATEGIC CONTEXT Brand: Capiche. Type: Cultural film — long-form or short-film piece making the case for Gujarat's pizza culture. Brand positioning c", "items": 0}, {"title": "Film: Don't Work At Bookends — Recruitment", "id": "6a2931efebcdba0000000180", "due": null, "content": "STRATEGIC CONTEXT Brand: Bookends. Type: Recruitment film — the anti-pitch. \"This is hard, you won't last\" framing that filters for people who actuall", "items": 0}]], ["🤝 Events / Collabs / Ops", [{"title": "Event: First-Ever 1000 Pizza Day — Capiche", "id": "6a02977efaf87e15fb51f565", "due": null, "content": "Goal: Hit 1000 pizzas made in a single day — a milestone that proves Capiche's production capacity and creates a marketing moment. What this means: Th", "items": 0}, {"title": "Collab: Suggahunny DJ Set", "id": "6a0d2ee4ebcdba0000000a9b", "due": null, "content": "STRATEGIC CONTEXT Brand: TBC — whichever venue fits the artist's crowd. Type: Event collab — DJ set by Suggahunny at one of the restaurants. Status: P", "items": 0}, {"title": "Ops: All Team Members Follow Brand Instagrams", "id": "6a1d03d4ebcdba00000004b2", "due": null, "content": "STRATEGIC CONTEXT Brand: All brands. Type: Ops/process task — every team member across all locations follows all brand handles and engages with new po", "items": 0}]], ["💡 Concepts & Ideas", [{"title": "Pipeline: MSCHF-Style Marketing Ideas", "id": "69b935bdebcdba0000000601", "due": null, "content": "STRATEGIC CONTEXT Brand: Capiche/Bookends (portfolio-wide). Type: Idea pipeline — rolling list of bold, MSCHF-inspired drops and stunts, activated whe", "items": 0}, {"title": "Instagram Post: Capiche Celebrity Logo Equivalents", "id": "6a09a43ecbb696ac7222996d", "due": null, "content": "STRATEGIC CONTEXT Brand: Capiche (correctly, this time — the 👌 *is* the Capiche logo, so unlike the fleet, badge, and artwork tasks, this one shouldn'", "items": 0}, {"title": "Idea: Bumper Sticker — \"If You Find This Car Speeding…\"", "id": "6a1d03caebcdba00000004a9", "due": null, "content": "STRATEGIC CONTEXT Brand: Bookends/Capiche delivery fleet. Type: Gag asset — bumper sticker for delivery/fleet cars: \"If you find this car speeding, ca", "items": 0}, {"title": "Reference: Libertario Coffee — Models on Instagram", "id": "6a22be57ebcdb9000000012f", "due": null, "content": "STRATEGIC CONTEXT Brand: Reference study (applies portfolio-wide). Type: Competitive/reference research — visit Libertario Coffee, break down how they", "items": 0}, {"title": "", "id": "6a2be731ebce350000000440", "due": null, "content": "STRATEGIC CONTEXT Brand: Capiche/Bookends (pizza). Type: Format reference — saved IG reel (link in title): pizza & Coke with Dipak Patel. Status: Refe", "items": 0}, {"title": "customized pens", "id": "6a2cdbe93b5511018c6ba8ff", "due": null, "content": "", "items": 0}, {"title": "The Hotline", "id": "6a2e5efb8f08a3d9c9854d3b", "due": null, "content": "A phone number that answers with oven sounds. Press 1 for cheese pull audio. Press 2 to hear the dough being slapped. Press 3 to speak to the manager ", "items": 0}, {"title": "Smells Like Capiche", "id": "6a2e5efb8f08b3d22adc6425", "due": null, "content": "A candle that smells like the oven — dough, char, oregano. Limited run, serious product photography, tasting notes.", "items": 0}, {"title": "The Disloyalty Card", "id": "6a2e5efb8f08e458b28ea574", "due": null, "content": "A stamp card for eating at other pizzerias. Collect proof of five visits elsewhere, bring it in, get a free Capiche pizza. \"We forgive you.\" Breaks th", "items": 0}, {"title": "The Capiche Entrance Exam", "id": "6a2e5efb8f08a3d9c9854d3c", "due": null, "content": "A 10-question deadpan exam — pizza ethics, fold technique, \"a friend asks for pineapple: what do you do\" — pass it, unlock the secret menu item. Poste", "items": 0}, {"title": "Menu Graveyard", "id": "6a2e5efb8f08b3d22adc6428", "due": null, "content": "Killed menu items get a proper shrine — framed portrait, candle, date of birth and death, an annual mourning post. Once a year, one item comes back fr", "items": 0}, {"title": "Slice Insurance", "id": "6a2e5efb8f08de211ba53fd5", "due": null, "content": "₹10 add-on at checkout. If you drop your slice, we replace it. Real policy document, absurd legal language, claims require \"photographic evidence of t", "items": 0}, {"title": "Transfer Window", "id": "6a2e5efb8f08de211ba53fd6", "due": null, "content": "Hiring posts done as signing announcements: \"Signed: Jay, dough department, undisclosed fee,\" jersey-reveal photo.", "items": 0}]]]};
 
 // Group overview data
 const OVERVIEW=[
@@ -348,30 +317,34 @@ function flagOf(b,p){const er=p[7]/p[6];const t=b.thr;
   if(b.dormant)return"OK";
   if(p[7]>=t.hitInt||er>=t.hitER)return"Hit";
   if(p[7]<t.dudInt||er<t.dudER)return"Dud";return"OK";}
-let current="overview";let sortKey="date";let sortDir=-1;
+let current="thisweek";let sortKey="date";let sortDir=-1;
 
 function buildTabs(){
   const t=document.getElementById("tabs");t.innerHTML="";
+  const tw=document.createElement("div");tw.className="tab"+(current==="thisweek"?" active":"");
+  tw.style.fontWeight="700";tw.innerHTML="🏠 This Week";
+  tw.onclick=()=>{current="thisweek";render();};t.appendChild(tw);
   const ov=document.createElement("div");ov.className="tab"+(current==="overview"?" active":"");
   ov.style.fontWeight="700";ov.innerHTML="◆ Overview";ov.onclick=()=>{current="overview";render();};t.appendChild(ov);
   Object.keys(DATA).forEach(k=>{const b=DATA[k];
     const el=document.createElement("div");el.className="tab "+k+(k===current?" active":"");
     el.innerHTML=`<span class="dot" style="background:${b.color}"></span>${b.name}`;
     el.onclick=()=>{current=k;render();};t.appendChild(el);});
-  const cal=document.createElement("div");cal.className="tab"+(current==="calendar"?" active":"");
-  cal.style.fontWeight="700";cal.innerHTML="📅 July Plan";
-  cal.onclick=()=>{current="calendar";render();};t.appendChild(cal);
   const bk=document.createElement("div");bk.className="tab"+(current==="backlog"?" active":"");
   bk.style.fontWeight="700";bk.innerHTML="✅ Backlog";
   bk.onclick=()=>{current="backlog";render();};t.appendChild(bk);
+  const mc=document.createElement("div");mc.className="tab"+(current==="monthcal"?" active":"");
+  mc.style.fontWeight="700";mc.innerHTML="🗓 Content Planner";
+  mc.onclick=()=>{current="monthcal";render();};t.appendChild(mc);
 }
 
 function render(){
   charts.forEach(c=>{try{c.destroy();}catch(e){}});charts=[];
   buildTabs();
+  if(current==="thisweek"){renderThisWeek();return;}
   if(current==="overview"){renderOverview();return;}
-  if(current==="calendar"){renderCalendar();return;}
   if(current==="backlog"){renderBacklog();return;}
+  if(current==="monthcal"){renderPlanner();return;}
   const b=DATA[current];const v=document.getElementById("view");
   const inter=b.posts.map(p=>p[7]);const reach=b.posts.map(p=>p[6]);const ers=b.posts.map(p=>p[7]/p[6]);
   const cad=(b.posts.length/90*7);const erMed=med(ers)*100;const reachPct=mean(reach)/b.followers*100;
@@ -403,7 +376,7 @@ function render(){
    </div></div>`;
   let chartPanel=`<div class="panel"><h2>Interactions over time (90 days)</h2><div class="chartbox"><canvas id="trend"></canvas></div></div>`;
 
-  v.innerHTML=cards+flagHtml+deepHtml+renderExtra(current)+renderBenchmark(current)+fmt+chartPanel+postsTable(b);
+  v.innerHTML=cards+flagHtml+deepHtml+renderExtra(current)+renderBenchmark(current)+renderTopPosts(current)+renderComments(current)+fmt+chartPanel+postsTable(b);
   drawInterChart(b);
   if(b.deep)drawDeepCharts(b);
   if(window.cowork&&window.cowork.callMcpTool&&b.deep&&!b._deepLive&&!b._deepLoading)refreshDeep(current);
@@ -519,16 +492,7 @@ function renderExtra(k){
 
 function renderOverview(){
   const v=document.getElementById("view");
-  // Numbers are computed live from DATA so this tab stays consistent with the brand tabs
-  // after the daily refresh. Only status colour (b[6]) and the "do today" note (b[7]) are editorial.
-  const ov=OVERVIEW.map(o=>{const B=DATA[o[0]];
-    return {k:o[0],name:o[1],
-      foll:B.followers,
-      n:B.posts.length,
-      er:B.posts.length?med(B.posts.map(p=>p[7]/p[6]))*100:0,
-      mom:B.deep?Math.round(B.deep.mom.reachD):0,
-      status:o[6],text:o[7]};});
-  const totF=ov.reduce((s,b)=>s+b.foll,0),totP=ov.reduce((s,b)=>s+b.n,0),need=ov.filter(b=>b.status==="red").length;
+  const totF=OVERVIEW.reduce((s,b)=>s+b[2],0),totP=OVERVIEW.reduce((s,b)=>s+b[3],0),need=OVERVIEW.filter(b=>b[6]==="red").length;
   let cards=`<div class="cards">
     <div class="kpi"><div class="lab">Total followers</div><div class="val">${(totF/1000).toFixed(1)}k</div><div class="note">3 brands</div></div>
     <div class="kpi"><div class="lab">Posts / 90d</div><div class="val">${totP}</div><div class="note">across brands</div></div>
@@ -536,16 +500,16 @@ function renderOverview(){
     <div class="kpi"><div class="lab">Backlog ideas</div><div class="val">${BACKLOG.total}</div><div class="note">in TickTick</div></div>
   </div>`;
   const dotS=`display:inline-block;width:9px;height:9px;border-radius:50%`;
-  let rows=ov.map(b=>{
-    const col=b.k==="capiche"?"var(--capiche)":b.k==="aiko"?"var(--aiko)":"var(--bookends)";
-    const dot=b.status==="green"?"#2E7D4E":b.status==="amber"?"#D09A12":"#C2080B";
-    const arrow=b.mom<=-10?"▼":b.mom<0?"▾":"▲";const acol=b.mom<=-10?"var(--dud)":b.mom<0?"#D09A12":"var(--hit)";
-    return `<tr style="cursor:pointer" onclick="current='${b.k}';render()">
-      <td><span style="${dotS};background:${col}"></span> <b>${b.name}</b></td>
-      <td>${b.foll.toLocaleString()}</td><td>${b.n}</td><td>${b.er?b.er.toFixed(1)+'%':'—'}</td>
-      <td style="color:${acol}"><b>${arrow} ${Math.abs(b.mom)}%</b></td>
+  let rows=OVERVIEW.map(b=>{
+    const col=b[0]==="capiche"?"var(--capiche)":b[0]==="aiko"?"var(--aiko)":"var(--bookends)";
+    const dot=b[6]==="green"?"#2E7D4E":b[6]==="amber"?"#D09A12":"#C2080B";
+    const arrow=b[5]<=-10?"▼":b[5]<0?"▾":"▲";const acol=b[5]<=-10?"var(--dud)":b[5]<0?"#D09A12":"var(--hit)";
+    return `<tr style="cursor:pointer" onclick="current='${b[0]}';render()">
+      <td><span style="${dotS};background:${col}"></span> <b>${b[1]}</b></td>
+      <td>${b[2].toLocaleString()}</td><td>${b[3]}</td><td>${b[4]?b[4]+'%':'—'}</td>
+      <td style="color:${acol}"><b>${arrow} ${Math.abs(b[5])}%</b></td>
       <td><span style="${dotS};background:${dot}"></span></td>
-      <td style="white-space:normal;text-align:left">${b.text}</td></tr>`;}).join("");
+      <td style="white-space:normal;text-align:left">${b[7]}</td></tr>`;}).join("");
   let table=`<div class="panel"><h2>All brands at a glance</h2>
     <table><thead><tr><th>Brand</th><th>Followers</th><th>90d</th><th>ER</th><th>Reach MoM</th><th>Status</th><th style="text-align:left">Do today</th></tr></thead><tbody>${rows}</tbody></table>
     <div style="font-size:12px;color:var(--muted);margin-top:8px">Click a brand to open its full page.</div></div>`;
@@ -561,7 +525,7 @@ function renderPlanActual(){
   return `<div class="panel"><h2>Plan vs. actual &middot; July <span class="tagm">live</span></h2>${rows}
     <div style="font-size:12px;color:var(--muted);margin-top:8px">${julyStarted?"Posts shipped vs planned this month. Red = behind schedule.":"July hasn't started — this fills in live as you post against the calendar. The point: it holds you to the cadence that fixes reach."}</div></div>`;
 }
-function groupsHtml(groups){return groups.map(g=>`<div class="panel"><h2>${g[0]} <span class="tagm">${g[1].length}</span></h2>${g[1].map(t=>`<div class="cmt" style="background:#faf9f6">${t}</div>`).join("")}</div>`).join("");}
+function groupsHtml(groups){return groups.map(g=>`<div class="panel"><h2>${g[0]} <span class="tagm">${g[1].length}</span></h2>${g[1].map(it=>{const t=(typeof it==="string")?{title:it}:it;const link=t.id?`https://ticktick.com/webapp/#p/${BACKLOG.projectId}/tasks/${t.id}`:null;const due=t.due?`<span style="color:var(--warn);font-weight:700">⏰ ${t.due}</span> &middot; `:"";const desc=t.content?`<div style="font-size:11.5px;color:var(--muted);margin-top:4px">${t.content}…</div>`:"";const items=(t.items&&t.items>0)?`<div style="font-size:11px;color:var(--muted);margin-top:3px">☑ ${t.items} checklist item${t.items>1?"s":""}</div>`:"";const open=link?` &middot; <a href="${link}" target="_blank" style="color:var(--navy);text-decoration:none;font-weight:600">edit in TickTick ↗</a>`:"";return `<div class="cmt" style="background:#faf7f0"><b style="font-weight:600">${t.title}</b>${open}<div style="margin-top:2px">${due}</div>${desc}${items}</div>`;}).join("")}</div>`).join("");}
 function renderBacklog(){
   const v=document.getElementById("view");
   v.innerHTML=`<div class="cards"><div class="kpi"><div class="lab">Marketing backlog</div><div class="val" id="bkTotal">${BACKLOG.total}</div><div class="note">open ideas &middot; TickTick "Bookends Marketing"</div></div></div>
@@ -582,7 +546,7 @@ async function pullBacklog(){
       if(s.startsWith("asset"))return order[3];if(s.startsWith("film"))return order[4];
       if(s.startsWith("event")||s.startsWith("collab")||s.startsWith("ops"))return order[5];
       return order[6];};
-    const G={};tasks.forEach(t=>{const g=grp(t.title);(G[g]=G[g]||[]).push(t.title.replace(/\[Instagram\][^\n]*/gi,"").replace(/https?:\/\/\S+/g,"").trim());});
+    const G={};window.TTDUE=[];tasks.forEach(t=>{const g=grp(t.title);const due=t.dueDate?new Date(t.dueDate):null;const obj={title:t.title.replace(/\[Instagram\][^\n]*/gi,"").replace(/https?:\/\/\S+/g,"").trim(),id:t.id,due:due?due.toLocaleDateString("en-IN",{day:"numeric",month:"short"}):null,content:(t.content||t.desc||"").replace(/\s+/g," ").trim().slice(0,150),items:(t.items||[]).length};(G[g]=G[g]||[]).push(obj);if(due)window.TTDUE.push({title:obj.title,id:t.id,date:due.toISOString().slice(0,10)});});
     const groups=order.filter(k=>G[k]).map(k=>[k,G[k]]);
     document.getElementById("bkGroups").innerHTML=groupsHtml(groups);
     document.getElementById("bkTotal").textContent=tasks.length;
@@ -647,7 +611,216 @@ async function refreshDeep(k){
   }catch(e){}
   b._deepLoading=false;
 }
+// Comment CRM data: [postCode, label, date, [[text,date],...], emojiReactionCount]
+const COMMENTS={
+ capiche:[
+  ["DZxHTwxsy2G","Capiche Privé — open for bookings","2026-06-19",[["Booking open 🤗","Jun 19"]],3],
+  ["DZfFecJjMQf","Capiche × Jaywalking merch","2026-06-12",[["Manish bhai on top 🔥","Jun 12"]],0],
+  ["DZNDRC7jGQf","the ny pies brought us here (team)","2026-06-05",[["Crazy idea!","Jun 5"]],5],
+  ["DY9aM6-DBSf","fueled a houseparty in Delhi","2026-05-30",[["when did this happen wtf how did i miss this","May 30"]],0],
+  ["DY4fmgBtjPF","pizza boys, top-5 finish","2026-05-28",[["awesome food, cool chefs doing cool stuff!! Insane aura farming #capiche","May 28"],["Top 5 🔥","May 28"]],13],
+  ["DYze7lNjFtm","your sign to reserve a table","2026-05-26",[["That's #GangstaSmooth 🔥","May 26"]],0],
+  ["DYhMU2-s2IS","flipping frisbees before pizzas","2026-05-19",[["Aao na Baa, BomBay 17 me bhi aao 🔥","May 19"],["Crazy bro @samyyy__11","May 19"],["Crazyy edit and shoot 🔥","May 19"],["Incredible @samyyy__11 😍","May 19"],["Inshallah the boys played well","May 19"],["The gully boy @_kenny_14_ 😍","May 19"],["@samyyy__11 epic shit!","May 20"],["Glorious video!","May 20"]],28],
+  ["DYPUZ-lsvas","new menu szn in the kitchen","2026-05-12",[["absolutely loveddd the cassata dessert 😍","May 12"]],0],
+  ["DYHdCtFjJKx","new menu >>","2026-05-09",[["Jab bhi IG kholti hun, Capiche jaane ki ek aur vajah mil jaati hai 🙌","May 9"],["Say Capiche!! 📸","May 9"],["Come to Mumbai bro!","May 17"]],2],
+  ["DXa7DSfDMv0","not just dinner anymore (Uni)","2026-04-22",[["Waghmare waking up to show how Ahmedabad lunches 🔥","Apr 22"]],4],
+  ["DWWOA9ajLP-","honestly, we'd have done the same","2026-03-26",[["Pass me the slice!!","Mar 27"]],15]
+ ],
+ aiko:[
+  ["DZXXEeVMLSR","food jutsu","2026-06-09",[["Best 😂","Jun 9"],["Sensei @vekariya_vasu @ghodke_yash 🥷🍣","Jun 9"]],4],
+  ["DZKa8wWv_J-","this one's a komfort order","2026-06-04",[["They are goddamn kwispyyy !!!","Jun 4"]],3],
+  ["DZCsZGiD7OD","nobody skips the noodle section","2026-06-02",[["my favv","Jun 2"]],0],
+  ["DYjy0-QsyTK","komfort in the open bao","2026-05-20",[["Uff 🔥","May 20"]],1],
+  ["DYCV2GNPTka","behind the pass","2026-05-07",[["Omgggg @patelanushka","May 9"]],2],
+  ["DX66jsmjOoT","this season feels different","2026-05-04",[["So excitedd 😍","May 4"],["Aa weekend java padse @aashray__patel @adnan_roopawala 😋","May 5"]],0],
+  ["DXzCSQDMtaY","5 khoka. no negotiations 🥭","2026-05-01",[["Ghodke Bhau Don 🔥","May 1"],["Gold","May 1"],["Pablo Ghodke 🔥","May 1"],["crazzyy","May 1"],["😂😂 Yash Gunda","May 7"]],8],
+  ["DXjlMhIjCJ2","chef's on katsu duty","2026-04-25",[["@premkotecha_24 chef chef yee 🌝","Apr 29"]],0]
+ ],
+ bookends:[]
+};
+const cdone=JSON.parse(localStorage.getItem("crm_done")||"{}");
+const isEmojiC=s=>!/[a-z0-9]/i.test(s);
+function ctoggle(b,u,t){const kk=b+"|"+u+"|"+t;if(cdone[kk])delete cdone[kk];else cdone[kk]=Date.now();localStorage.setItem("crm_done",JSON.stringify(cdone));render();}
+function renderComments(k){
+  const arr=COMMENTS[k]; if(!arr||!arr.length) return "";
+  let open=0,txt=0,react=0;
+  arr.forEach(p=>{p[3].forEach(c=>{if(isEmojiC(c[0]))react++;else{txt++;if(!cdone[k+"|"+p[0]+"|"+c[0]])open++;}});react+=p[4];});
+  const cards=arr.map(p=>{
+    const tc=p[3].filter(c=>!isEmojiC(c[0]));const em=p[3].filter(c=>isEmojiC(c[0])).length+p[4];
+    if(!tc.length) return "";
+    const url="https://www.instagram.com/p/"+p[0]+"/";
+    const rows=tc.map(c=>{const kk=k+"|"+p[0]+"|"+c[0];const d=cdone[kk];
+      return `<div style="display:flex;gap:9px;align-items:flex-start;padding:5px 0">
+        <input type="checkbox" ${d?"checked":""} onchange="ctoggle('${k}','${p[0]}',this.getAttribute('data-t'))" data-t="${c[0].replace(/"/g,"&quot;")}" style="margin-top:3px;cursor:pointer;flex:none">
+        <span style="flex:1"><span style="${d?"text-decoration:line-through;color:var(--muted)":""}">${c[0]}</span><div style="font-size:11px;color:var(--muted)">${c[1]}</div></span></div>`;}).join("");
+    return `<div style="border:1px solid var(--line);border-radius:11px;padding:11px 13px;margin-bottom:8px;background:#faf7f0">
+      <div style="font-size:12.5px;font-weight:700">${p[1]} <span class="ttype">${p[2].slice(5)}</span></div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:4px">${tc.length} to reply · ${em} reactions · <a href="${url}" target="_blank" style="color:var(--navy);text-decoration:none;font-weight:600">open post ↗</a></div>
+      ${rows}</div>`;}).join("");
+  return `<div class="panel"><h2>Comment CRM · reply inbox <span class="tagm">${open} open</span></h2>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:10px">${txt} text comments to reply to · ${react} emoji reactions. Tick when handled (saved on this device). Reply on Instagram via the post link, or in Meta Business Suite for team replies.</div>
+    ${cards||'<div style="color:var(--muted);font-size:12.5px">No text comments needing a reply.</div>'}</div>`;
+}
+let calMonth=new Date(2026,6,1);
+function navMonth(d){calMonth=new Date(calMonth.getFullYear(),calMonth.getMonth()+d,1);render();}
+function renderMonthCal(){
+  if(window.cowork&&window.cowork.callMcpTool&&!window._ttLoaded){window._ttLoaded=true;pullBacklog();}
+  const v=document.getElementById("view");
+  const y=calMonth.getFullYear(),m=calMonth.getMonth();
+  const MN=["January","February","March","April","May","June","July","August","September","October","November","December"];
+  const first=new Date(y,m,1).getDay(),days=new Date(y,m+1,0).getDate();
+  const ev={};
+  if(y===2026&&m===6){CAL.forEach(r=>{const d=parseInt(r[0].split(" ")[1]);(ev[d]=ev[d]||[]).push({t:r[2]+": "+r[5].slice(0,26),c:r[2]==="Capiche"?"var(--capiche)":"var(--aiko)"});});}
+  (window.TTDUE||[]).forEach(x=>{const dt=new Date(x.date);if(dt.getFullYear()===y&&dt.getMonth()===m){const d=dt.getDate();(ev[d]=ev[d]||[]).push({t:"⏰ "+x.title.slice(0,28),c:"var(--navy)"});}});
+  const dow=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+  let head=dow.map(d=>`<div style="font-size:10px;font-weight:700;color:var(--muted);text-align:center;padding:4px">${d}</div>`).join("");
+  let cells="";
+  for(let i=0;i<first;i++)cells+=`<div></div>`;
+  for(let d=1;d<=days;d++){const items=(ev[d]||[]).map(e=>`<div style="font-size:9.5px;background:${e.c};color:#fff;border-radius:4px;padding:1px 4px;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e.t}</div>`).join("");
+    cells+=`<div style="border:1px solid var(--line);border-radius:8px;min-height:76px;padding:4px;background:var(--card)"><div style="font-size:11px;font-weight:700;color:var(--muted)">${d}</div>${items}</div>`;}
+  v.innerHTML=`<div class="panel">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><h2 style="margin:0">\U0001f5d3 ${MN[m]} ${y}</h2>
+    <div><button class="btn" onclick="navMonth(-1)">‹ Prev</button> <button class="btn" onclick="navMonth(1)">Next ›</button></div></div>
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:5px">${head}${cells}</div>
+    <div style="font-size:12px;color:var(--muted);margin-top:12px">Red = Capiche, gold = Aiko (July content plan). Cobalt ⏰ = TickTick task due dates (live). Add due dates to tasks in TickTick and they appear here automatically — most backlog tasks have none yet.</div></div>`;
+}
+const CONTENT=[{"b": "Aiko", "date": "2026-07-06", "wk": "Wk 1", "day": "Mon", "fmt": "Reel", "pillar": "Hush / Mood", "concept": "Hush — the room at 7pm", "cap": "Low light. Slow steam. The first table fills. This is Aiko before the night begins — in [area], Ahmedabad. Some places you visit. This one you sink into.", "cta": "Save this for the night you need somewhere that feels like an exhale.", "obj": "Reach + desire + presence", "aud": "Ahd + India", "tag": "Geotag outlet. 📍[area], Ahmedabad. #ahmedabad #panasian."}, {"b": "Capiche", "date": "2026-07-06", "wk": "Wk 1", "day": "Mon", "fmt": "Reel", "pillar": "Wacky Capiche", "concept": "Sachet ASMR: The Tear", "cap": "Some sounds you don't ask for. You just receive them. 🔊 Oregano, but make it cinema. Capiche? Sound on, judgement off.", "cta": "Turn your sound on — are you a tear or a sprinkle person?", "obj": "Reach + voice", "aud": "India", "tag": "Trend-bend (ASMR). #pizza #ASMR sparingly."}, {"b": "Aiko", "date": "2026-07-07", "wk": "Wk 1", "day": "Tue", "fmt": "Carousel", "pillar": "The First Bowl", "concept": "First time at Aiko? Start here.", "cap": "Pan-Asian can feel like a lot. So we made it simple. Swipe for the three things to order on your first visit — the bowl, the bao, the one nobody expects to love. No wrong answers, but these are the right ones.", "cta": "Screenshot this for your first visit. Find us in [area], Ahmedabad.", "obj": "Conversion / lower barrier", "aud": "Ahmedabad", "tag": "Geotag. Insert real signature dishes. #ahmedabadfood."}, {"b": "Capiche", "date": "2026-07-07", "wk": "Wk 1", "day": "Tue", "fmt": "Carousel", "pillar": "The Dish Files", "concept": "Why our Margherita has no garlic (and we'd do it again)", "cap": "Everyone adds. We subtract. The Margherita is a test — if basil, cheese and crust can't carry it alone, the recipe's lying to you. Three ingredients. Nowhere to hide. Swipe for the one decision we argued about for a week.", "cta": "Save this for your next 'what should I order' crisis.", "obj": "Crave + quality", "aud": "India + Ahd", "tag": "#margherita #vegpizza. Light tags."}, {"b": "Aiko", "date": "2026-07-08", "wk": "Wk 1", "day": "Wed", "fmt": "Carousel", "pillar": "Dish Up Close", "concept": "What goes into the broth (12 hours you don't see)", "cap": "Before it reaches you, it waited. Twelve hours of low heat, patience and a recipe we won't fully explain. Swipe for the parts of the bowl that happen long before service.", "cta": "Save it. Then come taste the difference. 📍[area], Ahmedabad.", "obj": "Craft + crave", "aud": "Ahd + India", "tag": "Geotag. #ramen #broth #panasian."}, {"b": "Capiche", "date": "2026-07-08", "wk": "Wk 1", "day": "Wed", "fmt": "Reel", "pillar": "Capiche People", "concept": "Chef's Diary Ep.1: The 4 a.m. dough", "cap": "Before the city's awake, the dough already has opinions. Ep.1 of Chef's Diary — the parts of your pizza that happen before you're even hungry.", "cta": "Follow along — new diary entry every Wednesday.", "obj": "Trust + appointment-viewing", "aud": "India + Guj", "tag": "Pin as series. Geotag the outlet you shot in (rotate across the 4)."}, {"b": "Aiko", "date": "2026-07-09", "wk": "Wk 1", "day": "Thu", "fmt": "Reel", "pillar": "Presence & Discovery", "concept": "You've lived in Ahmedabad how long and didn't know we were here?", "cap": "Tucked into [area/landmark], quieter than the crowd, better than the hype. Aiko has been here, doing pan-Asian properly, while the city looked elsewhere. Consider this your invitation.", "cta": "Tag the friend who thinks they've 'been everywhere' in Ahmedabad.", "obj": "Awareness / flag-planting", "aud": "Ahmedabad", "tag": "Strong geotag + exact location in caption. #ahmedabad."}, {"b": "Capiche", "date": "2026-07-09", "wk": "Wk 1", "day": "Thu", "fmt": "Carousel", "pillar": "Home Turf", "concept": "A love letter to Ahmedabad, in pizza form", "cap": "Amdavad, you taught us that 'thoda spicy' is a personality. So we built a menu that keeps up. From our kitchens to your table — this one's for the city that argues about food the way it argues about everything: with love. 🤌", "cta": "Tag the one Amdavadi who'll fight you over toppings.", "obj": "Local follows + community", "aud": "Ahmedabad", "tag": "Tag both Ahd outlets + geo-sticker. #Ahmedabad #amdavadi #ahmedabadfood. (Run a Surat-version variant later.)"}, {"b": "Aiko", "date": "2026-07-10", "wk": "Wk 1", "day": "Fri", "fmt": "Reel", "pillar": "Aiko People / Collab", "concept": "We let an Ahmedabad food creator loose in Aiko", "cap": "We handed the menu to @[creator] and said: order like it's your last meal. This is what happened. (Posted as a collab — so blame them for the cravings.)", "cta": "Follow for the full first-visit guide. 📍[area], Ahmedabad.", "obj": "Borrowed reach (local)", "aud": "Ahmedabad", "tag": "Use IG Collab feature. Geotag. Pick a true Ahd creator."}, {"b": "Capiche", "date": "2026-07-10", "wk": "Wk 1", "day": "Fri", "fmt": "Reel", "pillar": "Inside Capiche", "concept": "The British racing green car has entered the chat", "cap": "Most pizza arrives. Ours makes an entrance. Meet the fleet — vintage green, gold leaf, zero chill. The pizza stays warm. The car stays cold-blooded.", "cta": "Spotted one on the road? Story it and tag us.", "obj": "Brand world + UGC seeding", "aud": "India + Guj", "tag": "Geotag city (Ahd or Surat). Seed UGC habit."}, {"b": "Aiko", "date": "2026-07-13", "wk": "Wk 2", "day": "Mon", "fmt": "Reel", "pillar": "Hush / Mood", "concept": "Hush no.2 — the sound of a wok", "cap": "Fire, then silence. The wok does the talking here. 30 seconds of the only ASMR we believe in. Sound on.", "cta": "Send this to whoever you're bringing this weekend. 📍Ahmedabad.", "obj": "Reach + sensory desire", "aud": "Ahd + India", "tag": "Geotag. Sound design heavy. #wok #ASMR sparingly."}, {"b": "Capiche", "date": "2026-07-13", "wk": "Wk 2", "day": "Mon", "fmt": "Reel", "pillar": "Wacky Capiche", "concept": "We gave our pizza box a diary", "cap": "Day 1 of being a Capiche box: got filled with a large, got Instagrammed, got recycled. A good life. Honestly more closure than most of us get. 📦", "cta": "Comment what YOUR box would write about you.", "obj": "Reach + reply-bait", "aud": "India", "tag": "Original bit, no trending audio needed."}, {"b": "Aiko", "date": "2026-07-14", "wk": "Wk 2", "day": "Tue", "fmt": "Reel", "pillar": "The First Bowl", "concept": "The First Bowl: the dish we'd order for you", "cap": "If you only have one visit in you, make it this. [Signature dish] — the one we'd put in front of a stranger to explain the whole restaurant in one bite.", "cta": "First visit loading? Save this. 📍[area], Ahmedabad.", "obj": "Conversion", "aud": "Ahmedabad", "tag": "Geotag. Insert real signature. Pin to series."}, {"b": "Capiche", "date": "2026-07-14", "wk": "Wk 2", "day": "Tue", "fmt": "Carousel", "pillar": "The Dish Files", "concept": "The pizza we almost didn't put on the menu", "cap": "It tested badly three times. Then someone added the wrong cheese on purpose and it became the one people drive across town for. Swipe for the story — proof the best decisions start as mistakes.", "cta": "Save it. Order it. Report back.", "obj": "Crave + narrative", "aud": "India + Ahd", "tag": "Name the actual dish. #vegpizza."}, {"b": "Aiko", "date": "2026-07-15", "wk": "Wk 2", "day": "Wed", "fmt": "Carousel", "pillar": "Dish Up Close", "concept": "Dumplings, folded by hand (we counted the pleats)", "cap": "Eighteen pleats. Every single one. Machines are faster; hands are better. Swipe for the part of the meal that takes the longest and disappears the quickest.", "cta": "Save it. Order it. 📍Ahmedabad.", "obj": "Craft / saves", "aud": "Ahd + India", "tag": "Geotag. #dumplings #handmade."}, {"b": "Capiche", "date": "2026-07-15", "wk": "Wk 2", "day": "Wed", "fmt": "Reel", "pillar": "Capiche People", "concept": "Chef's Diary Ep.2: the topping we fight about", "cap": "Ep.2. Every kitchen has one ingredient that starts wars. Ours is a quiet troublemaker. Chef explains why it stays — and why he's outnumbered.", "cta": "Whose side are you on? New diary every Wednesday.", "obj": "Series loyalty", "aud": "India + Ahd", "tag": "Series pin. Open loop to Ep.3."}, {"b": "Aiko", "date": "2026-07-16", "wk": "Wk 2", "day": "Thu", "fmt": "Carousel", "pillar": "Presence & Discovery", "concept": "A map to Aiko (because Google sends you the wrong way)", "cap": "Find the [landmark]. Turn where it feels too quiet to be a restaurant. That hush? That's us. Swipe for how to actually get here — and what to do once you do.", "cta": "Save this so you never circle the block again. 📍[exact address].", "obj": "Awareness + remove friction", "aud": "Ahmedabad", "tag": "Exact address in caption. Geotag. Pin a 'Find Us' highlight."}, {"b": "Capiche", "date": "2026-07-16", "wk": "Wk 2", "day": "Thu", "fmt": "Single", "pillar": "Home Turf", "concept": "Slice Court: Amdavad edition", "cap": "SLICE COURT is in session. Today's case: is it acceptable to eat pizza with a fork in this city? The defence rests. You decide. ⚖️", "cta": "Verdict in the comments. We read every one in Stories tomorrow.", "obj": "Engagement loop + local", "aud": "Ahmedabad", "tag": "Recurring format — rotate the 'edition' (Amdavad / Surat) each round. Geo-sticker."}, {"b": "Aiko", "date": "2026-07-17", "wk": "Wk 2", "day": "Fri", "fmt": "Reel", "pillar": "Aiko People", "concept": "Regulars: the table that's been ours for a year", "cap": "They came once by accident. Now it's every other Friday, same corner, same order. We asked what keeps them coming. 'It's the only place in Ahmedabad that feels like this.'", "cta": "Tag the person you'd bring for the first time.", "obj": "Social proof -> recruit", "aud": "Ahmedabad", "tag": "With consent. Geotag. #regulars #ahmedabad."}, {"b": "Capiche", "date": "2026-07-17", "wk": "Wk 2", "day": "Fri", "fmt": "Carousel", "pillar": "Inside Capiche", "concept": "Read the fine print on our chilli sachet", "cap": "We spent real money making a sachet funnier. No regrets. Swipe to read what's printed on the thing you usually rip open without looking. You're welcome. 🌶️", "cta": "Save your favourite line. We'll know.", "obj": "Brand detail + saves", "aud": "India + Ahd", "tag": "Show the real copy. #packaging."}, {"b": "Aiko", "date": "2026-07-20", "wk": "Wk 3", "day": "Mon", "fmt": "Reel", "pillar": "Hush / Mood", "concept": "Hush no.3 — steam, in slow motion", "cap": "Nothing happens fast here. Watch the steam find the light. Then decide you need a table.", "cta": "Save for your next 'where should we go' group chat. 📍Ahmedabad.", "obj": "Reach + desire", "aud": "Ahd + India", "tag": "Geotag. Cinematic. Minimal text on screen."}, {"b": "Capiche", "date": "2026-07-20", "wk": "Wk 3", "day": "Mon", "fmt": "Reel", "pillar": "Wacky Capiche", "concept": "Pizza, but it's a luxury car ad (parody)", "cap": "0 to 'oh my god' in 8 minutes. Leather? No. Cheese pull? Devastating. Some things weren't meant to be this dramatic. We did it anyway. 🏎️", "cta": "Tag someone who narrates their own life like this.", "obj": "Reach + voice", "aud": "India", "tag": "Parody, not a trend copy. Sound design heavy."}, {"b": "Aiko", "date": "2026-07-21", "wk": "Wk 3", "day": "Tue", "fmt": "Carousel", "pillar": "The First Bowl", "concept": "Veg or not — here's your order", "cap": "Pan-Asian, but nobody's left out. Swipe for the first-visit order: one for the veg table, one for everyone else. Aiko doesn't do 'compromise' dishes.", "cta": "Screenshot your side of the table. 📍[area], Ahmedabad.", "obj": "Conversion + inclusivity", "aud": "Ahmedabad", "tag": "CONFIRM veg/non-veg split before posting. Geotag."}, {"b": "Capiche", "date": "2026-07-21", "wk": "Wk 3", "day": "Tue", "fmt": "Carousel", "pillar": "The Dish Files", "concept": "What 'wood-fired' actually does (no fluff)", "cap": "Not a buzzword — it's chemistry with a temper. Swipe for what 60 seconds in a screaming-hot oven does to a crust, and why your oven at home is quietly disappointing you.", "cta": "Save this and stop overpaying for 'artisanal'.", "obj": "Authority + saves", "aud": "India + Ahd", "tag": "Educational. #woodfired #pizza."}, {"b": "Aiko", "date": "2026-07-22", "wk": "Wk 3", "day": "Wed", "fmt": "Carousel", "pillar": "Dish Up Close", "concept": "The sauce we make from scratch (and refuse to bottle)", "cap": "We've been asked to sell it. We won't. Some things only exist at the table they were made for. Swipe for the one element you can't get anywhere else in the city.", "cta": "Come taste the thing we won't sell. 📍Ahmedabad.", "obj": "Exclusivity / crave", "aud": "Ahd + India", "tag": "Geotag. #ahmedabadfood."}, {"b": "Capiche", "date": "2026-07-22", "wk": "Wk 3", "day": "Wed", "fmt": "Reel", "pillar": "Capiche People", "concept": "Chef's Diary Ep.3: the order that broke us (in a good way)", "cap": "Ep.3. A table once ordered something so unhinged we kept it. This is that story. The menu has a secret now. 🤫", "cta": "Think you can guess it? Drop it below.", "obj": "Series + intrigue", "aud": "India + Ahd", "tag": "Open loop. Pays off in Stories."}, {"b": "Aiko", "date": "2026-07-23", "wk": "Wk 3", "day": "Thu", "fmt": "Reel", "pillar": "Presence & Discovery", "concept": "Ahmedabad's pan-Asian spot you keep scrolling past", "cap": "Not a chain. Not a trend. Just Aiko, doing one thing seriously in [area]. If your feed hasn't shown you us yet, that's the algorithm's loss — and now your gain.", "cta": "Follow + save. We'll see you at a table soon. 📍[location].", "obj": "Awareness / new follows", "aud": "Ahmedabad", "tag": "Geotag. #ahmedabad #panasianfood."}, {"b": "Capiche", "date": "2026-07-23", "wk": "Wk 3", "day": "Thu", "fmt": "Reel", "pillar": "Home Turf", "concept": "Regulars: the Surat window-table regular", "cap": "Every week, same table, same order, zero notes. They've been coming to our Surat outlet since the early days. We asked why. The answer was better than any review. ❤️", "cta": "Tag your 'usual order' partner.", "obj": "Community + trust + local", "aud": "Surat", "tag": "With consent. Geotag the Surat outlet. #surat #suratfood #regulars."}, {"b": "Aiko", "date": "2026-07-24", "wk": "Wk 3", "day": "Fri", "fmt": "Reel", "pillar": "Collab", "concept": "Aiko x @[creator / neighbour business]", "cap": "We teamed up with @[partner] to give Ahmedabad a reason to wander in. Here's what we made together — for one weekend only.", "cta": "Tap follow, then come find it. 📍[area], Ahmedabad.", "obj": "Borrowed reach + footfall", "aud": "Ahmedabad", "tag": "IG Collab. Time-bound hook drives urgency. Geotag."}, {"b": "Capiche", "date": "2026-07-24", "wk": "Wk 3", "day": "Fri", "fmt": "Carousel", "pillar": "Inside Capiche", "concept": "A tour of the outlet in 6 details you'd miss", "cap": "Anyone can notice a room. We're obsessed with the corners. Swipe for the 6 things we lost sleep over — and one you'll only spot if you look up. 👀", "cta": "Next visit, find #4. Story it.", "obj": "Space storytelling + footfall", "aud": "India + Guj", "tag": "Geotag the outlet shown (rotate Ahd/Surat). Drives in-person discovery."}, {"b": "Aiko", "date": "2026-07-27", "wk": "Wk 4", "day": "Mon", "fmt": "Reel", "pillar": "Hush / Mood", "concept": "Hush no.4 — closing time", "cap": "The last bowl. The lights drop lower. Even our endings are slow. This is Aiko after the rush — the version regulars stay for.", "cta": "Save it. Some nights call for exactly this. 📍Ahmedabad.", "obj": "Reach + brand depth", "aud": "Ahd + India", "tag": "Geotag. Cinematic close."}, {"b": "Capiche", "date": "2026-07-27", "wk": "Wk 4", "day": "Mon", "fmt": "Reel", "pillar": "Wacky Capiche", "concept": "Our menu illustrator explains the riso-print drinks menu", "cap": "Why is there a double-sketch riso situation on our drinks menu? Because 'clean and minimal' is what everyone else did. We sketched it twice on purpose. Hear them out. ✏️", "cta": "Which illustration is secretly you? Comment the number.", "obj": "Brand world + reach", "aud": "India + Ahd", "tag": "Feature the artist. #risograph #illustration."}, {"b": "Aiko", "date": "2026-07-28", "wk": "Wk 4", "day": "Tue", "fmt": "Reel", "pillar": "The First Bowl", "concept": "Your first visit, in 45 seconds", "cap": "Walk in. Sit down. Order [signature]. The entire first-visit experience, start to finish, so there's nothing left to be nervous about. The only step missing is you.", "cta": "Book your first visit — DM or link in bio. 📍[area], Ahmedabad.", "obj": "Conversion / remove anxiety", "aud": "Ahmedabad", "tag": "Geotag. Clear CTA to book. Pin to series."}, {"b": "Capiche", "date": "2026-07-28", "wk": "Wk 4", "day": "Tue", "fmt": "Carousel", "pillar": "The Dish Files", "concept": "Toppings, ranked by us (controversial)", "cap": "We ranked every topping by how much it respects the pizza. This will upset people. Good. Swipe — and yes, your favourite is probably mid.", "cta": "Defend your topping in the comments. We're picking fights all week.", "obj": "Reply-bait + saves", "aud": "India", "tag": "Safe controversy. No pineapple cliché."}, {"b": "Aiko", "date": "2026-07-29", "wk": "Wk 4", "day": "Wed", "fmt": "Carousel", "pillar": "Dish Up Close", "concept": "Heat, ranked — order by how brave you are", "cap": "From 'gentle' to 'we warned you.' Swipe for the Aiko heat scale, so you order exactly the night you want. No surprises — unless you ask for them.", "cta": "Save it. Pick your level. 📍Ahmedabad.", "obj": "Saves + confident ordering", "aud": "Ahd + India", "tag": "Geotag. #spicy #panasian."}, {"b": "Capiche", "date": "2026-07-29", "wk": "Wk 4", "day": "Wed", "fmt": "Reel", "pillar": "Capiche People", "concept": "Chef's Diary Ep.4: what we throw away (and why it hurts)", "cap": "Ep.4. The dough that didn't make it. The standards nobody sees. This is the unglamorous part of caring too much.", "cta": "Diary's a month old — what should Ep.5 cover? Tell us.", "obj": "Trust + co-creation loop", "aud": "India + Ahd", "tag": "Co-creation. Sets next month's content."}, {"b": "Aiko", "date": "2026-07-30", "wk": "Wk 4", "day": "Thu", "fmt": "Carousel", "pillar": "Presence & Discovery", "concept": "Why people keep Aiko a secret (and why we're done with that)", "cap": "Regulars love that it feels hidden. We love that too — but a restaurant this good shouldn't be Ahmedabad's best-kept secret forever. Swipe for everything you've been missing in [area].", "cta": "Share with the one person who deserves to know. 📍[location].", "obj": "Awareness + reframe loyalty", "aud": "Ahmedabad", "tag": "Geotag. Built to be shared, not hoarded."}, {"b": "Capiche", "date": "2026-07-30", "wk": "Wk 4", "day": "Thu", "fmt": "Carousel", "pillar": "Home Turf", "concept": "Only in Ahmedabad: 5 things our outlets do differently", "cap": "Same brand, local soul. From the little details to the way Amdavad orders extra of one thing — here's how the city rewired our menu. Swipe. 🤌", "cta": "What should we steal from your neighbourhood next? Comment it.", "obj": "Local pride + follows", "aud": "Ahmedabad", "tag": "Tag both Ahd outlets. Geo-sticker. #ahmedabad #amdavadifoodie. (Surat 'Only in Surat' version next cycle.)"}, {"b": "Aiko", "date": "2026-07-31", "wk": "Wk 4", "day": "Fri", "fmt": "Reel", "pillar": "Aiko People", "concept": "First Timers: we filmed people walking in for the first time", "cap": "The pause at the door. The first look up. The first bite. We filmed first-timers all month — this is what discovering Aiko looks like. Your turn next.", "cta": "Follow, then become one of them. Tag who's coming with you. 📍Ahmedabad.", "obj": "Social proof + awareness loop", "aud": "Ahmedabad", "tag": "With consent. Geotag. Recurring monthly format."}, {"b": "Capiche", "date": "2026-07-31", "wk": "Wk 4", "day": "Fri", "fmt": "Reel", "pillar": "Wacky / Inside", "concept": "Month in review: the comments that lived in our heads", "cap": "You said unhinged things this month. We screenshotted all of them. Here are the comments that made the whole team stop working. Same time next month? 📸", "cta": "Follow so you're in next month's roundup. We're watching. 👌", "obj": "Community loop + follow CTA", "aud": "India + Ahd", "tag": "Recurring monthly format. The come-back hook."}];
+const STORIES={"capiche": [{"day": "Mon", "focus": "Tease the week's Reel", "frames": "Behind-the-scenes of Monday's wacky reel; 'guess what drops today' poll; repost weekend tags.", "sticker": "Poll + location sticker"}, {"day": "Tue", "focus": "Push the Dish Files save", "frames": "Pull one frame from the dish carousel; 'have you tried this?' poll; quick close-up b-roll.", "sticker": "Poll + location sticker"}, {"day": "Wed", "focus": "Chef's Diary BTS", "frames": "Raw kitchen clips; question sticker 'what should Chef answer next?'; episode link.", "sticker": "Question + location sticker"}, {"day": "Thu", "focus": "Slice Court verdict", "frames": "Read out yesterday's comments; reveal the 'ruling'; tease Saturday's case.", "sticker": "Quiz/this-or-that + geo"}, {"day": "Fri", "focus": "Weekend appetite + order", "frames": "Hours, fleet sightings reposts, 'order now' frame with order link/sticker.", "sticker": "Link/order + location"}, {"day": "Sat", "focus": "New Slice Court case", "frames": "Drop a fresh debate (this-or-that sticker); local geo-sticker; UGC reposts.", "sticker": "This-or-that + geo (Ahd)"}, {"day": "Sun", "focus": "Slow-day mood", "frames": "Calm decor frames, customer reposts, 'open till __' reminder, gratitude note.", "sticker": "Countdown/reminder + geo"}], "aiko": [{"day": "Mon", "focus": "Tease the week's Hush reel", "frames": "Behind-the-scenes mood frame; 'save this' nudge; tonight's atmosphere.", "sticker": "Location sticker + poll"}, {"day": "Tue", "focus": "Push the First Bowl", "frames": "Menu peek; 'first-timer or regular?' poll; the signature dish close-up.", "sticker": "Location + link/menu"}, {"day": "Wed", "focus": "Dish BTS", "frames": "The broth, the fold, the wok; question sticker 'what should we cook next?'", "sticker": "Location + question"}, {"day": "Thu", "focus": "PRESENCE day", "frames": "Full address, map, 'how to find us', 'tag us when you visit'; repost UGC.", "sticker": "Location (prominent) + 'how to find us'"}, {"day": "Fri", "focus": "Collab + regular amplification", "frames": "Repost the creator/collab content; reservation/DM prompt; weekend vibe.", "sticker": "Location + reservation/DM"}, {"day": "Sat", "focus": "The room, live-ish", "frames": "Tonight filling up; specials; 'walk-ins welcome'; this-or-that sticker.", "sticker": "Location + this-or-that"}, {"day": "Sun", "focus": "Slow mood + gratitude", "frames": "Calm frames, regulars reposts, 'open till __', 'first visit? DM us'.", "sticker": "Location + countdown/reminder"}]};
+const PSTAGES=["Ideas","Scripting","Shoot","Editing","Review","Scheduled","Posted"];
+const PSCOL={"Ideas":"#9a8c72","Scripting":"#7A7064","Shoot":"#D09A12","Editing":"#E8431C","Review":"#caa400","Scheduled":"#2563a8","Posted":"#2E7D4E"};
+let planView="month",planBrand="all",planDay=0;
+const planStatus=JSON.parse(localStorage.getItem("plan_status")||"{}");
+const pesc=s=>(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+const patt=s=>(s||"").replace(/"/g,"&quot;").replace(/</g,"");
+const pstat=i=>planStatus[i]||"Ideas";
+const bcolP=b=>b==="Capiche"?"var(--capiche)":"var(--aiko)";
+const inBrand=c=>planBrand==="all"||c.b.toLowerCase()===planBrand;
+function pset(k,v){if(k==="view")planView=v;else planBrand=v;render();}
+function pselDay(d){planDay=d;render();}
+function pmove(i,dir){const cur=planStatus[i]||"Ideas";let j=PSTAGES.indexOf(cur)+dir;j=Math.max(0,Math.min(PSTAGES.length-1,j));planStatus[i]=PSTAGES[j];localStorage.setItem("plan_status",JSON.stringify(planStatus));render();}
+function pbtn(active,onclick,label){return `<button onclick="${onclick}" style="border:1px solid var(--line);background:${active?'var(--navy)':'#fff'};color:${active?'#fff':'var(--muted)'};padding:6px 12px;border-radius:8px;font-weight:600;font-size:12.5px;cursor:pointer;margin-right:5px">${label}</button>`;}
+const GOALS=[
+ ["Capiche","Followers → 25,000",22089,25000],
+ ["Capiche","Cadence → 4 posts/wk",1.5,4],
+ ["Capiche","Engagement/followers → 3%",1.6,3],
+ ["Aiko","Followers → 12,000",11407,12000],
+ ["Aiko","Cadence → 4 posts/wk",2.0,4],
+ ["Bookends","Cadence → 4 posts/wk",0.5,4]
+];
+function renderGoals(){
+  const rows=GOALS.map(g=>{const pct=Math.min(100,Math.round(g[2]/g[3]*100));const col=g[0]==="Capiche"?"var(--capiche)":g[0]==="Aiko"?"var(--aiko)":"var(--bookends)";
+    return `<div style="margin:8px 0"><div style="display:flex;justify-content:space-between;font-size:12px"><span><b style="color:${col}">${g[0]}</b> · ${g[1]}</span><span class="ttype">${g[2]} / ${g[3]} (${pct}%)</span></div>
+      <div style="background:#efe7d8;border-radius:6px;height:9px;margin-top:3px;overflow:hidden"><div style="width:${pct}%;height:100%;background:${pct>=80?'var(--hit)':col}"></div></div></div>`;}).join("");
+  return `<div class="panel"><h2>Goals · progress to target</h2>${rows}<div style="font-size:11.5px;color:var(--muted);margin-top:8px">Current (Supermetrics) vs target. Ask me to change any target.</div></div>`;
+}
+function renderThisWeek(){
+  const v=document.getElementById("view");
+  const today=new Date();const in7=new Date(today.getTime()+7*864e5);
+  const up=CONTENT.filter(c=>new Date(c.date)>=new Date(today.toDateString())).sort((a,b)=>a.date<b.date?-1:1);
+  const within=up.filter(c=>new Date(c.date)<=in7);
+  const show=within.length?within:up.slice(0,6);
+  const postRows=show.map(c=>`<div style="display:flex;gap:8px;align-items:center;padding:6px 0;border-top:1px solid var(--line)">
+    <span style="width:9px;height:9px;border-radius:50%;background:${bcolP(c.b)};display:inline-block;flex:none"></span>
+    <span style="flex:1"><b style="font-weight:600">${pesc(c.concept)}</b> <span class="ttype">${c.b} · ${c.fmt}</span></span>
+    <span class="ttype">${c.day} ${parseInt(c.date.slice(8,10))} Jul</span></div>`).join("");
+  let openC=0;const cItems=[];
+  Object.keys(COMMENTS).forEach(k=>(COMMENTS[k]||[]).forEach(p=>p[3].forEach(cc=>{if(!isEmojiC(cc[0])&&!cdone[k+"|"+p[0]+"|"+cc[0]]){openC++;if(cItems.length<6)cItems.push({k,u:p[0],t:cc[0]});}})));
+  const cRows=cItems.map(x=>`<div style="padding:5px 0;border-top:1px solid var(--line);font-size:12.5px">${pesc(x.t)} <a href="https://www.instagram.com/p/${x.u}/" target="_blank" style="color:var(--navy);text-decoration:none;font-weight:600">reply ↗</a></div>`).join("");
+  const att=OVERVIEW.filter(b=>b[6]==="red"||b[5]<=-10).map(b=>`<div class="flag ${b[6]==='red'?'red':'amber'}"><span class="ic">!</span><span><b>${b[1]}:</b> ${b[7]}</span></div>`).join("");
+  v.innerHTML=`<div class="cards">
+     <div class="kpi"><div class="lab">Posts · next 7 days</div><div class="val">${within.length}</div><div class="note">${within.length?'scheduled':'none until 6 Jul'}</div></div>
+     <div class="kpi"><div class="lab">Comments to reply</div><div class="val" style="color:var(--dud)">${openC}</div><div class="note">across brands</div></div>
+     <div class="kpi"><div class="lab">Brands flagged</div><div class="val">${OVERVIEW.filter(b=>b[6]==='red').length}</div><div class="note warn">need attention</div></div>
+   </div>
+   <div class="panel"><h2>Needs attention now</h2><div class="flags">${att||'<div class="flag green"><span class="ic">✓</span><span>Nothing urgent.</span></div>'}</div></div>
+   <div class="panel"><h2>${within.length?'Posting this week':'Next up to produce'}</h2>${postRows||'<div style="color:var(--muted);font-size:12.5px">No posts planned.</div>'}<div style="font-size:11.5px;color:var(--muted);margin-top:8px">From the Content Planner — open that tab to stage them.</div></div>
+   <div class="panel"><h2>Comments to reply <span class="tagm">${openC} open</span></h2>${cRows||'<div style="color:var(--muted);font-size:12.5px">All caught up. 🎉</div>'}</div>
+   ${renderGoals()}`;
+}
+function renderTopPosts(k){
+  const b=DATA[k];if(!b||!b.posts||b.posts.length<2)return"";
+  const top=[...b.posts].sort((x,y)=>y[7]-x[7]).slice(0,5);
+  const rows=top.map(p=>{const er=(p[7]/p[6]*100).toFixed(1);const share=p[5]/p[6]>0.02;
+    return `<div style="display:flex;gap:10px;align-items:center;padding:7px 0;border-top:1px solid var(--line)">
+      <span style="flex:1"><a href="${p[8]}" target="_blank" style="color:var(--ink);text-decoration:none;font-weight:600">${pesc(p[9]||p[1])}</a> <span class="ttype">${p[1]}</span>${share?' <span class="tag Hit">shareable</span>':''}</span>
+      <span class="ttype">${p[7]} int · ${er}%</span></div>`;}).join("");
+  return `<div class="panel"><h2>Make more like this <span class="tagm">top ${top.length}</span></h2>${rows}
+    <div style="font-size:11.5px;color:var(--muted);margin-top:8px">Your highest-engagement posts — proven, repeatable formats to feed the planner. "Shareable" = high share-rate (travels beyond followers).</div></div>`;
+}
+function matchPost(b,date){const arr=(DATA[b.toLowerCase()]||{}).posts||[];const t=new Date(date).getTime();let best=null,bd=2.5*864e5;arr.forEach(p=>{const d=Math.abs(new Date(p[0]).getTime()-t);if(d<=bd){bd=d;best=p;}});return best;}
+function perfChip(c,i){if(pstat(i)!=="Posted")return"";const p=matchPost(c.b,c.date);if(!p)return`<span class="tag OK" style="margin-top:3px;display:inline-block">⏳ awaiting data</span>`;const er=p[7]/p[6];const hit=er>=0.07||p[7]>=(c.b==="Capiche"?800:350);return`<span class="tag ${hit?'Hit':'Dud'}" style="margin-top:3px;display:inline-block">${hit?'✓ hit':'✗ under'} · ${p[7]} int · ${(er*100).toFixed(1)}%</span>`;}
+function renderPlanner(){
+
+  const v=document.getElementById("view");
+  const vsw=[["month","Month"],["gantt","Gantt"],["kanban","Kanban"],["stories","Stories"]].map(o=>pbtn(planView===o[0],`pset('view','${o[0]}')`,o[1])).join("");
+  const bsw=[["all","All brands"],["capiche","Capiche"],["aiko","Aiko"]].map(o=>pbtn(planBrand===o[0],`pset('brand','${o[0]}')`,o[1])).join("");
+  const body=planView==="month"?renderPMonth():planView==="gantt"?renderPGantt():planView==="kanban"?renderPKanban():renderPStories();
+  v.innerHTML=`<div class="panel"><div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center;justify-content:space-between">
+    <div style="display:flex;gap:5px;flex-wrap:wrap">${vsw}</div><div style="display:flex;gap:5px;flex-wrap:wrap">${bsw}</div></div>
+    <div style="font-size:11.5px;color:var(--muted);margin-top:8px">${CONTENT.length} planned posts (Jul 2026) + daily stories, from your content calendars. In Kanban, move cards with ◀ ▶ — pipeline saved on this device.</div></div>${body}`;
+}
+function renderPMonth(){
+  const ev={};CONTENT.forEach((c,i)=>{if(!inBrand(c))return;const d=parseInt(c.date.slice(8,10));(ev[d]=ev[d]||[]).push([c,i]);});
+  const daysWith=Object.keys(ev).map(Number).sort((a,b)=>a-b);
+  let sel=planDay; if(!sel||!ev[sel]) sel=daysWith[0]||1;
+  const first=new Date(2026,6,1).getDay();const dow=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+  const now=new Date();const tD=(now.getFullYear()===2026&&now.getMonth()===6)?now.getDate():0;
+  let head=dow.map(d=>`<div class="caldow">${d}</div>`).join("");
+  let cells="";for(let k=0;k<first;k++)cells+=`<div class="calcell empty"></div>`;
+  for(let d=1;d<=31;d++){const wd=new Date(2026,6,d).getDay();const wknd=(wd===0||wd===6);const list=ev[d]||[];
+    const dots=list.slice(0,8).map(([c])=>`<span class="cdot" style="background:${c.b==="Capiche"?"#F50C0C":"#EDB32B"}" title="${c.b}"></span>`).join("");
+    cells+=`<div class="calcell${wknd?' wknd':''}${d===tD?' today':''}${d===sel?' sel':''}${list.length?' has':''}"${list.length?` onclick="pselDay(${d})"`:""}><div class="caldate"><span>${d}</span>${d===tD?'<span class="tdy">TODAY</span>':''}</div><div class="cdots">${dots}</div></div>`;}
+  const selList=ev[sel]||[];const dt=new Date(2026,6,sel);const dn=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][dt.getDay()];
+  const detail=selList.length?selList.map(([c,i])=>{const col=c.b==="Capiche"?"#F50C0C":"#EDB32B";const bg=c.b==="Capiche"?"#fdeceb":"#fbf2d8";
+    return `<div style="border:1px solid var(--line);border-left:4px solid ${col};border-radius:11px;padding:12px 14px;margin-bottom:9px;background:${bg}">
+      <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline"><div style="font-weight:700;font-size:13.5px">${pesc(c.concept)}</div><span class="tag" style="background:#fff;color:${col}">${c.b} &middot; ${c.fmt}</span></div>
+      <div style="font-size:11px;color:var(--muted);margin:3px 0 6px">${pesc(c.pillar)} &middot; stage: ${pstat(i)}${c.obj?` &middot; ${pesc(c.obj)}`:""}</div>
+      ${c.cap?`<div style="font-size:12.5px;line-height:1.5">${pesc(c.cap)}</div>`:""}
+      ${c.cta?`<div style="font-size:11.5px;color:var(--muted);margin-top:5px"><b>CTA:</b> ${pesc(c.cta)}</div>`:""}
+      ${c.tag?`<div style="font-size:11px;color:var(--muted);margin-top:3px">${pesc(c.tag)}</div>`:""}
+    </div>`;}).join(""):'<div style="color:var(--muted);font-size:12.5px;padding:8px 0">No posts on this day — pick a date with dots.</div>';
+  const fil=CONTENT.filter(inBrand);const reels=fil.filter(c=>c.fmt==="Reel").length;const cars=fil.filter(c=>c.fmt==="Carousel").length;
+  return `<div class="panel"><div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;margin-bottom:12px"><h2 style="margin:0">July 2026</h2><span style="font-size:11.5px;color:var(--muted)">${fil.length} posts &middot; ${reels} reels &middot; ${cars} carousels &middot; tap a date</span></div>
+    <div class="calgrid">${head}${cells}</div>
+    <div style="display:flex;gap:16px;font-size:11.5px;color:var(--muted);margin-top:12px;flex-wrap:wrap"><span><span class="cdot" style="background:#F50C0C;vertical-align:0"></span> Capiche</span><span><span class="cdot" style="background:#EDB32B;vertical-align:0"></span> Aiko</span></div></div>
+   <div class="panel"><h2>${dn} ${sel} July <span class="tagm">${selList.length} post${selList.length!=1?'s':''}</span></h2>${detail}</div>`;
+}
+function renderPGantt(){
+  const days=31;const now=new Date();const todayD=(now.getMonth()===6&&now.getFullYear()===2026)?now.getDate():0;
+  const axis=`<div style="display:flex;font-size:9px;color:var(--muted)">${Array.from({length:days},(_,i)=>`<div style="flex:1;text-align:center">${(i+1)%2?(i+1):""}</div>`).join("")}</div>`;
+  const brands=planBrand==="all"?["Capiche","Aiko"]:[planBrand==="capiche"?"Capiche":"Aiko"];
+  let rows="";
+  brands.forEach(br=>{rows+=`<div style="font-weight:700;font-size:12px;color:${bcolP(br)};margin:12px 0 4px">${br}</div>`;
+    CONTENT.forEach((c,i)=>{if(c.b!==br)return;const dd=parseInt(c.date.slice(8,10));const start=Math.max(1,dd-3);
+      const left=(start-1)/days*100,w=(dd-start+1)/days*100;const st=pstat(i);
+      rows+=`<div style="display:flex;align-items:center;gap:8px;margin:2px 0">
+        <div style="width:210px;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.day} ${dd} · <span class="ttype">${c.fmt}</span> ${pesc(c.concept)}</div>
+        <div style="flex:1;position:relative;height:15px;background:#efe7d8;border-radius:5px">${todayD?`<div style="position:absolute;left:${(todayD-1)/days*100}%;top:-2px;bottom:-2px;width:2px;background:#c2080b"></div>`:""}<div title="${st}" style="position:absolute;left:${left}%;width:${w}%;height:100%;background:${PSCOL[st]};border-radius:5px"></div></div></div>`;});});
+  return `<div class="panel"><h2>Production Gantt · idea → publish window</h2>
+    <div style="display:flex;gap:8px"><div style="width:210px"></div><div style="flex:1">${axis}</div></div>${rows}
+    <div style="font-size:11.5px;color:var(--muted);margin-top:10px">Each bar = the ~4-day production window ending on publish day. Red line = today. Colour = stage: ${PSTAGES.map(s=>`<span style="color:${PSCOL[s]};font-weight:700">${s}</span>`).join(" · ")}. Set stages in Kanban.</div></div>`;
+}
+function renderPKanban(){
+  const cols=PSTAGES.map(s=>{let n=0;let cards="";
+    CONTENT.forEach((c,i)=>{if(!inBrand(c)||pstat(i)!==s)return;n++;
+      cards+=`<div style="border:1px solid var(--line);border-left:3px solid ${bcolP(c.b)};border-radius:8px;padding:7px 9px;margin-bottom:7px;background:#fff">
+        <div style="font-weight:600;font-size:11.5px">${pesc(c.concept)}</div>
+        <div style="color:var(--muted);font-size:10.5px;margin:2px 0">${c.b} · ${c.fmt} · ${c.day} ${parseInt(c.date.slice(8,10))} Jul</div>${perfChip(c,i)}
+        <div><button onclick="pmove(${i},-1)" style="border:1px solid var(--line);background:#fff;border-radius:5px;cursor:pointer;font-size:11px;padding:1px 7px;margin-right:4px">◀</button><button onclick="pmove(${i},1)" style="border:1px solid var(--line);background:#fff;border-radius:5px;cursor:pointer;font-size:11px;padding:1px 7px">▶</button></div></div>`;});
+    return `<div style="min-width:172px;flex:1"><div style="font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:${PSCOL[s]};margin-bottom:7px;border-bottom:2px solid ${PSCOL[s]};padding-bottom:3px">${s} <span style="color:var(--muted)">${n}</span></div>${cards||'<div style="font-size:11px;color:var(--muted)">—</div>'}</div>`;}).join("");
+  return `<div class="panel"><h2>Production Kanban <span class="tagm">◀ ▶ to move stage</span></h2>
+   <div style="display:flex;gap:10px;overflow-x:auto;padding-bottom:8px">${cols}</div>
+   <div style="font-size:11.5px;color:var(--muted);margin-top:8px">Move a card through Ideas → Posted with ◀ ▶. Saved on this device; this drives the Gantt colours too.</div></div>`;
+}
+function renderPStories(){
+  const brands=planBrand==="all"?["capiche","aiko"]:[planBrand];
+  return brands.map(bk=>{const arr=STORIES[bk]||[];const name=bk==="capiche"?"Capiche":"Aiko";const col=bk==="capiche"?"var(--capiche)":"var(--aiko)";
+    const rows=arr.map(s=>`<tr><td style="text-align:left;font-weight:700;color:${col}">${s.day}</td><td style="text-align:left">${pesc(s.focus)}</td><td style="text-align:left;color:var(--muted)">${pesc(s.frames)}</td><td style="text-align:left" class="ttype">${pesc(s.sticker)}</td></tr>`).join("");
+    return `<div class="panel"><h2>${name} · daily stories rhythm</h2><table><thead><tr><th style="text-align:left">Day</th><th style="text-align:left">Focus</th><th style="text-align:left">Frames (3–5/day)</th><th style="text-align:left">Sticker</th></tr></thead><tbody>${rows}</tbody></table></div>`;}).join("");
+}
 function renderCalendar(){
+
+
   const v=document.getElementById("view");
   const capN=CAL.filter(r=>r[2]==="Capiche").length, aikN=CAL.filter(r=>r[2]==="Aiko").length;
   const weeks=[["Jul 1","Jul 5","Week 1"],["Jul 7","Jul 12","Week 2"],["Jul 14","Jul 19","Week 3"],["Jul 21","Jul 26","Week 4"],["Jul 28","Jul 31","Week 5"]];
@@ -748,11 +921,9 @@ async function pullBrand(k){
     if(dd.status==="completed"){rows=dd.data;break;}if(dd.status==="failed")throw new Error("failed");}
   if(!rows)throw new Error("timeout");
   const out=[];
-  // Supermetrics returns DIMENSIONS before METRICS, so the actual column order is:
-  // [0]timestamp [1]media_type [2]media_permalink [3]likes [4]comments [5]saves [6]shares [7]reach [8]interactions
   for(let i=1;i<rows.length;i++){const r=rows[i];
     const type=r[1]==="VIDEO"||r[1]==="REELS"?"Reel":r[1]==="CAROUSEL_ALBUM"?"Carousel":r[1]==="IMAGE"?"Image":r[1];
-    out.push([String(r[0]).slice(0,10),type,+r[3]||0,+r[4]||0,+r[5]||0,+r[6]||0,+r[7]||0,+r[8]||0,r[2]||"#",""]);}
+    out.push([String(r[0]).slice(0,10),type,+r[2]||0,+r[3]||0,+r[4]||0,+r[5]||0,+r[6]||0,+r[7]||0,r[8]||"#",""]);}
   if(out.length){b.posts=out;}
   return out.length;
 }
@@ -766,17 +937,11 @@ async function refreshAll(){
   else if(ok>0){pill.className="pill live";pill.textContent="● Live ("+ok+"/"+(ok+fail)+") · "+now;}
   else{pill.className="pill snap";pill.textContent="Snapshot · "+SNAPSHOT_DATE;}
 }
+document.getElementById("refreshBtn").onclick=refreshAll;
 render();
 document.getElementById("freshPill").className="pill snap";
-document.getElementById("freshPill").textContent="Updated · "+SNAPSHOT_DATE;
-if(window.cowork&&window.cowork.callMcpTool){
-  // inside Claude: the live in-browser refresh works
-  document.getElementById("refreshBtn").onclick=refreshAll;
-  refreshAll().catch(()=>{});
-}else{
-  // hosted (no Claude bridge): the button can't pull data, so hide it — data is baked in daily
-  document.getElementById("refreshBtn").style.display="none";
-}
+document.getElementById("freshPill").textContent="Snapshot · "+SNAPSHOT_DATE;
+if(window.cowork&&window.cowork.callMcpTool){refreshAll().catch(()=>{});}
 </script>
 </body>
 </html>

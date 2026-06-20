@@ -1,0 +1,7 @@
+# Keep refreshed/automated files LF in the repo no matter the OS.
+# The GitHub Actions daily refresh (scripts/refresh.mjs) matches `posts:[\n`,
+# which only works on LF. CRLF here would silently break the every-morning update.
+index.html        text eol=lf
+cockpit/data.json text eol=lf
+scripts/*.mjs     text eol=lf
+.github/**        text eol=lf
